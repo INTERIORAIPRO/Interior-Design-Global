@@ -1,0 +1,132 @@
+{
+  "meta": {
+    "title": "Interior Design Global",
+    "description": "Ein internationaler Interior-Marktplatz mit Echtzeit-3D-Studio und Partnerhandel."
+  },
+  "nav": {
+    "marketplace": "Marktplatz",
+    "aiStudio": "KI-Render",
+    "cart": "Warenkorb",
+    "studio": "3D-Studio",
+    "vendors": "Partner",
+    "returns": "Rücksendungen"
+  },
+  "welcome": {
+    "kicker": "Weltweite Interieurs, ein Studio",
+    "title": "Räume gestalten. Stücke finden. Global liefern.",
+    "subtitle": "Ein mehrsprachiger Marktplatz für Möbel, Materialien und Licht — mit 3D-Engine und Partnerportal.",
+    "ctaPrimary": "KI-Render starten",
+    "ctaStudio": "3D-Studio",
+    "ctaSecondary": "Kollektionen entdecken",
+    "ctaVendor": "Partnerportal öffnen"
+  },
+  "features": {
+    "ai": {
+      "title": "KI-Raumrender",
+      "body": "Foto laden, Bestehendes behalten, Rest mit The Home im Budget füllen."
+    },
+    "i18n": {
+      "title": "Mehrsprachig gedacht",
+      "body": "Shoppen und gestalten auf Englisch, Rumänisch, Französisch, Deutsch, Spanisch und Italienisch."
+    },
+    "engine": {
+      "title": "Live-3D-Engine",
+      "body": "Räume, Materialien und Licht vor dem Kauf oder Listing vorschauen."
+    },
+    "vendors": {
+      "title": "Partner-Cockpit",
+      "body": "Vendoren verwalten Kataloge, Bestellungen, Provisionen und Versand."
+    },
+    "returns": {
+      "title": "Rücksendesystem",
+      "body": "RMA-Anfragen, Restocking und Erstattungen international verfolgen."
+    }
+  },
+  "product": {
+    "clickHint": "Klicken Sie ein Möbelstück im Raum für Details und die The-Home-Bestellung.",
+    "dimensions": "Maße",
+    "price": "Preis",
+    "order": "Bei The Home bestellen",
+    "close": "Schließen",
+    "affiliateNote": "Öffnet thehome.ro mit Interior-Design-Global-Affiliate-Tag."
+  },
+  "aiRender": {
+    "title": "KI-Raumstudio",
+    "intro": "Ein Ablauf: Foto, Auto-Erkennung, Keep-Maske, Stil und Budget, fotoreales The-Home-Komposit mit Affiliate-Links.",
+    "steps": {
+      "upload": "Foto",
+      "analyze": "Erkennung",
+      "mask": "Behalten",
+      "style": "Stil & Budget",
+      "result": "Render"
+    },
+    "uploadTitle": "Raumbild hochladen",
+    "uploadBody": "Leer oder möbliert — die Engine liest das Bild. Keine manuelle Maßeingabe.",
+    "uploadCta": "Foto wählen",
+    "sampleCta": "Demo-Raum",
+    "analyzing": "Perspektive und Maßstab werden gelesen…",
+    "autoTitle": "Aus dem Bild erkannt",
+    "autoBody": "Breite, Tiefe und Perspektive automatisch. Deckenhöhe mit 2,6-m-Prior.",
+    "width": "Breite",
+    "depth": "Tiefe",
+    "height": "Decke",
+    "perspective": "Perspektive",
+    "furnished": "Vorhandene Möbel",
+    "confidence": "Konfidenz",
+    "continueMask": "Objekte zum Behalten markieren",
+    "maskBody": "Übermalen Sie, was bleiben muss. Diese Pixel werden nicht ersetzt.",
+    "brushKeep": "Behalten",
+    "brushErase": "Radierer",
+    "brushSize": "Größe",
+    "continueStyle": "Stil und Budget",
+    "styleTitle": "Stil",
+    "budgetTitle": "Budget",
+    "budgets": {
+      "economic": "Economy",
+      "medium": "Mittel",
+      "premium": "Premium"
+    },
+    "fallbackNotice": "Die KI-Darstellung ist vorübergehend nicht verfügbar. Wir zeigen die The-Home-Katalogszene für Stil und Budget.",
+    "styles": {
+      "scandinavian": "Skandinavisch",
+      "modern": "Modern",
+      "classic": "Klassisch",
+      "industrial": "Industrial",
+      "minimal": "Minimal"
+    },
+    "catalogHint": "{store}: {count} Teile im Budget · {spent} RON",
+    "generate": "Fotoreales Render erzeugen",
+    "generating": "The-Home-Stücke werden gesetzt…",
+    "resultAlt": "KI-Render mit The Home",
+    "beforeLabel": "Dein Raum",
+    "afterLabel": "Design mit The-Home-Hotspots",
+    "hotspotHint": "Klicke ein Produkt im Bild für Details und Kauf.",
+    "closeHotspot": "Schließen",
+    "errorNeedPhoto": "Lade zuerst ein Foto deines Raums hoch.",
+    "download": "PNG laden",
+    "restart": "Neuer Raum",
+    "order": "Bei The Home bestellen →",
+    "designProductsTitle": "Produkte in diesem Design (The Home)",
+    "designProductsBody": "{count} empfohlene Stücke für Raum und Stil.",
+    "estimatedPrice": "Richtpreis",
+    "viewOnTheHome": "Bei The Home ansehen",
+    "addSetToCart": "Komplettes Set in den Warenkorb",
+    "setTotal": "Set-Summe",
+    "setAdded": "Das Set wurde in den Warenkorb gelegt ({count} Teile).",
+    "openCart": "Warenkorb öffnen",
+    "nonePlaced": "Die Keep-Maske deckt den freien Boden. Maske verkleinern oder Budget erhöhen.",
+    "errorFile": "Bitte eine Bilddatei hochladen.",
+    "errorAnalyze": "Analyse fehlgeschlagen. Anderes Bild versuchen.",
+    "errorGenerate": "Render fehlgeschlagen. Foto oder Maske ändern."
+  },
+  "cart": {
+    "title": "Design-Set Warenkorb",
+    "body": "The-Home-Stücke aus dem generierten Raum. Jeden Artikel auf der Partnerseite öffnen.",
+    "empty": "Der Warenkorb ist leer.",
+    "backToStudio": "Zurück zum KI-Studio",
+    "qty": "Menge: {count}",
+    "view": "Bei The Home ansehen",
+    "total": "Summe",
+    "clear": "Warenkorb leeren"
+  }
+}

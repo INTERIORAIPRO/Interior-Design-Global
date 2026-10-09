@@ -1,0 +1,135 @@
+{
+  "meta": {
+    "title": "Interior Design Global",
+    "description": "Marketplace internațional de design interior, cu studio 3D în timp real și comerț pentru parteneri."
+  },
+  "nav": {
+    "marketplace": "Marketplace",
+    "aiStudio": "Randare AI",
+    "cart": "Coș",
+    "studio": "Studio 3D",
+    "vendors": "Parteneri",
+    "returns": "Retururi"
+  },
+  "welcome": {
+    "kicker": "Interioare globale, un singur studio",
+    "title": "Proiectează camere. Alege piese. Livrează oriunde.",
+    "subtitle": "Un marketplace multilingv pentru mobilier, materiale și iluminat — cu motor 3D integrat și panou de control pentru vendori.",
+    "ctaPrimary": "Pornește randarea AI",
+    "ctaStudio": "Studio 3D",
+    "ctaSecondary": "Explorează colecțiile",
+    "ctaVendor": "Deschide portalul de parteneri"
+  },
+  "features": {
+    "ai": {
+      "title": "Randare AI a camerei",
+      "body": "Încarcă o poză, păstrează ce îți place, apoi completează spațiul cu piese The Home în bugetul tău."
+    },
+    "i18n": {
+      "title": "Multilingv din start",
+      "body": "Cumpără și creează în engleză, română, franceză, germană, spaniolă și italiană."
+    },
+    "engine": {
+      "title": "Motor 3D live",
+      "body": "Previzualizează camere, materiale și lumină înainte să cumperi sau să listezi un produs."
+    },
+    "vendors": {
+      "title": "Panou pentru parteneri",
+      "body": "Vendorii gestionează cataloage, comenzi, comisioane și livrări dintr-un singur loc."
+    },
+    "returns": {
+      "title": "Sistem de retururi",
+      "body": "Urmărește cereri RMA, restocking și rambursări pentru comenzi internaționale."
+    }
+  },
+  "product": {
+    "clickHint": "Click pe un obiect din cameră pentru detalii și comanda pe The Home.",
+    "dimensions": "Dimensiuni",
+    "price": "Preț",
+    "order": "Comandă pe The Home",
+    "close": "Închide",
+    "affiliateNote": "Deschide thehome.ro cu tag-ul de afiliere Interior Design Global."
+  },
+  "aiRender": {
+    "title": "Virtual Staging The Home",
+    "intro": "Încarcă o poză cu camera ta (goală sau mobilată). Păstrăm forma, pereții și unghiul, înlocuim mobilierul vechi cu piese reale The Home și îți arătăm prețurile cu link de cumpărare.",
+    "steps": {
+      "upload": "Poză",
+      "analyze": "Detectare",
+      "mask": "Păstrare",
+      "style": "Stil și buget",
+      "result": "Randare"
+    },
+    "uploadTitle": "Încarcă fotografia camerei tale",
+    "uploadBody": "Goală sau deja mobilată. Folosim poza ta ca referință de structură și restilăm mobilierul cu catalogul The Home.",
+    "uploadCta": "Încarcă poza camerei",
+    "sampleCta": "Încearcă o cameră exemplu",
+    "analyzing": "Citesc perspectiva și scara din fotografie…",
+    "autoTitle": "Detectat din imagine",
+    "autoBody": "Lățimea, adâncimea și perspectiva camerei sunt estimate automat. Înălțimea tavanului folosește un reper rezidențial de 2,6 m.",
+    "width": "Lățime",
+    "depth": "Adâncime",
+    "height": "Tavan",
+    "perspective": "Perspectivă",
+    "furnished": "Mobilier existent",
+    "confidence": "Încredere",
+    "continueMask": "Marchează obiectele de păstrat",
+    "maskBody": "Pictează peste tot ce trebuie să rămână (o canapea existentă, o fereastră, un tablou). Generatorul nu înlocuiește acei pixeli.",
+    "brushKeep": "Pensulă păstrare",
+    "brushErase": "Gumă",
+    "brushSize": "Grosime",
+    "continueStyle": "Alege stilul și bugetul",
+    "styleTitle": "Stil interior",
+    "budgetTitle": "Buget",
+    "budgets": {
+      "economic": "Economic",
+      "medium": "Mediu",
+      "premium": "Premium"
+    },
+    "fallbackNotice": "Randarea AI este temporar indisponibilă. Îți arătăm scena de catalog The Home pentru stilul și bugetul alese.",
+    "styles": {
+      "scandinavian": "Scandinav",
+      "modern": "Modern",
+      "contemporary": "Contemporan",
+      "minimalist": "Minimalist",
+      "industrial": "Industrial",
+      "midcentury": "Mid-Century",
+      "japandi": "Japandi",
+      "boho": "Boho"
+    },
+    "catalogHint": "{store}: {count} piese în buget · {spent} RON",
+    "generate": "Așază produsele The Home în cameră",
+    "generating": "Suprapun piesele The Home pe fotografia ta…",
+    "resultAlt": "Cameră cu overlay The Home",
+    "beforeLabel": "Camera ta",
+    "afterLabel": "Design cu hotspot-uri The Home",
+    "hotspotHint": "Click pe un produs din imagine pentru detalii și cumpărare.",
+    "closeHotspot": "Închide",
+    "errorNeedPhoto": "Încarcă mai întâi o poză a camerei tale.",
+    "download": "Descarcă PNG",
+    "restart": "Cameră nouă",
+    "order": "Comandă pe The Home →",
+    "designProductsTitle": "Produsele din acest design - The Home",
+    "designProductsBody": "{count} piese The Home plasate în această cameră, cu preț și link de cumpărare.",
+    "estimatedPrice": "Preț estimativ",
+    "viewOnTheHome": "Vezi pe The Home",
+    "addSetToCart": "Adaugă tot setul în coș",
+    "setTotal": "Total set",
+    "setAdded": "Setul a fost adăugat în coș ({count} piese).",
+    "openCart": "Deschide coșul",
+    "nonePlaced": "Masca de păstrare acoperă tot podeaua liberă. Șterge din mască sau crește bugetul.",
+    "errorFile": "Te rog încarcă un fișier imagine.",
+    "errorAnalyze": "Nu am putut analiza fotografia. Încearcă altă imagine.",
+    "errorGenerate": "Randarea a eșuat. Încearcă altă poză sau altă mască."
+  },
+  "cart": {
+    "title": "Coșul setului de design",
+    "body": "Piesele The Home grupate din camera generată. Poți deschide fiecare articol pe site-ul partener.",
+    "empty": "Coșul este gol.",
+    "backToStudio": "Înapoi la randarea AI",
+    "qty": "Cantitate: {count}",
+    "view": "Vezi pe The Home",
+    "total": "Total",
+    "clear": "Golește coșul"
+  }
+}

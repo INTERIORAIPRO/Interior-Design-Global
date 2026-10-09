@@ -1,0 +1,132 @@
+{
+  "meta": {
+    "title": "Interior Design Global",
+    "description": "Un marketplace internazionale di interior design con studio 3D in tempo reale."
+  },
+  "nav": {
+    "marketplace": "Marketplace",
+    "aiStudio": "Render AI",
+    "cart": "Carrello",
+    "studio": "Studio 3D",
+    "vendors": "Partner",
+    "returns": "Resi"
+  },
+  "welcome": {
+    "kicker": "Interni globali, un solo studio",
+    "title": "Progetta stanze. Scegli pezzi. Spedisci ovunque.",
+    "subtitle": "Un marketplace multilingue per arredi, materiali e luce — con motore 3D e pannello partner.",
+    "ctaPrimary": "Avvia render AI",
+    "ctaStudio": "Studio 3D",
+    "ctaSecondary": "Sfoglia le collezioni",
+    "ctaVendor": "Apri il portale partner"
+  },
+  "features": {
+    "ai": {
+      "title": "Render AI della stanza",
+      "body": "Carica una foto, tieni ciò che vuoi, completa con The Home nel budget."
+    },
+    "i18n": {
+      "title": "Multilingue nativo",
+      "body": "Acquista e crea in inglese, rumeno, francese, tedesco, spagnolo e italiano."
+    },
+    "engine": {
+      "title": "Motore 3D live",
+      "body": "Anteprima di stanze, materiali e luce prima di acquistare o pubblicare."
+    },
+    "vendors": {
+      "title": "Pannello partner",
+      "body": "I vendor gestiscono cataloghi, ordini, commissioni e spedizioni."
+    },
+    "returns": {
+      "title": "Sistema resi",
+      "body": "Traccia RMA, restock e rimborsi sugli ordini internazionali."
+    }
+  },
+  "product": {
+    "clickHint": "Clicca un pezzo nella stanza per i dettagli e l’ordine su The Home.",
+    "dimensions": "Dimensioni",
+    "price": "Prezzo",
+    "order": "Ordina su The Home",
+    "close": "Chiudi",
+    "affiliateNote": "Apre thehome.ro con il tag affiliato Interior Design Global."
+  },
+  "aiRender": {
+    "title": "Studio di render AI",
+    "intro": "Un flusso: foto, rilevamento automatico, maschera di conservazione, stile e budget, composite The Home con link affiliato.",
+    "steps": {
+      "upload": "Foto",
+      "analyze": "Rilevamento",
+      "mask": "Conserva",
+      "style": "Stile e budget",
+      "result": "Render"
+    },
+    "uploadTitle": "Carica una foto della stanza",
+    "uploadBody": "Vuota o arredata: il motore legge l’immagine. Niente misure manuali.",
+    "uploadCta": "Scegli foto",
+    "sampleCta": "Stanza demo",
+    "analyzing": "Lettura di prospettiva e scala…",
+    "autoTitle": "Rilevato dall’immagine",
+    "autoBody": "Larghezza, profondità e prospettiva stimate in automatico. Soffitto con prior 2,6 m.",
+    "width": "Larghezza",
+    "depth": "Profondità",
+    "height": "Soffitto",
+    "perspective": "Prospettiva",
+    "furnished": "Arredo esistente",
+    "confidence": "Affidabilità",
+    "continueMask": "Segna gli oggetti da tenere",
+    "maskBody": "Dipingi ciò che deve restare. Quei pixel non vengono sostituiti.",
+    "brushKeep": "Pennello conserva",
+    "brushErase": "Gomma",
+    "brushSize": "Dimensione",
+    "continueStyle": "Stile e budget",
+    "styleTitle": "Stile",
+    "budgetTitle": "Budget",
+    "budgets": {
+      "economic": "Economico",
+      "medium": "Medio",
+      "premium": "Premium"
+    },
+    "fallbackNotice": "Il render IA è temporaneamente non disponibile. Mostriamo la scena catalogo The Home per stile e budget.",
+    "styles": {
+      "scandinavian": "Scandinavo",
+      "modern": "Modern",
+      "classic": "Classico",
+      "industrial": "Industrial",
+      "minimal": "Minimal"
+    },
+    "catalogHint": "{store}: {count} pezzi nel budget · {spent} RON",
+    "generate": "Genera il render",
+    "generating": "Integrazione The Home…",
+    "resultAlt": "Render AI The Home",
+    "beforeLabel": "La tua stanza",
+    "afterLabel": "Design con hotspot The Home",
+    "hotspotHint": "Clicca un prodotto nell’immagine per dettagli e acquisto.",
+    "closeHotspot": "Chiudi",
+    "errorNeedPhoto": "Carica prima una foto della tua stanza.",
+    "download": "Scarica PNG",
+    "restart": "Nuova stanza",
+    "order": "Ordina su The Home →",
+    "designProductsTitle": "Prodotti di questo design (The Home)",
+    "designProductsBody": "{count} pezzi consigliati per stanza e stile.",
+    "estimatedPrice": "Prezzo stimato",
+    "viewOnTheHome": "Vedi su The Home",
+    "addSetToCart": "Aggiungi tutto il set al carrello",
+    "setTotal": "Totale set",
+    "setAdded": "Il set è stato aggiunto al carrello ({count} pezzi).",
+    "openCart": "Apri il carrello",
+    "nonePlaced": "La maschera copre il pavimento libero. Cancella parte della maschera o alza il budget.",
+    "errorFile": "Carica un file immagine.",
+    "errorAnalyze": "Analisi non riuscita. Prova un’altra foto.",
+    "errorGenerate": "Render non riuscito. Cambia foto o maschera."
+  },
+  "cart": {
+    "title": "Carrello del set design",
+    "body": "Pezzi The Home raggruppati dalla stanza generata. Apri ogni articolo sul sito partner.",
+    "empty": "Il carrello è vuoto.",
+    "backToStudio": "Torna allo studio AI",
+    "qty": "Qtà: {count}",
+    "view": "Vedi su The Home",
+    "total": "Totale",
+    "clear": "Svuota carrello"
+  }
+}

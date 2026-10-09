@@ -1,0 +1,132 @@
+{
+  "meta": {
+    "title": "Interior Design Global",
+    "description": "Un marketplace internacional de interiorismo con estudio 3D en tiempo real."
+  },
+  "nav": {
+    "marketplace": "Marketplace",
+    "aiStudio": "Render IA",
+    "cart": "Cesta",
+    "studio": "Estudio 3D",
+    "vendors": "Partners",
+    "returns": "Devoluciones"
+  },
+  "welcome": {
+    "kicker": "Interiores globales, un solo estudio",
+    "title": "Diseña estancias. Elige piezas. Envía al mundo.",
+    "subtitle": "Un marketplace multilingüe para mobiliario, materiales e iluminación — con motor 3D y panel de partners.",
+    "ctaPrimary": "Iniciar render IA",
+    "ctaStudio": "Estudio 3D",
+    "ctaSecondary": "Ver colecciones",
+    "ctaVendor": "Abrir portal de partners"
+  },
+  "features": {
+    "ai": {
+      "title": "Render IA de la estancia",
+      "body": "Sube una foto, conserva lo que quieres y completa con The Home según presupuesto."
+    },
+    "i18n": {
+      "title": "Multilingüe de origen",
+      "body": "Compra y crea en inglés, rumano, francés, alemán, español e italiano."
+    },
+    "engine": {
+      "title": "Motor 3D en vivo",
+      "body": "Previsualiza estancias, materiales y luz antes de comprar o publicar."
+    },
+    "vendors": {
+      "title": "Panel de partners",
+      "body": "Los vendedores gestionan catálogos, pedidos, comisiones y envíos."
+    },
+    "returns": {
+      "title": "Sistema de devoluciones",
+      "body": "Sigue RMA, reposición y reembolsos en pedidos internacionales."
+    }
+  },
+  "product": {
+    "clickHint": "Haz clic en una pieza de la estancia para ver detalles y pedir en The Home.",
+    "dimensions": "Dimensiones",
+    "price": "Precio",
+    "order": "Pedir en The Home",
+    "close": "Cerrar",
+    "affiliateNote": "Abre thehome.ro con la etiqueta de afiliado de Interior Design Global."
+  },
+  "aiRender": {
+    "title": "Estudio de render IA",
+    "intro": "Un flujo: foto, detección automática, máscara de conservación, estilo y presupuesto, composite The Home con enlaces de afiliado.",
+    "steps": {
+      "upload": "Foto",
+      "analyze": "Detección",
+      "mask": "Conservar",
+      "style": "Estilo y presupuesto",
+      "result": "Render"
+    },
+    "uploadTitle": "Sube una foto de la estancia",
+    "uploadBody": "Vacía o amueblada: el motor lee la imagen. Sin medidas manuales.",
+    "uploadCta": "Elegir foto",
+    "sampleCta": "Estancia demo",
+    "analyzing": "Leyendo perspectiva y escala…",
+    "autoTitle": "Detectado en la imagen",
+    "autoBody": "Ancho, fondo y perspectiva se estiman solos. El techo usa un prior de 2,6 m.",
+    "width": "Ancho",
+    "depth": "Fondo",
+    "height": "Techo",
+    "perspective": "Perspectiva",
+    "furnished": "Mobiliario existente",
+    "confidence": "Confianza",
+    "continueMask": "Marcar objetos a conservar",
+    "maskBody": "Pinta lo que debe quedarse. Esos píxeles no se sustituyen.",
+    "brushKeep": "Pincel conservar",
+    "brushErase": "Borrar",
+    "brushSize": "Tamaño",
+    "continueStyle": "Estilo y presupuesto",
+    "styleTitle": "Estilo",
+    "budgetTitle": "Presupuesto",
+    "budgets": {
+      "economic": "Económico",
+      "medium": "Medio",
+      "premium": "Premium"
+    },
+    "fallbackNotice": "El render IA no está disponible. Mostramos la escena de catálogo The Home para el estilo y presupuesto elegidos.",
+    "styles": {
+      "scandinavian": "Escandinavo",
+      "modern": "Moderno",
+      "classic": "Clásico",
+      "industrial": "Industrial",
+      "minimal": "Minimal"
+    },
+    "catalogHint": "{store}: {count} piezas en presupuesto · {spent} RON",
+    "generate": "Generar render",
+    "generating": "Integrando The Home…",
+    "resultAlt": "Render IA The Home",
+    "beforeLabel": "Tu estancia",
+    "afterLabel": "Diseño con hotspots The Home",
+    "hotspotHint": "Haz clic en un producto de la imagen para ver detalles y comprar.",
+    "closeHotspot": "Cerrar",
+    "errorNeedPhoto": "Sube primero una foto de tu estancia.",
+    "download": "Descargar PNG",
+    "restart": "Nueva estancia",
+    "order": "Pedir en The Home →",
+    "designProductsTitle": "Productos de este diseño (The Home)",
+    "designProductsBody": "{count} piezas recomendadas para la estancia y el estilo.",
+    "estimatedPrice": "Precio estimado",
+    "viewOnTheHome": "Ver en The Home",
+    "addSetToCart": "Añadir todo el set a la cesta",
+    "setTotal": "Total del set",
+    "setAdded": "El set se añadió a la cesta ({count} piezas).",
+    "openCart": "Abrir la cesta",
+    "nonePlaced": "La máscara cubre el suelo libre. Borra parte o sube el presupuesto.",
+    "errorFile": "Sube un archivo de imagen.",
+    "errorAnalyze": "No se pudo analizar. Prueba otra foto.",
+    "errorGenerate": "Falló el render. Cambia foto o máscara."
+  },
+  "cart": {
+    "title": "Cesta del set de diseño",
+    "body": "Piezas The Home agrupadas desde la estancia generada. Abre cada artículo en el sitio partner.",
+    "empty": "La cesta está vacía.",
+    "backToStudio": "Volver al estudio IA",
+    "qty": "Cant.: {count}",
+    "view": "Ver en The Home",
+    "total": "Total",
+    "clear": "Vaciar cesta"
+  }
+}

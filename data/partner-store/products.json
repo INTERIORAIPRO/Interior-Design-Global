@@ -1,0 +1,62 @@
+[
+  {
+    "id": "test_sofa_01",
+    "sku": "TEST-SOFA-MOD",
+    "name": "Canapea Modulară Velvet",
+    "description": "Canapea de test confortabilă, design contemporan, potrivită pentru randări de interior.",
+    "category": "sofa",
+    "image2d": "/partner-store/sofa.png",
+    "accentColor": "#e8dfd2",
+    "styles": ["modern", "minimal"],
+    "dimensions": { "widthCm": 210, "depthCm": 90, "heightCm": 85 },
+    "price": 3499,
+    "currency": "RON",
+    "affiliateUrl": "https://www.thehome.ro",
+    "placement": { "x": 0.1, "z": -1.85, "rotation": 0 }
+  },
+  {
+    "id": "test_armchair_02",
+    "sku": "TEST-CHAIR-LUX",
+    "name": "Fotoliu Lounge Retro",
+    "description": "Fotoliu de test cu tapițerie texturată și picioare metalice negre.",
+    "category": "armchair",
+    "image2d": "/partner-store/armchair.png",
+    "accentColor": "#8a9a84",
+    "styles": ["retro", "scandinavian"],
+    "dimensions": { "widthCm": 85, "depthCm": 82, "heightCm": 90 },
+    "price": 1299,
+    "currency": "RON",
+    "affiliateUrl": "https://www.thehome.ro",
+    "placement": { "x": 1.95, "z": -0.45, "rotation": -0.6 }
+  },
+  {
+    "id": "test_table_03",
+    "sku": "TEST-TABLE-WOOD",
+    "name": "Măsuță de Cafea Minimalistă",
+    "description": "Masă de test din lemn masiv cu finisaj natural.",
+    "category": "table",
+    "image2d": "/partner-store/lamp.png",
+    "accentColor": "#d4a373",
+    "styles": ["minimal", "industrial"],
+    "dimensions": { "widthCm": 100, "depthCm": 60, "heightCm": 45 },
+    "price": 799,
+    "currency": "RON",
+    "affiliateUrl": "https://www.thehome.ro",
+    "placement": { "x": 0.0, "z": -1.0, "rotation": 0 }
+  },
+  {
+    "id": "test_rug_04",
+    "sku": "TEST-RUG-GEO",
+    "name": "Covor Texturat Nordic",
+    "description": "Covor de test cu țesătură densă și tonuri neutre.",
+    "category": "rug",
+    "image2d": "/partner-store/sofa.png",
+    "accentColor": "#f4f1de",
+    "styles": ["scandinavian", "boho"],
+    "dimensions": { "widthCm": 200, "depthCm": 300, "heightCm": 1 },
+    "price": 1199,
+    "currency": "RON",
+    "affiliateUrl": "https://www.thehome.ro",
+    "placement": { "x": 0.0, "z": -0.5, "rotation": 0 }
+  }
+]

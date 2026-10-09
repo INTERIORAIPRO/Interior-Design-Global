@@ -1,0 +1,132 @@
+{
+  "meta": {
+    "title": "Interior Design Global",
+    "description": "An international interior marketplace with a real-time 3D studio and partner commerce."
+  },
+  "nav": {
+    "marketplace": "Marketplace",
+    "aiStudio": "AI Render",
+    "cart": "Cart",
+    "studio": "3D Studio",
+    "vendors": "Partners",
+    "returns": "Returns"
+  },
+  "welcome": {
+    "kicker": "Worldwide interiors, one studio",
+    "title": "Design rooms. Source pieces. Ship globally.",
+    "subtitle": "A multilingual marketplace for furniture, materials, and lighting — with a built-in 3D engine and a partner dashboard for vendors.",
+    "ctaPrimary": "Start AI render",
+    "ctaStudio": "3D studio",
+    "ctaSecondary": "Browse collections",
+    "ctaVendor": "Open partner portal"
+  },
+  "features": {
+    "ai": {
+      "title": "AI room render",
+      "body": "Upload a photo, keep what you love, then fill the rest with The Home pieces in your budget."
+    },
+    "i18n": {
+      "title": "Multilingual by design",
+      "body": "Shop and create in English, Romanian, French, German, Spanish, and Italian."
+    },
+    "engine": {
+      "title": "Live 3D engine",
+      "body": "Preview rooms, materials, and lighting before you buy or list a product."
+    },
+    "vendors": {
+      "title": "Partner control panel",
+      "body": "Vendors manage catalogs, orders, commissions, and shipping from one place."
+    },
+    "returns": {
+      "title": "Returns system",
+      "body": "Track RMA requests, restocking, and refunds across international orders."
+    }
+  },
+  "product": {
+    "clickHint": "Click a piece in the room for details and The Home order link.",
+    "dimensions": "Dimensions",
+    "price": "Price",
+    "order": "Order on The Home",
+    "close": "Close",
+    "affiliateNote": "Opens thehome.ro with an Interior Design Global affiliate tag."
+  },
+  "aiRender": {
+    "title": "The Home virtual staging",
+    "intro": "Upload a photo of your room (empty or furnished). We keep the walls and camera angle, replace the old furniture with real The Home pieces, and show prices with buy links.",
+    "steps": {
+      "upload": "Photo",
+      "analyze": "Auto detect",
+      "mask": "Keep",
+      "style": "Style & budget",
+      "result": "Render"
+    },
+    "uploadTitle": "Upload a photo of your room",
+    "uploadBody": "Empty or already furnished. Your photo is the structural guide; furniture is restaged from The Home catalog.",
+    "uploadCta": "Upload room photo",
+    "sampleCta": "Try a sample room",
+    "analyzing": "Reading perspective and scale from the photo…",
+    "autoTitle": "Detected from the image",
+    "autoBody": "Width, depth and camera perspective are estimated automatically. Ceiling height uses a 2.6 m residential prior.",
+    "width": "Width",
+    "depth": "Depth",
+    "height": "Ceiling",
+    "perspective": "Perspective",
+    "furnished": "Existing furniture",
+    "confidence": "Confidence",
+    "continueMask": "Mark objects to keep",
+    "maskBody": "Paint over anything that must stay (an existing sofa, a window, art). The generator will not replace those pixels.",
+    "brushKeep": "Keep brush",
+    "brushErase": "Erase",
+    "brushSize": "Size",
+    "continueStyle": "Choose style and budget",
+    "styleTitle": "Interior style",
+    "budgetTitle": "Budget",
+    "budgets": {
+      "economic": "Economy",
+      "medium": "Medium",
+      "premium": "Premium"
+    },
+    "fallbackNotice": "AI rendering is temporarily unavailable. Showing the The Home catalog scene for your selected style and budget.",
+    "styles": {
+      "scandinavian": "Scandinavian",
+      "modern": "Modern",
+      "classic": "Classic",
+      "industrial": "Industrial",
+      "minimal": "Minimal"
+    },
+    "catalogHint": "{store}: {count} pieces in budget · {spent} RON",
+    "generate": "Place The Home products in the room",
+    "generating": "Overlaying The Home pieces on your photo…",
+    "resultAlt": "Room with The Home product overlay",
+    "beforeLabel": "Your room",
+    "afterLabel": "Design with The Home hotspots",
+    "hotspotHint": "Click a product in the image for details and purchase.",
+    "closeHotspot": "Close",
+    "errorNeedPhoto": "Please upload a photo of your room first.",
+    "download": "Download PNG",
+    "restart": "New room",
+    "order": "Order on The Home →",
+    "designProductsTitle": "Products in this design - The Home",
+    "designProductsBody": "{count} The Home pieces placed in this room, with price and buy link.",
+    "estimatedPrice": "Estimated price",
+    "viewOnTheHome": "View on The Home",
+    "addSetToCart": "Add the full set to cart",
+    "setTotal": "Set total",
+    "setAdded": "The set was added to your cart ({count} pieces).",
+    "openCart": "Open cart",
+    "nonePlaced": "Keep-mask covered the free floor. Erase some of the mask or raise the budget.",
+    "errorFile": "Please upload an image file.",
+    "errorAnalyze": "Could not analyze this photo. Try another image.",
+    "errorGenerate": "Render failed. Try a different photo or mask."
+  },
+  "cart": {
+    "title": "Design set cart",
+    "body": "The Home pieces grouped from the generated room. Open each item on the partner site.",
+    "empty": "Your cart is empty.",
+    "backToStudio": "Back to AI studio",
+    "qty": "Qty: {count}",
+    "view": "View on The Home",
+    "total": "Total",
+    "clear": "Clear cart"
+  }
+}

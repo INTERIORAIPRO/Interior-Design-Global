@@ -1,10 +1,8 @@
-import type { NextConfig } from "next";
+﻿import createNextIntlPlugin from 'next-intl/plugin';
 
-const nextConfig: NextConfig = {
-  typescript: {
-    // Ignoră erorile de TypeScript la build pentru a permite lansarea pe Vercel
-    ignoreBuildErrors: true,
-  },
-};
+const withNextIntl = createNextIntlPlugin('./src/i18n.ts');
 
-export default nextConfig;
+/** @type {import('next').NextCoreConfig} */
+const nextConfig = {};
+
+export default withNextIntl(nextConfig);

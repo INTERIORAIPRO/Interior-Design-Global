@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { setRequestLocale } from "next-intl/server";
 import { DesignCartView } from "@/components/cart/DesignCartView";
 

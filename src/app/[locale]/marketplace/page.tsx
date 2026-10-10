@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { CatalogPhoto } from "@/components/catalog/CatalogPhoto";
 import { setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";

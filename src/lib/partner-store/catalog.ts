@@ -72,3 +72,13 @@ export function getPartnerProducts(): PartnerProduct[] {
   return KAVE_HOME_PRODUCTS;
 }
 
+
+export function withAffiliateParams(url: string, params?: Record<string, string>): string { return url; }
+
+export const primaryPartnerStore = { name: "Kave Home", slug: "kave-home", url: "https://kavehome.com" };
+
+export function formatProductDimensions(p){ return p?.dimensions || ""; }
+
+export function formatProductPrice(price){ return price ? price + " RON" : ""; }
+
+export const partnerProducts = typeof getPartnerProducts === "function" ? getPartnerProducts() : [];

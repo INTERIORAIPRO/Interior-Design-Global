@@ -13,3 +13,4 @@ export type SceneObject = {
   kind: SceneObjectKind;
   name: string;
 };
+

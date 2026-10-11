@@ -17,11 +17,11 @@ export default async function VendorProductsPage({ params }: PageProps) {
   setRequestLocale(locale);
 
   return (
-    <VendorShell title="The Home catalog">
+    <VendorShell title="Kave Home catalog">
       <p className="mb-8 max-w-2xl text-linen/65">
         Edit demo products in{" "}
         <code className="text-brass">data/partner-store/products.json</code>.
-        Each row needs a 2D image, centimetre dimensions, price, and a The Home
+        Each row needs a 2D image, centimetre dimensions, price, and a Kave Home
         URL. The 3D engine builds an in-room stand-in automatically.
       </p>
       <ul className="space-y-4">

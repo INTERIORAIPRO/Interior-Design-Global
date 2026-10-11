@@ -13,8 +13,8 @@
   },
   "welcome": {
     "kicker": "Interiores globales, un solo estudio",
-    "title": "Diseña estancias. Elige piezas. Envía al mundo.",
-    "subtitle": "Un marketplace multilingüe para mobiliario, materiales e iluminación — con motor 3D y panel de partners.",
+    "title": "DiseÃ±a estancias. Elige piezas. EnvÃ­a al mundo.",
+    "subtitle": "Un marketplace multilingÃ¼e para mobiliario, materiales e iluminaciÃ³n â€” con motor 3D y panel de partners.",
     "ctaPrimary": "Iniciar render IA",
     "ctaStudio": "Estudio 3D",
     "ctaSecondary": "Ver colecciones",
@@ -23,11 +23,11 @@
   "features": {
     "ai": {
       "title": "Render IA de la estancia",
-      "body": "Sube una foto, conserva lo que quieres y completa con The Home según presupuesto."
+      "body": "Sube una foto, conserva lo que quieres y completa con Kave Home segÃºn presupuesto."
     },
     "i18n": {
-      "title": "Multilingüe de origen",
-      "body": "Compra y crea en inglés, rumano, francés, alemán, español e italiano."
+      "title": "MultilingÃ¼e de origen",
+      "body": "Compra y crea en inglÃ©s, rumano, francÃ©s, alemÃ¡n, espaÃ±ol e italiano."
     },
     "engine": {
       "title": "Motor 3D en vivo",
@@ -35,36 +35,36 @@
     },
     "vendors": {
       "title": "Panel de partners",
-      "body": "Los vendedores gestionan catálogos, pedidos, comisiones y envíos."
+      "body": "Los vendedores gestionan catÃ¡logos, pedidos, comisiones y envÃ­os."
     },
     "returns": {
       "title": "Sistema de devoluciones",
-      "body": "Sigue RMA, reposición y reembolsos en pedidos internacionales."
+      "body": "Sigue RMA, reposiciÃ³n y reembolsos en pedidos internacionales."
     }
   },
   "product": {
-    "clickHint": "Haz clic en una pieza de la estancia para ver detalles y pedir en The Home.",
+    "clickHint": "Haz clic en una pieza de la estancia para ver detalles y pedir en Kave Home.",
     "dimensions": "Dimensiones",
     "price": "Precio",
-    "order": "Pedir en The Home",
+    "order": "Pedir en Kave Home",
     "close": "Cerrar",
     "affiliateNote": "Abre thehome.ro con la etiqueta de afiliado de Interior Design Global."
   },
   "aiRender": {
     "title": "Estudio de render IA",
-    "intro": "Un flujo: foto, detección automática, máscara de conservación, estilo y presupuesto, composite The Home con enlaces de afiliado.",
+    "intro": "Un flujo: foto, detecciÃ³n automÃ¡tica, mÃ¡scara de conservaciÃ³n, estilo y presupuesto, composite Kave Home con enlaces de afiliado.",
     "steps": {
       "upload": "Foto",
-      "analyze": "Detección",
+      "analyze": "DetecciÃ³n",
       "mask": "Conservar",
       "style": "Estilo y presupuesto",
       "result": "Render"
     },
     "uploadTitle": "Sube una foto de la estancia",
-    "uploadBody": "Vacía o amueblada: el motor lee la imagen. Sin medidas manuales.",
+    "uploadBody": "VacÃ­a o amueblada: el motor lee la imagen. Sin medidas manuales.",
     "uploadCta": "Elegir foto",
     "sampleCta": "Estancia demo",
-    "analyzing": "Leyendo perspectiva y escala…",
+    "analyzing": "Leyendo perspectiva y escalaâ€¦",
     "autoTitle": "Detectado en la imagen",
     "autoBody": "Ancho, fondo y perspectiva se estiman solos. El techo usa un prior de 2,6 m.",
     "width": "Ancho",
@@ -74,59 +74,60 @@
     "furnished": "Mobiliario existente",
     "confidence": "Confianza",
     "continueMask": "Marcar objetos a conservar",
-    "maskBody": "Pinta lo que debe quedarse. Esos píxeles no se sustituyen.",
+    "maskBody": "Pinta lo que debe quedarse. Esos pÃ­xeles no se sustituyen.",
     "brushKeep": "Pincel conservar",
     "brushErase": "Borrar",
-    "brushSize": "Tamaño",
+    "brushSize": "TamaÃ±o",
     "continueStyle": "Estilo y presupuesto",
     "styleTitle": "Estilo",
     "budgetTitle": "Presupuesto",
     "budgets": {
-      "economic": "Económico",
+      "economic": "EconÃ³mico",
       "medium": "Medio",
       "premium": "Premium"
     },
-    "fallbackNotice": "El render IA no está disponible. Mostramos la escena de catálogo The Home para el estilo y presupuesto elegidos.",
+    "fallbackNotice": "El render IA no estÃ¡ disponible. Mostramos la escena de catÃ¡logo Kave Home para el estilo y presupuesto elegidos.",
     "styles": {
       "scandinavian": "Escandinavo",
       "modern": "Moderno",
-      "classic": "Clásico",
+      "classic": "ClÃ¡sico",
       "industrial": "Industrial",
       "minimal": "Minimal"
     },
-    "catalogHint": "{store}: {count} piezas en presupuesto · {spent} RON",
+    "catalogHint": "{store}: {count} piezas en presupuesto Â· {spent} RON",
     "generate": "Generar render",
-    "generating": "Integrando The Home…",
-    "resultAlt": "Render IA The Home",
+    "generating": "Integrando Kave Homeâ€¦",
+    "resultAlt": "Render IA Kave Home",
     "beforeLabel": "Tu estancia",
-    "afterLabel": "Diseño con hotspots The Home",
+    "afterLabel": "DiseÃ±o con hotspots Kave Home",
     "hotspotHint": "Haz clic en un producto de la imagen para ver detalles y comprar.",
     "closeHotspot": "Cerrar",
     "errorNeedPhoto": "Sube primero una foto de tu estancia.",
     "download": "Descargar PNG",
     "restart": "Nueva estancia",
-    "order": "Pedir en The Home →",
-    "designProductsTitle": "Productos de este diseño (The Home)",
+    "order": "Pedir en Kave Home â†’",
+    "designProductsTitle": "Productos de este diseÃ±o (Kave Home)",
     "designProductsBody": "{count} piezas recomendadas para la estancia y el estilo.",
     "estimatedPrice": "Precio estimado",
-    "viewOnTheHome": "Ver en The Home",
-    "addSetToCart": "Añadir todo el set a la cesta",
+    "viewOnTheHome": "Ver en Kave Home",
+    "addSetToCart": "AÃ±adir todo el set a la cesta",
     "setTotal": "Total del set",
-    "setAdded": "El set se añadió a la cesta ({count} piezas).",
+    "setAdded": "El set se aÃ±adiÃ³ a la cesta ({count} piezas).",
     "openCart": "Abrir la cesta",
-    "nonePlaced": "La máscara cubre el suelo libre. Borra parte o sube el presupuesto.",
+    "nonePlaced": "La mÃ¡scara cubre el suelo libre. Borra parte o sube el presupuesto.",
     "errorFile": "Sube un archivo de imagen.",
     "errorAnalyze": "No se pudo analizar. Prueba otra foto.",
-    "errorGenerate": "Falló el render. Cambia foto o máscara."
+    "errorGenerate": "FallÃ³ el render. Cambia foto o mÃ¡scara."
   },
   "cart": {
-    "title": "Cesta del set de diseño",
-    "body": "Piezas The Home agrupadas desde la estancia generada. Abre cada artículo en el sitio partner.",
-    "empty": "La cesta está vacía.",
+    "title": "Cesta del set de diseÃ±o",
+    "body": "Piezas Kave Home agrupadas desde la estancia generada. Abre cada artÃ­culo en el sitio partner.",
+    "empty": "La cesta estÃ¡ vacÃ­a.",
     "backToStudio": "Volver al estudio IA",
     "qty": "Cant.: {count}",
-    "view": "Ver en The Home",
+    "view": "Ver en Kave Home",
     "total": "Total",
     "clear": "Vaciar cesta"
   }
 }
+

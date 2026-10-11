@@ -6,3 +6,4 @@ export const materialPalettes = {
   charcoal: "#1c1917",
   sage: "#8a9a84",
 } as const;
+

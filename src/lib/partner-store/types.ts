@@ -67,3 +67,4 @@ export type IndicativeModel = {
   imageUrl: string;
   accentColor: string;
 };
+

@@ -17,8 +17,8 @@ type RoomType = RoomKind;
 const roomLabels: Record<RoomType, string> = {
   living: "Sufragerie / Living",
   bedroom: "Dormitor",
-  office: "Birou Acasă",
-  kitchen: "Bucătărie / Dining",
+  office: "Birou AcasÄƒ",
+  kitchen: "BucÄƒtÄƒrie / Dining",
 };
 
 export function AiRenderFlow() {
@@ -137,7 +137,7 @@ export function AiRenderFlow() {
       });
       setUsedFallback(shouldFallback);
     } catch {
-      // Fallback sigur în caz de eroare de rețea sau limită de la Replicate (429)
+      // Fallback sigur Ã®n caz de eroare de reÈ›ea sau limitÄƒ de la Replicate (429)
       setRendered({ key: activeKey, imageUrl: design.sceneUrl });
       setUsedFallback(true);
     } finally {
@@ -151,7 +151,7 @@ export function AiRenderFlow() {
 
   return (
     <div className="space-y-8">
-      {/* Selector Tip Cameră */}
+      {/* Selector Tip CamerÄƒ */}
       <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/5 p-4">
         <div>
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-brass">
@@ -232,7 +232,7 @@ export function AiRenderFlow() {
 
       {usedFallback ? (
         <p className="rounded-2xl border border-brass/30 bg-brass/10 px-4 py-3 text-sm text-linen/85">
-          {t("fallbackNotice")} (Modul optimizat de siguranță activat din cauza limitelor API externe).
+          {t("fallbackNotice")} (Modul optimizat de siguranÈ›Äƒ activat din cauza limitelor API externe).
         </p>
       ) : null}
 
@@ -242,7 +242,7 @@ export function AiRenderFlow() {
         </p>
       ) : null}
 
-      {/* Upload Foto Cameră Proprie */}
+      {/* Upload Foto CamerÄƒ Proprie */}
       <div className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4">
         <div>
           <p className="font-serif text-lg text-linen">{t("uploadTitle")}</p>
@@ -290,7 +290,7 @@ export function AiRenderFlow() {
         </div>
       </form>
 
-      {/* Produsele reale The Home corespunzătoare setului curent */}
+      {/* Produsele reale Kave Home corespunzÄƒtoare setului curent */}
       <DesignProductsSection products={displayProducts} locale={locale} />
     </div>
   );

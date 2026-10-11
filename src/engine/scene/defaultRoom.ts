@@ -6,3 +6,4 @@ export const defaultRoom: SceneObject[] = [
   { id: "sofa-01", kind: "furniture", name: "Linen sofa" },
   { id: "lamp-01", kind: "light", name: "Brass floor lamp" },
 ];
+

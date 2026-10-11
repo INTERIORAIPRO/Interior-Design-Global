@@ -14,7 +14,7 @@
   "welcome": {
     "kicker": "Worldwide interiors, one studio",
     "title": "Design rooms. Source pieces. Ship globally.",
-    "subtitle": "A multilingual marketplace for furniture, materials, and lighting — with a built-in 3D engine and a partner dashboard for vendors.",
+    "subtitle": "A multilingual marketplace for furniture, materials, and lighting â€” with a built-in 3D engine and a partner dashboard for vendors.",
     "ctaPrimary": "Start AI render",
     "ctaStudio": "3D studio",
     "ctaSecondary": "Browse collections",
@@ -23,7 +23,7 @@
   "features": {
     "ai": {
       "title": "AI room render",
-      "body": "Upload a photo, keep what you love, then fill the rest with The Home pieces in your budget."
+      "body": "Upload a photo, keep what you love, then fill the rest with Kave Home pieces in your budget."
     },
     "i18n": {
       "title": "Multilingual by design",
@@ -43,16 +43,16 @@
     }
   },
   "product": {
-    "clickHint": "Click a piece in the room for details and The Home order link.",
+    "clickHint": "Click a piece in the room for details and Kave Home order link.",
     "dimensions": "Dimensions",
     "price": "Price",
-    "order": "Order on The Home",
+    "order": "Order on Kave Home",
     "close": "Close",
     "affiliateNote": "Opens thehome.ro with an Interior Design Global affiliate tag."
   },
   "aiRender": {
-    "title": "The Home virtual staging",
-    "intro": "Upload a photo of your room (empty or furnished). We keep the walls and camera angle, replace the old furniture with real The Home pieces, and show prices with buy links.",
+    "title": "Kave Home virtual staging",
+    "intro": "Upload a photo of your room (empty or furnished). We keep the walls and camera angle, replace the old furniture with real Kave Home pieces, and show prices with buy links.",
     "steps": {
       "upload": "Photo",
       "analyze": "Auto detect",
@@ -61,10 +61,10 @@
       "result": "Render"
     },
     "uploadTitle": "Upload a photo of your room",
-    "uploadBody": "Empty or already furnished. Your photo is the structural guide; furniture is restaged from The Home catalog.",
+    "uploadBody": "Empty or already furnished. Your photo is the structural guide; furniture is restaged from Kave Home catalog.",
     "uploadCta": "Upload room photo",
     "sampleCta": "Try a sample room",
-    "analyzing": "Reading perspective and scale from the photo…",
+    "analyzing": "Reading perspective and scale from the photoâ€¦",
     "autoTitle": "Detected from the image",
     "autoBody": "Width, depth and camera perspective are estimated automatically. Ceiling height uses a 2.6 m residential prior.",
     "width": "Width",
@@ -86,7 +86,7 @@
       "medium": "Medium",
       "premium": "Premium"
     },
-    "fallbackNotice": "AI rendering is temporarily unavailable. Showing the The Home catalog scene for your selected style and budget.",
+    "fallbackNotice": "AI rendering is temporarily unavailable. Showing the Kave Home catalog scene for your selected style and budget.",
     "styles": {
       "scandinavian": "Scandinavian",
       "modern": "Modern",
@@ -94,22 +94,22 @@
       "industrial": "Industrial",
       "minimal": "Minimal"
     },
-    "catalogHint": "{store}: {count} pieces in budget · {spent} RON",
-    "generate": "Place The Home products in the room",
-    "generating": "Overlaying The Home pieces on your photo…",
-    "resultAlt": "Room with The Home product overlay",
+    "catalogHint": "{store}: {count} pieces in budget Â· {spent} RON",
+    "generate": "Place Kave Home products in the room",
+    "generating": "Overlaying Kave Home pieces on your photoâ€¦",
+    "resultAlt": "Room with Kave Home product overlay",
     "beforeLabel": "Your room",
-    "afterLabel": "Design with The Home hotspots",
+    "afterLabel": "Design with Kave Home hotspots",
     "hotspotHint": "Click a product in the image for details and purchase.",
     "closeHotspot": "Close",
     "errorNeedPhoto": "Please upload a photo of your room first.",
     "download": "Download PNG",
     "restart": "New room",
-    "order": "Order on The Home →",
-    "designProductsTitle": "Products in this design - The Home",
-    "designProductsBody": "{count} The Home pieces placed in this room, with price and buy link.",
+    "order": "Order on Kave Home â†’",
+    "designProductsTitle": "Products in this design - Kave Home",
+    "designProductsBody": "{count} Kave Home pieces placed in this room, with price and buy link.",
     "estimatedPrice": "Estimated price",
-    "viewOnTheHome": "View on The Home",
+    "viewOnTheHome": "View on Kave Home",
     "addSetToCart": "Add the full set to cart",
     "setTotal": "Set total",
     "setAdded": "The set was added to your cart ({count} pieces).",
@@ -121,12 +121,13 @@
   },
   "cart": {
     "title": "Design set cart",
-    "body": "The Home pieces grouped from the generated room. Open each item on the partner site.",
+    "body": "Kave Home pieces grouped from the generated room. Open each item on the partner site.",
     "empty": "Your cart is empty.",
     "backToStudio": "Back to AI studio",
     "qty": "Qty: {count}",
-    "view": "View on The Home",
+    "view": "View on Kave Home",
     "total": "Total",
     "clear": "Clear cart"
   }
 }
+

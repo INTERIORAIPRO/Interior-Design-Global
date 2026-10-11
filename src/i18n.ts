@@ -1,4 +1,4 @@
-﻿import { getRequestConfig } from 'next-intl/server';
+import { getRequestConfig } from 'next-intl/server';
 import { routing } from './i18n/routing';
 
 export default getRequestConfig(async ({ locale }) => {
@@ -22,3 +22,4 @@ export default getRequestConfig(async ({ locale }) => {
     messages
   };
 });
+

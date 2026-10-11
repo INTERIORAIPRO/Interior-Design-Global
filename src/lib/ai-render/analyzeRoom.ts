@@ -173,3 +173,4 @@ export function maskCoverage(mask: HTMLCanvasElement) {
   }
   return painted / (mask.width * mask.height);
 }
+

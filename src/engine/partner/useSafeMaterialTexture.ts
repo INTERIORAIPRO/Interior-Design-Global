@@ -45,3 +45,4 @@ export function useSafeMaterialTexture(accentColor: string) {
 
   return texture;
 }
+

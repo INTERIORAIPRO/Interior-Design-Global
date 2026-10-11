@@ -125,3 +125,4 @@ export function createIndicativeModel(product: PartnerProduct): IndicativeModel 
 export function createIndicativeModels(products: PartnerProduct[]) {
   return products.map(createIndicativeModel);
 }
+

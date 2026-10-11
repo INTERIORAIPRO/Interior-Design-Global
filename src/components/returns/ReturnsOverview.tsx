@@ -13,7 +13,7 @@ export function ReturnsOverview({ requests }: { requests: ReturnRequest[] }) {
             <div>
               <p className="font-medium">{request.id}</p>
               <p className="text-sm text-linen/55">
-                Order {request.orderId} · {request.reason}
+                Order {request.orderId} Â· {request.reason}
               </p>
             </div>
             <span className="text-xs uppercase tracking-widest text-brass">
@@ -25,3 +25,4 @@ export function ReturnsOverview({ requests }: { requests: ReturnRequest[] }) {
     </ul>
   );
 }
+

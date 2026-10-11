@@ -70,3 +70,4 @@ export function SceneCanvas({ selectedId, onSelect }: SceneCanvasProps) {
     </div>
   );
 }
+

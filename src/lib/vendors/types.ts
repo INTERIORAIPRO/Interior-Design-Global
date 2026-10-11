@@ -7,3 +7,4 @@ export type Vendor = {
   status: VendorStatus;
   commissionPercent: number;
 };
+

@@ -28,7 +28,7 @@ export function DesignCartView() {
 
   return (
     <main className="mx-auto max-w-3xl px-6 pb-24 pt-28">
-      <p className="text-xs uppercase tracking-[0.28em] text-brass">The Home</p>
+      <p className="text-xs uppercase tracking-[0.28em] text-brass">Kave Home</p>
       <h1 className="mt-3 font-serif text-5xl text-linen">{t("title")}</h1>
       <p className="mt-4 text-linen/65">{t("body")}</p>
 
@@ -98,3 +98,4 @@ export function DesignCartView() {
     </main>
   );
 }
+

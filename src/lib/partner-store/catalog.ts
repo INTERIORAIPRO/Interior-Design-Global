@@ -1,4 +1,4 @@
-﻿export interface PartnerProduct {
+export interface PartnerProduct {
   id: string;
   name: string;
   brand: string;
@@ -71,3 +71,4 @@ export const KAVE_HOME_PRODUCTS: PartnerProduct[] = [
 export function getPartnerProducts(): PartnerProduct[] {
   return KAVE_HOME_PRODUCTS;
 }
+

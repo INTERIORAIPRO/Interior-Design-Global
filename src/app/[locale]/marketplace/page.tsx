@@ -26,7 +26,7 @@ export default async function MarketplacePage({ params }: PageProps) {
       </p>
       <h1 className="mt-3 font-serif text-5xl text-linen">Marketplace</h1>
       <p className="mt-4 max-w-2xl text-linen/65">
-        Demo collection inspired by The Home. Preview in the studio, then order
+        Demo collection inspired by Kave Home. Preview in the studio, then order
         on the partner site through the affiliate link.
       </p>
       <div className="mt-10 grid gap-4 sm:grid-cols-3">
@@ -57,7 +57,7 @@ export default async function MarketplacePage({ params }: PageProps) {
                 rel="sponsored noopener noreferrer"
                 className="mt-4 inline-block text-sm text-linen hover:text-brass"
               >
-                Order on The Home →
+                Order on Kave Home →
               </a>
             </div>
           </article>

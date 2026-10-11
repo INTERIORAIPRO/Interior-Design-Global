@@ -19,7 +19,7 @@ export default async function VendorDashboardPage({ params }: PageProps) {
         Primary storefront: {primaryPartnerStore.brandName} (
         {primaryPartnerStore.country}). Commission{" "}
         {primaryPartnerStore.commissionPercent}%. Catalog items render in the 3D
-        studio and open The Home with an affiliate query string.
+        studio and open Kave Home with an affiliate query string.
       </p>
       <div className="grid gap-4 sm:grid-cols-3">
         {[

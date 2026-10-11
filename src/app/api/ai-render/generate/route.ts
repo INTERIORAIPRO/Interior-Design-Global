@@ -83,27 +83,27 @@ const styleMaterials: Record<string, string> = {
 const namedVisuals: Record<string, string> = {
   "Canapea 3 locuri Nordic Velvet":
     "a wide three-seat low Scandinavian sofa upholstered in plush oatmeal-sand velvet, deep seat cushions, slim rectangular back, four short tapered pale-oak legs, no tufting, no Chesterfield buttons",
-  "Lampadar arcuit din alamă":
+  "Lampadar arcuit din alamÄƒ":
     "a tall arched floor lamp with a slender brushed-brass stem that curves over seating, round warm-linen drum shade, circular marble or pale-oak base, lit with warm 2700K glow",
-  "Măsuță de cafea din lemn masiv":
+  "MÄƒsuÈ›Äƒ de cafea din lemn masiv":
     "a low rectangular solid pale-oak coffee table with visible straight wood grain, thick tabletops, simple square-block or hairpin-light legs, no glass, no marble luxury slab",
-  "Covor pufos din lână naturală":
+  "Covor pufos din lÃ¢nÄƒ naturalÄƒ":
     "a large plush high-pile natural-wool rug in warm beige-sand, soft irregular texture covering the floor under the main furniture, not a small bath mat",
-  "Vază ceramică design organic":
+  "VazÄƒ ceramicÄƒ design organic":
     "a medium matte stoneware vase with an irregular organic silhouette, sand and off-white glaze, sitting as a visible accent on a table or nightstand",
-  "Pat tapițat Nordic":
+  "Pat tapiÈ›at Nordic":
     "a low Scandinavian upholstered bed as the hero piece: wide rectangular headboard in oatmeal linen with slim piping, pale-oak platform base, white linen duvet, two matching pillows, clearly a bed not a sofa",
-  "Noptieră stejar deschis":
+  "NoptierÄƒ stejar deschis":
     "a compact square light-oak nightstand with a single drawer, slender tapered legs, pale Nordic grain, placed tight beside the bed",
   "Birou stejar scandinav":
     "a long Scandinavian writing desk in pale oak, slim rectangular top, tapered legs, clean uncluttered surface",
-  "Masă dining stejar":
+  "MasÄƒ dining stejar":
     "a solid pale-oak dining table with a thick rectangular top and simple Nordic legs, dining scale not a coffee table",
   "Lampadar minimal negru":
     "a slim matte-black tripod or stick floor lamp, thin stem, small drum or cone shade, contemporary silhouette",
-  "Noptieră metal industrial":
+  "NoptierÄƒ metal industrial":
     "a compact industrial bedside table with a black metal frame and oak top, open shelf, placed beside the bed",
-  "Pătură textilă boho":
+  "PÄƒturÄƒ textilÄƒ boho":
     "a folded layered throw in sand and terracotta weave draped on the bed or sofa edge",
   "Fotoliu lounge Nordic":
     "a sculptural Scandinavian lounge armchair in oatmeal boucle or light linen, rounded back, visible pale-oak legs, one-seat accent chair not a sofa",
@@ -129,14 +129,14 @@ function styleLexicon(style: string) {
 }
 
 function productVisual(product: PromptProduct, style: string) {
-  const name = product.name?.trim() || "The Home piece";
+  const name = product.name?.trim() || "Kave Home piece";
   const named = namedVisuals[name];
   const hint = product.promptHint?.trim();
   const fallback =
     (product.category && categoryFallback[product.category]) ||
-    "catalog-quality Nordic furniture from The Home";
+    "catalog-quality Nordic furniture from Kave Home";
   const body = named || hint || fallback;
-  return `(${name}:1.35), MUST be clearly visible in the photograph: ${body}. Materials locked to The Home ${style} look: ${styleLexicon(style)}. Correct real-world scale, grounded on the floor, photoreal product photography.`;
+  return `(${name}:1.35), MUST be clearly visible in the photograph: ${body}. Materials locked to Kave Home ${style} look: ${styleLexicon(style)}. Correct real-world scale, grounded on the floor, photoreal product photography.`;
 }
 
 function buildProductBlock(products: PromptProduct[] | undefined, style: string) {
@@ -148,10 +148,10 @@ function buildProductBlock(products: PromptProduct[] | undefined, style: string)
       `MANDATORY ${index + 1}: ${productVisual(product, style)} Do not omit this object. Do not replace it with a different typology.`,
   );
   return [
-    `The Home catalog staging, every listed piece MUST appear: ${weighted}.`,
+    `Kave Home catalog staging, every listed piece MUST appear: ${weighted}.`,
     "Force the diffusion model to render these exact furniture objects as the main staged pieces, occupying the room, sharp and recognizable:",
     ...lines,
-    "Do not invent a generic living-room sofa unless a sofa is listed. Do not hide listed lamps, nightstands, armchairs or the bed. Keep each The Home piece fully in frame.",
+    "Do not invent a generic living-room sofa unless a sofa is listed. Do not hide listed lamps, nightstands, armchairs or the bed. Keep each Kave Home piece fully in frame.",
   ].join(" ");
 }
 
@@ -167,7 +167,7 @@ function buildPrompt(
   return [
     "VIRTUAL STAGING / INTERIOR REDESIGN of the user's own room photograph, photorealistic, 8k, magazine interior photography",
     "The uploaded photo is the structural reference: keep the SAME room shape, walls, windows, doors, ceiling, floor plane, architectural lines and camera angle. Do not invent a different floor plan.",
-    "REMOVE the existing old furniture, clutter and previous staging. Replace it with the listed The Home catalog pieces only, correctly scaled and grounded on the original floor.",
+    "REMOVE the existing old furniture, clutter and previous staging. Replace it with the listed Kave Home catalog pieces only, correctly scaled and grounded on the original floor.",
     `This space is ${roomBriefs[room]}.`,
     `${styleBriefs[chosenStyle]}. Palette and materials: ${styleLexicon(chosenStyle)}.`,
     productBlock,
@@ -231,7 +231,7 @@ async function toPublicImageUri(imageUrl: string) {
   if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
     const response = await fetch(imageUrl);
     if (!response.ok) {
-      throw new Error("Nu am putut descărca imaginea camerei.");
+      throw new Error("Nu am putut descÄƒrca imaginea camerei.");
     }
     const mime = response.headers.get("content-type")?.split(";")[0] || "image/jpeg";
     const bytes = Buffer.from(await response.arrayBuffer());
@@ -249,7 +249,7 @@ async function toPublicImageUri(imageUrl: string) {
   }
 
   throw new Error(
-    "Imaginea trebuie să fie un URL http(s), un fișier din /public sau un data URI.",
+    "Imaginea trebuie sÄƒ fie un URL http(s), un fiÈ™ier din /public sau un data URI.",
   );
 }
 
@@ -343,7 +343,7 @@ export async function POST(request: Request) {
 
     if (!imageUrl || typeof imageUrl !== "string") {
       return NextResponse.json(
-        { error: "Lipsește imaginea camerei." },
+        { error: "LipseÈ™te imaginea camerei." },
         { status: 400 },
       );
     }
@@ -375,3 +375,4 @@ export async function POST(request: Request) {
     return fallbackResponse(fallbackImageUrl);
   }
 }
+

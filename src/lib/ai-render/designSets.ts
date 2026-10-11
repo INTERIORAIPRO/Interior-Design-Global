@@ -219,3 +219,4 @@ export function getDesignScene(
     products: filterByBudget(productsByIds(ids), budget),
   };
 }
+

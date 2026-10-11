@@ -9,46 +9,46 @@
     "cart": "Warenkorb",
     "studio": "3D-Studio",
     "vendors": "Partner",
-    "returns": "Rücksendungen"
+    "returns": "RÃ¼cksendungen"
   },
   "welcome": {
     "kicker": "Weltweite Interieurs, ein Studio",
-    "title": "Räume gestalten. Stücke finden. Global liefern.",
-    "subtitle": "Ein mehrsprachiger Marktplatz für Möbel, Materialien und Licht — mit 3D-Engine und Partnerportal.",
+    "title": "RÃ¤ume gestalten. StÃ¼cke finden. Global liefern.",
+    "subtitle": "Ein mehrsprachiger Marktplatz fÃ¼r MÃ¶bel, Materialien und Licht â€” mit 3D-Engine und Partnerportal.",
     "ctaPrimary": "KI-Render starten",
     "ctaStudio": "3D-Studio",
     "ctaSecondary": "Kollektionen entdecken",
-    "ctaVendor": "Partnerportal öffnen"
+    "ctaVendor": "Partnerportal Ã¶ffnen"
   },
   "features": {
     "ai": {
       "title": "KI-Raumrender",
-      "body": "Foto laden, Bestehendes behalten, Rest mit The Home im Budget füllen."
+      "body": "Foto laden, Bestehendes behalten, Rest mit Kave Home im Budget fÃ¼llen."
     },
     "i18n": {
       "title": "Mehrsprachig gedacht",
-      "body": "Shoppen und gestalten auf Englisch, Rumänisch, Französisch, Deutsch, Spanisch und Italienisch."
+      "body": "Shoppen und gestalten auf Englisch, RumÃ¤nisch, FranzÃ¶sisch, Deutsch, Spanisch und Italienisch."
     },
     "engine": {
       "title": "Live-3D-Engine",
-      "body": "Räume, Materialien und Licht vor dem Kauf oder Listing vorschauen."
+      "body": "RÃ¤ume, Materialien und Licht vor dem Kauf oder Listing vorschauen."
     },
     "vendors": {
       "title": "Partner-Cockpit",
       "body": "Vendoren verwalten Kataloge, Bestellungen, Provisionen und Versand."
     },
     "returns": {
-      "title": "Rücksendesystem",
+      "title": "RÃ¼cksendesystem",
       "body": "RMA-Anfragen, Restocking und Erstattungen international verfolgen."
     }
   },
   "product": {
-    "clickHint": "Klicken Sie ein Möbelstück im Raum für Details und die The-Home-Bestellung.",
-    "dimensions": "Maße",
+    "clickHint": "Klicken Sie ein MÃ¶belstÃ¼ck im Raum fÃ¼r Details und die The-Home-Bestellung.",
+    "dimensions": "MaÃŸe",
     "price": "Preis",
-    "order": "Bei The Home bestellen",
-    "close": "Schließen",
-    "affiliateNote": "Öffnet thehome.ro mit Interior-Design-Global-Affiliate-Tag."
+    "order": "Bei Kave Home bestellen",
+    "close": "SchlieÃŸen",
+    "affiliateNote": "Ã–ffnet thehome.ro mit Interior-Design-Global-Affiliate-Tag."
   },
   "aiRender": {
     "title": "KI-Raumstudio",
@@ -61,23 +61,23 @@
       "result": "Render"
     },
     "uploadTitle": "Raumbild hochladen",
-    "uploadBody": "Leer oder möbliert — die Engine liest das Bild. Keine manuelle Maßeingabe.",
-    "uploadCta": "Foto wählen",
+    "uploadBody": "Leer oder mÃ¶bliert â€” die Engine liest das Bild. Keine manuelle MaÃŸeingabe.",
+    "uploadCta": "Foto wÃ¤hlen",
     "sampleCta": "Demo-Raum",
-    "analyzing": "Perspektive und Maßstab werden gelesen…",
+    "analyzing": "Perspektive und MaÃŸstab werden gelesenâ€¦",
     "autoTitle": "Aus dem Bild erkannt",
-    "autoBody": "Breite, Tiefe und Perspektive automatisch. Deckenhöhe mit 2,6-m-Prior.",
+    "autoBody": "Breite, Tiefe und Perspektive automatisch. DeckenhÃ¶he mit 2,6-m-Prior.",
     "width": "Breite",
     "depth": "Tiefe",
     "height": "Decke",
     "perspective": "Perspektive",
-    "furnished": "Vorhandene Möbel",
+    "furnished": "Vorhandene MÃ¶bel",
     "confidence": "Konfidenz",
     "continueMask": "Objekte zum Behalten markieren",
-    "maskBody": "Übermalen Sie, was bleiben muss. Diese Pixel werden nicht ersetzt.",
+    "maskBody": "Ãœbermalen Sie, was bleiben muss. Diese Pixel werden nicht ersetzt.",
     "brushKeep": "Behalten",
     "brushErase": "Radierer",
-    "brushSize": "Größe",
+    "brushSize": "GrÃ¶ÃŸe",
     "continueStyle": "Stil und Budget",
     "styleTitle": "Stil",
     "budgetTitle": "Budget",
@@ -86,7 +86,7 @@
       "medium": "Mittel",
       "premium": "Premium"
     },
-    "fallbackNotice": "Die KI-Darstellung ist vorübergehend nicht verfügbar. Wir zeigen die The-Home-Katalogszene für Stil und Budget.",
+    "fallbackNotice": "Die KI-Darstellung ist vorÃ¼bergehend nicht verfÃ¼gbar. Wir zeigen die The-Home-Katalogszene fÃ¼r Stil und Budget.",
     "styles": {
       "scandinavian": "Skandinavisch",
       "modern": "Modern",
@@ -94,39 +94,40 @@
       "industrial": "Industrial",
       "minimal": "Minimal"
     },
-    "catalogHint": "{store}: {count} Teile im Budget · {spent} RON",
+    "catalogHint": "{store}: {count} Teile im Budget Â· {spent} RON",
     "generate": "Fotoreales Render erzeugen",
-    "generating": "The-Home-Stücke werden gesetzt…",
-    "resultAlt": "KI-Render mit The Home",
+    "generating": "The-Home-StÃ¼cke werden gesetztâ€¦",
+    "resultAlt": "KI-Render mit Kave Home",
     "beforeLabel": "Dein Raum",
     "afterLabel": "Design mit The-Home-Hotspots",
-    "hotspotHint": "Klicke ein Produkt im Bild für Details und Kauf.",
-    "closeHotspot": "Schließen",
+    "hotspotHint": "Klicke ein Produkt im Bild fÃ¼r Details und Kauf.",
+    "closeHotspot": "SchlieÃŸen",
     "errorNeedPhoto": "Lade zuerst ein Foto deines Raums hoch.",
     "download": "PNG laden",
     "restart": "Neuer Raum",
-    "order": "Bei The Home bestellen →",
-    "designProductsTitle": "Produkte in diesem Design (The Home)",
-    "designProductsBody": "{count} empfohlene Stücke für Raum und Stil.",
+    "order": "Bei Kave Home bestellen â†’",
+    "designProductsTitle": "Produkte in diesem Design (Kave Home)",
+    "designProductsBody": "{count} empfohlene StÃ¼cke fÃ¼r Raum und Stil.",
     "estimatedPrice": "Richtpreis",
-    "viewOnTheHome": "Bei The Home ansehen",
+    "viewOnTheHome": "Bei Kave Home ansehen",
     "addSetToCart": "Komplettes Set in den Warenkorb",
     "setTotal": "Set-Summe",
     "setAdded": "Das Set wurde in den Warenkorb gelegt ({count} Teile).",
-    "openCart": "Warenkorb öffnen",
-    "nonePlaced": "Die Keep-Maske deckt den freien Boden. Maske verkleinern oder Budget erhöhen.",
+    "openCart": "Warenkorb Ã¶ffnen",
+    "nonePlaced": "Die Keep-Maske deckt den freien Boden. Maske verkleinern oder Budget erhÃ¶hen.",
     "errorFile": "Bitte eine Bilddatei hochladen.",
     "errorAnalyze": "Analyse fehlgeschlagen. Anderes Bild versuchen.",
-    "errorGenerate": "Render fehlgeschlagen. Foto oder Maske ändern."
+    "errorGenerate": "Render fehlgeschlagen. Foto oder Maske Ã¤ndern."
   },
   "cart": {
     "title": "Design-Set Warenkorb",
-    "body": "The-Home-Stücke aus dem generierten Raum. Jeden Artikel auf der Partnerseite öffnen.",
+    "body": "The-Home-StÃ¼cke aus dem generierten Raum. Jeden Artikel auf der Partnerseite Ã¶ffnen.",
     "empty": "Der Warenkorb ist leer.",
-    "backToStudio": "Zurück zum KI-Studio",
+    "backToStudio": "ZurÃ¼ck zum KI-Studio",
     "qty": "Menge: {count}",
-    "view": "Bei The Home ansehen",
+    "view": "Bei Kave Home ansehen",
     "total": "Summe",
     "clear": "Warenkorb leeren"
   }
 }
+

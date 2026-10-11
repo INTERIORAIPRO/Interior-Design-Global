@@ -82,3 +82,4 @@ export function addRoomSet(products: CartProduct[]) {
 export function clearCart() {
   writeCart(emptyCart());
 }
+

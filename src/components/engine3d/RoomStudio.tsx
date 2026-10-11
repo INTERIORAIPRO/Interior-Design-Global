@@ -17,7 +17,7 @@ const SceneCanvas = dynamic(
     ssr: false,
     loading: () => (
       <div className="flex h-full min-h-[320px] items-center justify-center rounded-[28px] border border-white/10 bg-[#2a231c] text-sm text-linen/50">
-        Loading 3D studio…
+        Loading 3D studioâ€¦
       </div>
     ),
   },
@@ -81,3 +81,4 @@ export function RoomStudio({
     </div>
   );
 }
+

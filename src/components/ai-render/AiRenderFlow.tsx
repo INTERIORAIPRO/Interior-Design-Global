@@ -11,7 +11,11 @@ import {
 } from "@/lib/ai-render/designSets";
 import type { RoomKind } from "@/lib/partner-store/catalog";
 import { useProjectDestination } from "@/lib/partner-store/ProjectDestinationProvider";
-import { getActiveVendorName } from "@/lib/partner-store/vendors";
+import {
+  MIX_VENDOR_ID,
+  getActiveVendorName,
+  getVendor,
+} from "@/lib/partner-store/vendors";
 import { VendorChipBar } from "@/components/layout/VendorSelect";
 import { DesignProductsSection } from "./DesignProductsSection";
 
@@ -29,7 +33,11 @@ export function AiRenderFlow() {
   const tCommerce = useTranslations("commerce");
   const locale = useLocale();
   const { catalog, vendorId, countryId } = useProjectDestination();
-  const vendorName = getActiveVendorName(vendorId, tCommerce("mixMatchShort"));
+  const vendorName =
+    vendorId === MIX_VENDOR_ID
+      ? tCommerce("mixMatchShort")
+      : getVendor(vendorId)?.brandName ??
+        getActiveVendorName(vendorId, tCommerce("mixMatchShort"));
   const [isMounted, setIsMounted] = useState(false);
   const [roomType, setRoomType] = useState<RoomType>("bedroom");
   const [style, setStyle] = useState<InteriorStyle>("scandinavian");
@@ -40,6 +48,7 @@ export function AiRenderFlow() {
   );
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [imageFailed, setImageFailed] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -51,11 +60,16 @@ export function AiRenderFlow() {
     [roomType, style, budget, catalog, vendorId, countryId],
   );
   const activeKey = sceneKey(roomType, style, budget, vendorId, countryId);
-  const displayImage =
+  const heroImage =
     rendered?.key === activeKey
       ? rendered.imageUrl
       : sourceImage ?? design.sceneUrl;
+  const displayImage = imageFailed ? design.sceneUrl : heroImage;
   const displayProducts = design.products;
+
+  useEffect(() => {
+    setImageFailed(false);
+  }, [heroImage]);
 
   function handleImageUpload(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -155,10 +169,12 @@ export function AiRenderFlow() {
           {vendorName}
         </p>
         <h1 className="mt-3 font-serif text-5xl text-linen">
-          {t("title", { vendor: vendorName })}
+          Virtual Staging {vendorName}
         </h1>
         <p className="mt-4 max-w-2xl text-linen/65">
-          {t("intro", { vendor: vendorName })}
+          {locale === "ro"
+            ? `Încarcă o poză cu camera ta (goală sau mobilată). Păstrăm forma, pereții și unghiul, înlocuim mobilierul vechi cu piese reale ${vendorName} și îți arătăm prețurile cu link de cumpărare.`
+            : t("intro", { vendor: vendorName })}
         </p>
       </div>
       <VendorChipBar />
@@ -249,7 +265,9 @@ export function AiRenderFlow() {
         <div>
           <p className="font-serif text-lg text-linen">{t("uploadTitle")}</p>
           <p className="mt-1 text-sm text-linen/70">
-            {t("uploadBody", { vendor: vendorName })}
+            {locale === "ro"
+              ? `Goală sau deja mobilată. Folosim poza ta ca referință de structură și restilăm mobilierul cu catalogul ${vendorName}.`
+              : t("uploadBody", { vendor: vendorName })}
           </p>
         </div>
         <label htmlFor="room-photo-upload" className="sr-only">
@@ -282,23 +300,32 @@ export function AiRenderFlow() {
           className="rounded-full bg-brass px-8 py-3 text-sm font-medium text-ink disabled:opacity-40"
         >
           {busy
-            ? t("generating", { vendor: vendorName })
-            : t("generate", { vendor: vendorName })}
+            ? locale === "ro"
+              ? `AI-ul generează spațiul cu mobilier ${vendorName}...`
+              : t("generating", { vendor: vendorName })
+            : locale === "ro"
+              ? "Randează camera cu AI"
+              : t("generate")}
         </button>
       </form>
 
       <div className="space-y-8">
         <section className="relative overflow-hidden rounded-[28px] border border-white/10 bg-[#1c1814]">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={displayImage}
-            alt=""
-            className="mx-auto block h-auto min-h-[280px] w-full max-h-[80vh] object-contain"
-          />
+          {displayImage ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={displayImage}
+              alt=""
+              onError={() => setImageFailed(true)}
+              className="mx-auto block h-auto w-full max-h-[80vh] object-contain"
+            />
+          ) : null}
           {busy ? (
             <div className="absolute inset-0 flex items-center justify-center bg-black/55 px-6 text-center">
               <p className="max-w-md font-serif text-xl text-linen sm:text-2xl">
-                {t("generating", { vendor: vendorName })}
+                {locale === "ro"
+                  ? `AI-ul generează spațiul cu mobilier ${vendorName}...`
+                  : t("generating", { vendor: vendorName })}
               </p>
             </div>
           ) : null}

@@ -106,7 +106,7 @@
       "boho": "Boho"
     },
     "catalogHint": "{store}: {count} piese în buget · {spent} RON",
-    "generate": "Așază produsele {vendor} în cameră",
+    "generate": "Randează camera cu AI",
     "generating": "AI-ul generează spațiul cu mobilier {vendor}...",
     "resultAlt": "Cameră mobilată {vendor}",
     "beforeLabel": "Camera ta",

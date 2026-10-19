@@ -103,7 +103,7 @@
       "minimal": "Minimal"
     },
     "catalogHint": "{store}: {count} pieces in budget Â· {spent} RON",
-    "generate": "Place {vendor} products in the room",
+    "generate": "Render the room with AI",
     "generating": "AI is furnishing the room with {vendor} pieces...",
     "resultAlt": "Furnished {vendor} room",
     "beforeLabel": "Your room",

@@ -103,7 +103,7 @@
       "minimal": "Minimal"
     },
     "catalogHint": "{store}: {count} piezas en presupuesto Â· {spent} RON",
-    "generate": "Colocar productos {vendor} en la estancia",
+    "generate": "Renderizar la estancia con IA",
     "generating": "La IA amuebla el espacio con {vendor}...",
     "resultAlt": "Estancia amueblada {vendor}",
     "beforeLabel": "Tu estancia",

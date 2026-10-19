@@ -103,7 +103,7 @@
       "minimal": "Minimal"
     },
     "catalogHint": "{store}: {count} pezzi nel budget Â· {spent} RON",
-    "generate": "Disponi i prodotti {vendor} nella stanza",
+    "generate": "Renderizza la stanza con l'IA",
     "generating": "L'IA arreda lo spazio con {vendor}...",
     "resultAlt": "Stanza arredata {vendor}",
     "beforeLabel": "La tua stanza",

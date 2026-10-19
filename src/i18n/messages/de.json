@@ -103,7 +103,7 @@
       "minimal": "Minimal"
     },
     "catalogHint": "{store}: {count} Teile im Budget Â· {spent} RON",
-    "generate": "{vendor}-Produkte im Raum platzieren",
+    "generate": "Raum mit KI rendern",
     "generating": "KI richtet den Raum mit {vendor} ein...",
     "resultAlt": "Eingerichteter {vendor}-Raum",
     "beforeLabel": "Dein Raum",

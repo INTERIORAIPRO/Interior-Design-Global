@@ -53,7 +53,9 @@ export function DesignProductsSection({
             {vendorName}
           </p>
           <h2 className="mt-2 font-serif text-3xl text-linen sm:text-4xl">
-            {t("designProductsTitle", { vendor: vendorName })}
+            {locale.startsWith("ro")
+              ? `Produsele din acest design - ${vendorName}`
+              : t("designProductsTitle", { vendor: vendorName })}
           </h2>
           <p className="mt-2 text-sm text-linen/60">
             {t("designProductsBody", {
@@ -102,10 +104,12 @@ export function DesignProductsSection({
                 rel="sponsored noopener noreferrer"
                 className="mt-4 inline-flex justify-center rounded-full border border-brass/50 px-4 py-2.5 text-sm font-medium text-brass hover:bg-brass hover:text-ink"
               >
-                {t("viewOnVendor", {
-                  vendor:
-                    getVendor(product.vendorId)?.brandName ?? vendorName,
-                })}
+                {locale.startsWith("ro")
+                  ? `Vezi pe ${getVendor(product.vendorId)?.brandName ?? vendorName}`
+                  : t("viewOnVendor", {
+                      vendor:
+                        getVendor(product.vendorId)?.brandName ?? vendorName,
+                    })}
               </a>
             </div>
           </li>

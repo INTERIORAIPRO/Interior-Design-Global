@@ -361,7 +361,9 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const {
-      imageUrl,
+      imageUrl: bodyImageUrl,
+      image,
+      controlnet_image,
       roomType,
       style,
       products,
@@ -369,6 +371,8 @@ export async function POST(request: Request) {
       keepStructure,
     } = body as {
       imageUrl?: string;
+      image?: string;
+      controlnet_image?: string;
       roomType?: string;
       style?: string;
       products?: PromptProduct[];
@@ -376,11 +380,15 @@ export async function POST(request: Request) {
       keepStructure?: boolean;
     };
 
+    const imageUrl = [bodyImageUrl, controlnet_image, image].find(
+      (value): value is string => typeof value === "string" && value.length > 0,
+    );
+
     if (typeof bodyFallback === "string" && bodyFallback.length > 0) {
       fallbackImageUrl = bodyFallback;
     }
 
-    if (!imageUrl || typeof imageUrl !== "string") {
+    if (!imageUrl) {
       return NextResponse.json(
         { error: "Lipsește imaginea camerei." },
         { status: 400 },

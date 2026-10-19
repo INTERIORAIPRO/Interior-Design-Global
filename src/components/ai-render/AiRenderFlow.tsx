@@ -42,7 +42,9 @@ export function AiRenderFlow() {
   const [roomType, setRoomType] = useState<RoomType>("bedroom");
   const [style, setStyle] = useState<InteriorStyle>("scandinavian");
   const [budget, setBudget] = useState<BudgetTier>("medium");
-  const [sourceImage, setSourceImage] = useState<string | null>(null);
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
   const [rendered, setRendered] = useState<{ key: string; imageUrl: string } | null>(
     null,
   );
@@ -50,9 +52,15 @@ export function AiRenderFlow() {
   const [error, setError] = useState<string | null>(null);
   const [imageFailed, setImageFailed] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const previewUrlRef = useRef<string | null>(null);
 
   useEffect(() => {
     setIsMounted(true);
+    return () => {
+      if (previewUrlRef.current?.startsWith("blob:")) {
+        URL.revokeObjectURL(previewUrlRef.current);
+      }
+    };
   }, []);
 
   const design = useMemo(
@@ -63,13 +71,20 @@ export function AiRenderFlow() {
   const heroImage =
     rendered?.key === activeKey
       ? rendered.imageUrl
-      : sourceImage ?? design.sceneUrl;
+      : uploadedImage ?? previewUrl ?? design.sceneUrl;
   const displayImage = imageFailed ? design.sceneUrl : heroImage;
   const displayProducts = design.products;
 
   useEffect(() => {
     setImageFailed(false);
   }, [heroImage]);
+
+  function revokePreview() {
+    if (previewUrlRef.current?.startsWith("blob:")) {
+      URL.revokeObjectURL(previewUrlRef.current);
+    }
+    previewUrlRef.current = null;
+  }
 
   function handleImageUpload(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -81,9 +96,15 @@ export function AiRenderFlow() {
     }
     setError(null);
     setRendered(null);
+    setImageFailed(false);
+    revokePreview();
+    const objectUrl = URL.createObjectURL(file);
+    previewUrlRef.current = objectUrl;
+    setPreviewUrl(objectUrl);
+    setFileName(file.name);
     const reader = new FileReader();
     reader.onload = () => {
-      setSourceImage(String(reader.result));
+      setUploadedImage(String(reader.result));
     };
     reader.onerror = () => {
       setError(t("errorFile"));
@@ -91,12 +112,19 @@ export function AiRenderFlow() {
     reader.readAsDataURL(file);
   }
 
+  function clearUploadedPhoto() {
+    revokePreview();
+    setPreviewUrl(null);
+    setUploadedImage(null);
+    setFileName(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }
+
   function reset() {
-    setSourceImage(null);
+    clearUploadedPhoto();
     setRendered(null);
     setBusy(false);
     setError(null);
-    if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
   async function toSendableImage(src: string) {
@@ -118,16 +146,20 @@ export function AiRenderFlow() {
     setBusy(true);
 
     try {
-      const imageUrl = await toSendableImage(sourceImage ?? design.sceneUrl);
+      const referenceImage = uploadedImage
+        ? await toSendableImage(uploadedImage)
+        : await toSendableImage(design.sceneUrl);
       const response = await fetch("/api/ai-render/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           mode: "virtual-staging",
-          imageUrl,
+          imageUrl: referenceImage,
+          image: referenceImage,
+          controlnet_image: referenceImage,
           roomType,
           style,
-          keepStructure: Boolean(sourceImage),
+          keepStructure: Boolean(uploadedImage),
           fallbackImageUrl: design.sceneUrl,
           products: displayProducts.map((product) => ({
             name: product.name,
@@ -266,11 +298,38 @@ export function AiRenderFlow() {
         <div>
           <p className="font-serif text-lg text-linen">{t("uploadTitle")}</p>
           <p className="mt-1 text-sm text-linen/70">
-            {locale === "ro"
-              ? `Goală sau deja mobilată. Folosim poza ta ca referință de structură și restilăm mobilierul cu catalogul ${vendorName}.`
-              : t("uploadBody", { vendor: vendorName })}
+            {`Goală sau deja mobilată. Folosim poza ta ca referință de structură și restilăm mobilierul cu catalogul ${vendorName}.`}
           </p>
         </div>
+        {previewUrl || uploadedImage ? (
+          <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-ink/40">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={previewUrl ?? uploadedImage ?? ""}
+              alt={fileName ?? "Fotografie încărcată"}
+              className="h-40 w-full object-cover sm:h-48"
+            />
+            <div className="absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-2 bg-black/55 px-3 py-2">
+              <p className="truncate text-xs text-linen/80">{fileName ?? "Fotografie încărcată"}</p>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="rounded-full bg-brass px-3 py-1 text-[11px] font-medium text-ink"
+                >
+                  Înlocuiește fotografia
+                </button>
+                <button
+                  type="button"
+                  onClick={clearUploadedPhoto}
+                  className="rounded-full border border-white/30 px-3 py-1 text-[11px] text-linen"
+                >
+                  Șterge
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
         <label htmlFor="room-photo-upload" className="sr-only">
           {t("uploadCta")}
         </label>
@@ -280,7 +339,9 @@ export function AiRenderFlow() {
           type="file"
           accept="image/*"
           onChange={handleImageUpload}
-          className="block w-full cursor-pointer text-sm text-linen file:mr-4 file:cursor-pointer file:rounded-full file:border-0 file:bg-brass file:px-5 file:py-2.5 file:text-sm file:font-medium file:text-ink"
+          className={`block w-full cursor-pointer text-sm text-linen file:mr-4 file:cursor-pointer file:rounded-full file:border-0 file:bg-brass file:px-5 file:py-2.5 file:text-sm file:font-medium file:text-ink ${
+            previewUrl || uploadedImage ? "sr-only" : ""
+          }`}
         />
       </div>
 

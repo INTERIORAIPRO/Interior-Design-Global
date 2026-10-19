@@ -83,27 +83,27 @@ const styleMaterials: Record<string, string> = {
 const namedVisuals: Record<string, string> = {
   "Canapea 3 locuri Nordic Velvet":
     "a wide three-seat low Scandinavian sofa upholstered in plush oatmeal-sand velvet, deep seat cushions, slim rectangular back, four short tapered pale-oak legs, no tufting, no Chesterfield buttons",
-  "Lampadar arcuit din alamÄƒ":
+  "Lampadar arcuit din alamă":
     "a tall arched floor lamp with a slender brushed-brass stem that curves over seating, round warm-linen drum shade, circular marble or pale-oak base, lit with warm 2700K glow",
-  "MÄƒsuÈ›Äƒ de cafea din lemn masiv":
+  "Măsuță de cafea din lemn masiv":
     "a low rectangular solid pale-oak coffee table with visible straight wood grain, thick tabletops, simple square-block or hairpin-light legs, no glass, no marble luxury slab",
-  "Covor pufos din lÃ¢nÄƒ naturalÄƒ":
+  "Covor pufos din lână naturală":
     "a large plush high-pile natural-wool rug in warm beige-sand, soft irregular texture covering the floor under the main furniture, not a small bath mat",
-  "VazÄƒ ceramicÄƒ design organic":
+  "Vază ceramică design organic":
     "a medium matte stoneware vase with an irregular organic silhouette, sand and off-white glaze, sitting as a visible accent on a table or nightstand",
-  "Pat tapiÈ›at Nordic":
+  "Pat tapițat Nordic":
     "a low Scandinavian upholstered bed as the hero piece: wide rectangular headboard in oatmeal linen with slim piping, pale-oak platform base, white linen duvet, two matching pillows, clearly a bed not a sofa",
-  "NoptierÄƒ stejar deschis":
+  "Noptieră stejar deschis":
     "a compact square light-oak nightstand with a single drawer, slender tapered legs, pale Nordic grain, placed tight beside the bed",
   "Birou stejar scandinav":
     "a long Scandinavian writing desk in pale oak, slim rectangular top, tapered legs, clean uncluttered surface",
-  "MasÄƒ dining stejar":
+  "Masă dining stejar":
     "a solid pale-oak dining table with a thick rectangular top and simple Nordic legs, dining scale not a coffee table",
   "Lampadar minimal negru":
     "a slim matte-black tripod or stick floor lamp, thin stem, small drum or cone shade, contemporary silhouette",
-  "NoptierÄƒ metal industrial":
+  "Noptieră metal industrial":
     "a compact industrial bedside table with a black metal frame and oak top, open shelf, placed beside the bed",
-  "PÄƒturÄƒ textilÄƒ boho":
+  "Pătură textilă boho":
     "a folded layered throw in sand and terracotta weave draped on the bed or sofa edge",
   "Fotoliu lounge Nordic":
     "a sculptural Scandinavian lounge armchair in oatmeal boucle or light linen, rounded back, visible pale-oak legs, one-seat accent chair not a sofa",
@@ -231,7 +231,7 @@ async function toPublicImageUri(imageUrl: string) {
   if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
     const response = await fetch(imageUrl);
     if (!response.ok) {
-      throw new Error("Nu am putut descÄƒrca imaginea camerei.");
+      throw new Error("Nu am putut descărca imaginea camerei.");
     }
     const mime = response.headers.get("content-type")?.split(";")[0] || "image/jpeg";
     const bytes = Buffer.from(await response.arrayBuffer());
@@ -249,7 +249,7 @@ async function toPublicImageUri(imageUrl: string) {
   }
 
   throw new Error(
-    "Imaginea trebuie sÄƒ fie un URL http(s), un fiÈ™ier din /public sau un data URI.",
+    "Imaginea trebuie să fie un URL http(s), un fișier din /public sau un data URI.",
   );
 }
 
@@ -343,7 +343,7 @@ export async function POST(request: Request) {
 
     if (!imageUrl || typeof imageUrl !== "string") {
       return NextResponse.json(
-        { error: "LipseÈ™te imaginea camerei." },
+        { error: "Lipsește imaginea camerei." },
         { status: 400 },
       );
     }

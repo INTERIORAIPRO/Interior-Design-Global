@@ -1,84 +1,84 @@
 {
   "meta": {
     "title": "Interior Design Global",
-    "description": "Marketplace internaÈ›ional de design interior, cu studio 3D Ã®n timp real È™i comerÈ› pentru parteneri."
+    "description": "Marketplace internațional de design interior, cu studio 3D în timp real și comerț pentru parteneri."
   },
   "nav": {
     "marketplace": "Marketplace",
     "aiStudio": "Randare AI",
-    "cart": "CoÈ™",
+    "cart": "Coș",
     "studio": "Studio 3D",
     "vendors": "Parteneri",
     "returns": "Retururi"
   },
   "welcome": {
     "kicker": "Interioare globale, un singur studio",
-    "title": "ProiecteazÄƒ camere. Alege piese. LivreazÄƒ oriunde.",
-    "subtitle": "Un marketplace multilingv pentru mobilier, materiale È™i iluminat â€” cu motor 3D integrat È™i panou de control pentru vendori.",
-    "ctaPrimary": "PorneÈ™te randarea AI",
+    "title": "Proiectează camere. Alege piese. Livrează oriunde.",
+    "subtitle": "Un marketplace multilingv pentru mobilier, materiale și iluminat — cu motor 3D integrat și panou de control pentru vendori.",
+    "ctaPrimary": "Pornește randarea AI",
     "ctaStudio": "Studio 3D",
-    "ctaSecondary": "ExploreazÄƒ colecÈ›iile",
+    "ctaSecondary": "Explorează colecțiile",
     "ctaVendor": "Deschide portalul de parteneri"
   },
   "features": {
     "ai": {
       "title": "Randare AI a camerei",
-      "body": "ÃŽncarcÄƒ o pozÄƒ, pÄƒstreazÄƒ ce Ã®È›i place, apoi completeazÄƒ spaÈ›iul cu piese Kave Home Ã®n bugetul tÄƒu."
+      "body": "Încarcă o poză, păstrează ce îți place, apoi completează spațiul cu piese Kave Home în bugetul tău."
     },
     "i18n": {
       "title": "Multilingv din start",
-      "body": "CumpÄƒrÄƒ È™i creeazÄƒ Ã®n englezÄƒ, romÃ¢nÄƒ, francezÄƒ, germanÄƒ, spaniolÄƒ È™i italianÄƒ."
+      "body": "Cumpără și creează în engleză, română, franceză, germană, spaniolă și italiană."
     },
     "engine": {
       "title": "Motor 3D live",
-      "body": "PrevizualizeazÄƒ camere, materiale È™i luminÄƒ Ã®nainte sÄƒ cumperi sau sÄƒ listezi un produs."
+      "body": "Previzualizează camere, materiale și lumină înainte să cumperi sau să listezi un produs."
     },
     "vendors": {
       "title": "Panou pentru parteneri",
-      "body": "Vendorii gestioneazÄƒ cataloage, comenzi, comisioane È™i livrÄƒri dintr-un singur loc."
+      "body": "Vendorii gestionează cataloage, comenzi, comisioane și livrări dintr-un singur loc."
     },
     "returns": {
       "title": "Sistem de retururi",
-      "body": "UrmÄƒreÈ™te cereri RMA, restocking È™i rambursÄƒri pentru comenzi internaÈ›ionale."
+      "body": "Urmărește cereri RMA, restocking și rambursări pentru comenzi internaționale."
     }
   },
   "product": {
-    "clickHint": "Click pe un obiect din camerÄƒ pentru detalii È™i comanda pe Kave Home.",
+    "clickHint": "Click pe un obiect din cameră pentru detalii și comanda pe Kave Home.",
     "dimensions": "Dimensiuni",
-    "price": "PreÈ›",
-    "order": "ComandÄƒ pe Kave Home",
-    "close": "ÃŽnchide",
+    "price": "Preț",
+    "order": "Comandă pe Kave Home",
+    "close": "Închide",
     "affiliateNote": "Deschide thehome.ro cu tag-ul de afiliere Interior Design Global."
   },
   "aiRender": {
     "title": "Virtual Staging Kave Home",
-    "intro": "ÃŽncarcÄƒ o pozÄƒ cu camera ta (goalÄƒ sau mobilatÄƒ). PÄƒstrÄƒm forma, pereÈ›ii È™i unghiul, Ã®nlocuim mobilierul vechi cu piese reale Kave Home È™i Ã®È›i arÄƒtÄƒm preÈ›urile cu link de cumpÄƒrare.",
+    "intro": "Încarcă o poză cu camera ta (goală sau mobilată). Păstrăm forma, pereții și unghiul, înlocuim mobilierul vechi cu piese reale Kave Home și îți arătăm prețurile cu link de cumpărare.",
     "steps": {
-      "upload": "PozÄƒ",
+      "upload": "Poză",
       "analyze": "Detectare",
-      "mask": "PÄƒstrare",
-      "style": "Stil È™i buget",
+      "mask": "Păstrare",
+      "style": "Stil și buget",
       "result": "Randare"
     },
-    "uploadTitle": "ÃŽncarcÄƒ fotografia camerei tale",
-    "uploadBody": "GoalÄƒ sau deja mobilatÄƒ. Folosim poza ta ca referinÈ›Äƒ de structurÄƒ È™i restilÄƒm mobilierul cu catalogul Kave Home.",
-    "uploadCta": "ÃŽncarcÄƒ poza camerei",
-    "sampleCta": "ÃŽncearcÄƒ o camerÄƒ exemplu",
-    "analyzing": "Citesc perspectiva È™i scara din fotografieâ€¦",
+    "uploadTitle": "Încarcă fotografia camerei tale",
+    "uploadBody": "Goală sau deja mobilată. Folosim poza ta ca referință de structură și restilăm mobilierul cu catalogul Kave Home.",
+    "uploadCta": "Încarcă poza camerei",
+    "sampleCta": "Încearcă o cameră exemplu",
+    "analyzing": "Citesc perspectiva și scara din fotografie…",
     "autoTitle": "Detectat din imagine",
-    "autoBody": "LÄƒÈ›imea, adÃ¢ncimea È™i perspectiva camerei sunt estimate automat. ÃŽnÄƒlÈ›imea tavanului foloseÈ™te un reper rezidenÈ›ial de 2,6 m.",
-    "width": "LÄƒÈ›ime",
-    "depth": "AdÃ¢ncime",
+    "autoBody": "Lățimea, adâncimea și perspectiva camerei sunt estimate automat. Înălțimea tavanului folosește un reper rezidențial de 2,6 m.",
+    "width": "Lățime",
+    "depth": "Adâncime",
     "height": "Tavan",
-    "perspective": "PerspectivÄƒ",
+    "perspective": "Perspectivă",
     "furnished": "Mobilier existent",
-    "confidence": "ÃŽncredere",
-    "continueMask": "MarcheazÄƒ obiectele de pÄƒstrat",
-    "maskBody": "PicteazÄƒ peste tot ce trebuie sÄƒ rÄƒmÃ¢nÄƒ (o canapea existentÄƒ, o fereastrÄƒ, un tablou). Generatorul nu Ã®nlocuieÈ™te acei pixeli.",
-    "brushKeep": "PensulÄƒ pÄƒstrare",
-    "brushErase": "GumÄƒ",
+    "confidence": "Încredere",
+    "continueMask": "Marchează obiectele de păstrat",
+    "maskBody": "Pictează peste tot ce trebuie să rămână (o canapea existentă, o fereastră, un tablou). Generatorul nu înlocuiește acei pixeli.",
+    "brushKeep": "Pensulă păstrare",
+    "brushErase": "Gumă",
     "brushSize": "Grosime",
-    "continueStyle": "Alege stilul È™i bugetul",
+    "continueStyle": "Alege stilul și bugetul",
     "styleTitle": "Stil interior",
     "budgetTitle": "Buget",
     "budgets": {
@@ -86,7 +86,7 @@
       "medium": "Mediu",
       "premium": "Premium"
     },
-    "fallbackNotice": "Randarea AI este temporar indisponibilÄƒ. ÃŽÈ›i arÄƒtÄƒm scena de catalog Kave Home pentru stilul È™i bugetul alese.",
+    "fallbackNotice": "Randarea AI este temporar indisponibilă. Îți arătăm scena de catalog Kave Home pentru stilul și bugetul alese.",
     "styles": {
       "scandinavian": "Scandinav",
       "modern": "Modern",
@@ -97,39 +97,39 @@
       "japandi": "Japandi",
       "boho": "Boho"
     },
-    "catalogHint": "{store}: {count} piese Ã®n buget Â· {spent} RON",
-    "generate": "AÈ™azÄƒ produsele Kave Home Ã®n camerÄƒ",
-    "generating": "Suprapun piesele Kave Home pe fotografia taâ€¦",
-    "resultAlt": "CamerÄƒ cu overlay Kave Home",
+    "catalogHint": "{store}: {count} piese în buget · {spent} RON",
+    "generate": "Așază produsele Kave Home în cameră",
+    "generating": "Suprapun piesele Kave Home pe fotografia ta…",
+    "resultAlt": "Cameră cu overlay Kave Home",
     "beforeLabel": "Camera ta",
     "afterLabel": "Design cu hotspot-uri Kave Home",
-    "hotspotHint": "Click pe un produs din imagine pentru detalii È™i cumpÄƒrare.",
-    "closeHotspot": "ÃŽnchide",
-    "errorNeedPhoto": "ÃŽncarcÄƒ mai Ã®ntÃ¢i o pozÄƒ a camerei tale.",
-    "download": "DescarcÄƒ PNG",
-    "restart": "CamerÄƒ nouÄƒ",
-    "order": "ComandÄƒ pe Kave Home â†’",
+    "hotspotHint": "Click pe un produs din imagine pentru detalii și cumpărare.",
+    "closeHotspot": "Închide",
+    "errorNeedPhoto": "Încarcă mai întâi o poză a camerei tale.",
+    "download": "Descarcă PNG",
+    "restart": "Cameră nouă",
+    "order": "Comandă pe Kave Home →",
     "designProductsTitle": "Produsele din acest design - Kave Home",
-    "designProductsBody": "{count} piese Kave Home plasate Ã®n aceastÄƒ camerÄƒ, cu preÈ› È™i link de cumpÄƒrare.",
-    "estimatedPrice": "PreÈ› estimativ",
+    "designProductsBody": "{count} piese Kave Home plasate în această cameră, cu preț și link de cumpărare.",
+    "estimatedPrice": "Preț estimativ",
     "viewOnTheHome": "Vezi pe Kave Home",
-    "addSetToCart": "AdaugÄƒ tot setul Ã®n coÈ™",
+    "addSetToCart": "Adaugă tot setul în coș",
     "setTotal": "Total set",
-    "setAdded": "Setul a fost adÄƒugat Ã®n coÈ™ ({count} piese).",
-    "openCart": "Deschide coÈ™ul",
-    "nonePlaced": "Masca de pÄƒstrare acoperÄƒ tot podeaua liberÄƒ. È˜terge din mascÄƒ sau creÈ™te bugetul.",
-    "errorFile": "Te rog Ã®ncarcÄƒ un fiÈ™ier imagine.",
-    "errorAnalyze": "Nu am putut analiza fotografia. ÃŽncearcÄƒ altÄƒ imagine.",
-    "errorGenerate": "Randarea a eÈ™uat. ÃŽncearcÄƒ altÄƒ pozÄƒ sau altÄƒ mascÄƒ."
+    "setAdded": "Setul a fost adăugat în coș ({count} piese).",
+    "openCart": "Deschide coșul",
+    "nonePlaced": "Masca de păstrare acoperă tot podeaua liberă. Șterge din mască sau crește bugetul.",
+    "errorFile": "Te rog încarcă un fișier imagine.",
+    "errorAnalyze": "Nu am putut analiza fotografia. Încearcă altă imagine.",
+    "errorGenerate": "Randarea a eșuat. Încearcă altă poză sau altă mască."
   },
   "cart": {
-    "title": "CoÈ™ul setului de design",
-    "body": "Piesele Kave Home grupate din camera generatÄƒ. PoÈ›i deschide fiecare articol pe site-ul partener.",
-    "empty": "CoÈ™ul este gol.",
-    "backToStudio": "ÃŽnapoi la randarea AI",
+    "title": "Coșul setului de design",
+    "body": "Piesele Kave Home grupate din camera generată. Poți deschide fiecare articol pe site-ul partener.",
+    "empty": "Coșul este gol.",
+    "backToStudio": "Înapoi la randarea AI",
     "qty": "Cantitate: {count}",
     "view": "Vezi pe Kave Home",
     "total": "Total",
-    "clear": "GoleÈ™te coÈ™ul"
+    "clear": "Golește coșul"
   }
 }

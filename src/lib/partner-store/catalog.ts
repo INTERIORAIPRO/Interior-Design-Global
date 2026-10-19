@@ -20,6 +20,7 @@ export type PartnerProduct = TypedPartnerProduct & {
   style: string[];
   promptHint: string;
   vendorId: string;
+  image: string;
 };
 
 export type { TypedPartnerProduct };
@@ -36,6 +37,44 @@ export const primaryPartnerStore: PartnerStore = {
 
 const AFFILIATE_REF = "interior-design-global";
 
+const catalogPhotos = {
+  bed: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80",
+  nightstand:
+    "https://images.unsplash.com/photo-1594026112284-02bb6f3352fe?auto=format&fit=crop&w=900&q=80",
+  lamp: "https://images.unsplash.com/photo-1507473883500-6e47245f1fba?auto=format&fit=crop&w=900&q=80",
+  sofa: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=900&q=80",
+  table:
+    "https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?auto=format&fit=crop&w=900&q=80",
+  armchair:
+    "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&w=900&q=80",
+  rug: "https://images.unsplash.com/photo-1600166898405-eeb7126d395f?auto=format&fit=crop&w=900&q=80",
+  vase: "https://images.unsplash.com/photo-1578500494198-3448ba75c6f9?auto=format&fit=crop&w=900&q=80",
+  desk: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?auto=format&fit=crop&w=900&q=80",
+  dining:
+    "https://images.unsplash.com/photo-1617806118233-18e1de3d13f4?auto=format&fit=crop&w=900&q=80",
+} as const;
+
+function photoFor(input: { name: string; category: ProductCategory; image?: string }) {
+  if (input.image) return input.image;
+  const name = input.name.toLowerCase();
+  if (name.includes("noptier")) return catalogPhotos.nightstand;
+  if (name.includes("veioz") || name.includes("lampadar") || name.includes("lamp")) {
+    return catalogPhotos.lamp;
+  }
+  if (name.includes("pat ") || name.startsWith("pat") || input.category === "beds") {
+    return catalogPhotos.bed;
+  }
+  if (name.includes("canapea") || input.category === "sofas") return catalogPhotos.sofa;
+  if (name.includes("fotoliu") || input.category === "armchair") return catalogPhotos.armchair;
+  if (name.includes("covor") || input.category === "rugs") return catalogPhotos.rug;
+  if (name.includes("vaz") || input.category === "decor") return catalogPhotos.vase;
+  if (name.includes("birou")) return catalogPhotos.desk;
+  if (name.includes("dining")) return catalogPhotos.dining;
+  if (input.category === "tables") return catalogPhotos.table;
+  if (input.category === "lighting") return catalogPhotos.lamp;
+  return catalogPhotos.sofa;
+}
+
 function product(input: {
   id: string;
   sku: string;
@@ -43,6 +82,7 @@ function product(input: {
   description: string;
   category: ProductCategory;
   image2d: string;
+  image?: string;
   accentColor: string;
   styles: InteriorStyle[];
   rooms: RoomKind[];
@@ -53,12 +93,15 @@ function product(input: {
   currency?: string;
   dimensions?: TypedPartnerProduct["dimensions"];
 }): PartnerProduct {
+  const image = photoFor(input);
   return {
     ...input,
     currency: input.currency ?? "EUR",
     dimensions: input.dimensions ?? { widthCm: 80, depthCm: 80, heightCm: 80 },
     vendorId: input.vendorId ?? "kave-home",
     style: input.styles,
+    image,
+    image2d: image,
   };
 }
 

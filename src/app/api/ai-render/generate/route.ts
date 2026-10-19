@@ -14,11 +14,22 @@ const CONTROLNET_MODELS = {
     "adirik/interior-design:76604baddc85b1b4616e1c6475eca080da339c8875bd4996705440484a6eac38",
 } as const;
 
+const roomLeads = {
+  living:
+    "A living room interior design, professional virtual staging of a living room / lounge with sofa seating. This is NOT a bedroom.",
+  bedroom:
+    "A bedroom interior design, professional virtual staging of a bedroom with a bed as the hero piece, nightstands and bedside lamps. This is NOT a living room, NOT a lounge, NO sofa as the main furniture.",
+  office:
+    "A home office interior design, professional virtual staging of a workspace with a desk. This is NOT a bedroom or living room.",
+  kitchen:
+    "A kitchen / dining interior design, professional virtual staging of a cooking and dining space. This is NOT a living room or bedroom.",
+} as const;
+
 const roomBriefs = {
   living:
     "a living room / lounge with sofa seating and a coffee table, clearly not a bedroom",
   bedroom:
-    "a bedroom with a bed as the main piece, nightstands and calm sleeping layout, clearly not a living room or lounge",
+    "a bedroom with a bed as the main piece, nightstands and bedside lamps, calm sleeping layout, clearly not a living room or lounge",
   office:
     "a home office with a desk and work seating, clearly not a bedroom or living room",
   kitchen:
@@ -155,20 +166,39 @@ function buildProductBlock(products: PromptProduct[] | undefined, style: string)
   ].join(" ");
 }
 
+function normalizeRoomType(value?: string): RoomKey {
+  const raw = (value ?? "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim();
+  if (raw.includes("bed") || raw.includes("dorm")) return "bedroom";
+  if (raw.includes("office") || raw.includes("birou")) return "office";
+  if (raw.includes("kitchen") || raw.includes("bucat") || raw.includes("dining")) {
+    return "kitchen";
+  }
+  if (raw.includes("living") || raw.includes("lounge") || raw.includes("sufrager")) {
+    return "living";
+  }
+  if (raw && raw in roomBriefs) return raw as RoomKey;
+  return "living";
+}
+
 function buildPrompt(
   roomType: string | undefined,
   style: string | undefined,
   products?: PromptProduct[],
 ) {
-  const room: RoomKey = roomType && roomType in roomBriefs ? (roomType as RoomKey) : "living";
+  const room = normalizeRoomType(roomType);
   const chosenStyle: StyleKey =
     style && style in styleBriefs ? (style as StyleKey) : "scandinavian";
   const productBlock = buildProductBlock(products, chosenStyle);
   return [
-    "VIRTUAL STAGING / INTERIOR REDESIGN of the user's own room photograph, photorealistic, 8k, magazine interior photography",
-    "The uploaded photo is the structural reference: keep the SAME room shape, walls, windows, doors, ceiling, floor plane, architectural lines and camera angle. Do not invent a different floor plan.",
-    "REMOVE the existing old furniture, clutter and previous staging. Replace it with the listed Kave Home catalog pieces only, correctly scaled and grounded on the original floor.",
-    `This space is ${roomBriefs[room]}.`,
+    roomLeads[room],
+    "VIRTUAL STAGING / INTERIOR REDESIGN of the USER'S OWN ROOM PHOTOGRAPH, photorealistic, 8k, magazine interior photography, image-to-image restaging",
+    "The uploaded photo is the ControlNet / img2img structural reference: keep the SAME room shape, walls, windows, doors, ceiling, floor plane, architectural lines and camera angle. Do not invent a different floor plan.",
+    "REMOVE the existing old furniture, clutter and previous staging. Replace it with the listed catalog pieces only, correctly scaled and grounded on the original floor.",
+    `ROOM TYPE LOCK: ${room}. This space is ${roomBriefs[room]}.`,
     `${styleBriefs[chosenStyle]}. Palette and materials: ${styleLexicon(chosenStyle)}.`,
     productBlock,
     "Natural window light matching the original photo, contact shadows, no collage, no floating objects.",
@@ -275,7 +305,9 @@ async function runControlNet(
   controlImageUrl: string,
   prompt: string,
   negativePrompt: string,
+  keepStructure: boolean,
 ) {
+  const promptStrength = keepStructure ? 0.58 : 0.7;
   try {
     const output = await replicate.run(CONTROLNET_MODELS.interior, {
       input: {
@@ -283,7 +315,7 @@ async function runControlNet(
         prompt,
         negative_prompt: negativePrompt,
         guidance_scale: 15,
-        prompt_strength: 0.74,
+        prompt_strength: promptStrength,
         num_inference_steps: 40,
       },
     });
@@ -328,14 +360,21 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    const { imageUrl, roomType, style, products, fallbackImageUrl: bodyFallback } =
-      body as {
-        imageUrl?: string;
-        roomType?: string;
-        style?: string;
-        products?: PromptProduct[];
-        fallbackImageUrl?: string;
-      };
+    const {
+      imageUrl,
+      roomType,
+      style,
+      products,
+      fallbackImageUrl: bodyFallback,
+      keepStructure,
+    } = body as {
+      imageUrl?: string;
+      roomType?: string;
+      style?: string;
+      products?: PromptProduct[];
+      fallbackImageUrl?: string;
+      keepStructure?: boolean;
+    };
 
     if (typeof bodyFallback === "string" && bodyFallback.length > 0) {
       fallbackImageUrl = bodyFallback;
@@ -351,11 +390,12 @@ export async function POST(request: Request) {
     try {
       const publicImageUrl = await toPublicImageUri(imageUrl);
       const prompt = buildPrompt(roomType, style, products);
-      const negativePrompt = buildNegativePrompt(roomType);
+      const negativePrompt = buildNegativePrompt(normalizeRoomType(roomType));
       const generatedImageUrl = await runControlNet(
         publicImageUrl,
         prompt,
         negativePrompt,
+        Boolean(keepStructure) || imageUrl.startsWith("data:"),
       );
 
       if (!generatedImageUrl) {

@@ -127,6 +127,7 @@ export function AiRenderFlow() {
           imageUrl,
           roomType,
           style,
+          keepStructure: Boolean(sourceImage),
           fallbackImageUrl: design.sceneUrl,
           products: displayProducts.map((product) => ({
             name: product.name,
@@ -304,7 +305,7 @@ export function AiRenderFlow() {
               ? `AI-ul generează spațiul cu mobilier ${vendorName}...`
               : t("generating", { vendor: vendorName })
             : locale === "ro"
-              ? "Randează camera cu AI"
+              ? "Randează camera"
               : t("generate")}
         </button>
       </form>

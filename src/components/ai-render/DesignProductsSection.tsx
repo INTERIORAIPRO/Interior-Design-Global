@@ -80,7 +80,7 @@ export function DesignProductsSection({
           >
             <div className="aspect-[4/3] overflow-hidden bg-white/[0.06]">
               <CatalogPhoto
-                src={product.image2d}
+                src={product.image || product.image2d}
                 alt={product.name}
                 fallbackColor={product.accentColor}
                 className="h-full w-full object-cover"

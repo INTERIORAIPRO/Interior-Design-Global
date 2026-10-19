@@ -1,11 +1,10 @@
-﻿/** @type {import("next").NextType} */
+﻿import createNextIntlPlugin from "next-intl/plugin";
+
+const withNextIntl = createNextIntlPlugin("./src/request.ts");
+
+/** @type {import("next").NextConfig} */
 const nextConfig = {
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  reactStrictMode: true,
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

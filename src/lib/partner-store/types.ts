@@ -1,18 +1,29 @@
 export type ProductCategory =
   | "sofa"
+  | "sofas"
   | "armchair"
   | "coffee-table"
   | "table"
+  | "tables"
   | "floor-lamp"
+  | "lighting"
   | "rug"
-  | "sideboard";
+  | "rugs"
+  | "sideboard"
+  | "beds"
+  | "decor";
 
 export type InteriorStyle =
   | "scandinavian"
   | "modern"
+  | "contemporary"
   | "classic"
   | "industrial"
-  | "minimal";
+  | "minimal"
+  | "minimalist"
+  | "midcentury"
+  | "japandi"
+  | "boho";
 
 export type ProductDimensions = {
   widthCm: number;

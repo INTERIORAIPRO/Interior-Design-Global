@@ -15,6 +15,7 @@
     "shippingCountry": "Lieferung",
     "vendor": "Anbieter",
     "mixMatch": "Alle Anbieter (Mix & Match)",
+    "mixMatchShort": "Mix & Match",
     "exclusive": "Exklusiv {brand}",
     "vendorHint": "Wählen Sie Mix & Match oder eine Marke, die ins Projektland liefert."
   },
@@ -58,7 +59,7 @@
     "affiliateNote": "Ã–ffnet thehome.ro mit Interior-Design-Global-Affiliate-Tag."
   },
   "aiRender": {
-    "title": "KI-Raumstudio",
+    "title": "Virtual Staging {vendor}",
     "intro": "Ein Ablauf: Foto, Auto-Erkennung, Keep-Maske, Stil und Budget, fotoreales The-Home-Komposit mit Affiliate-Links.",
     "steps": {
       "upload": "Foto",
@@ -102,9 +103,9 @@
       "minimal": "Minimal"
     },
     "catalogHint": "{store}: {count} Teile im Budget Â· {spent} RON",
-    "generate": "Fotoreales Render erzeugen",
-    "generating": "The-Home-StÃ¼cke werden gesetztâ€¦",
-    "resultAlt": "KI-Render mit Kave Home",
+    "generate": "{vendor}-Produkte im Raum platzieren",
+    "generating": "KI richtet den Raum mit {vendor} ein...",
+    "resultAlt": "Eingerichteter {vendor}-Raum",
     "beforeLabel": "Dein Raum",
     "afterLabel": "Design mit The-Home-Hotspots",
     "hotspotHint": "Klicke ein Produkt im Bild fÃ¼r Details und Kauf.",
@@ -113,10 +114,11 @@
     "download": "PNG laden",
     "restart": "Neuer Raum",
     "order": "Bei Kave Home bestellen â†’",
-    "designProductsTitle": "Produkte in diesem Design (Kave Home)",
+    "designProductsTitle": "Produkte in diesem Design - {vendor}",
     "designProductsBody": "{count} empfohlene StÃ¼cke fÃ¼r Raum und Stil.",
     "estimatedPrice": "Richtpreis",
-    "viewOnTheHome": "Bei Kave Home ansehen",
+    "viewOnTheHome": "Bei {vendor} ansehen",
+    "viewOnVendor": "Bei {vendor} ansehen",
     "addSetToCart": "Komplettes Set in den Warenkorb",
     "setTotal": "Set-Summe",
     "setAdded": "Das Set wurde in den Warenkorb gelegt ({count} Teile).",

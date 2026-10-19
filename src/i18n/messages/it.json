@@ -15,6 +15,7 @@
     "shippingCountry": "Consegna",
     "vendor": "Fornitore",
     "mixMatch": "Tutti i fornitori (Mix & Match)",
+    "mixMatchShort": "Mix & Match",
     "exclusive": "Esclusivo {brand}",
     "vendorHint": "Scegli Mix & Match o un singolo brand che consegna a destinazione."
   },
@@ -58,7 +59,7 @@
     "affiliateNote": "Apre thehome.ro con il tag affiliato Interior Design Global."
   },
   "aiRender": {
-    "title": "Studio di render AI",
+    "title": "Virtual Staging {vendor}",
     "intro": "Un flusso: foto, rilevamento automatico, maschera di conservazione, stile e budget, composite Kave Home con link affiliato.",
     "steps": {
       "upload": "Foto",
@@ -102,9 +103,9 @@
       "minimal": "Minimal"
     },
     "catalogHint": "{store}: {count} pezzi nel budget Â· {spent} RON",
-    "generate": "Genera il render",
-    "generating": "Integrazione Kave Homeâ€¦",
-    "resultAlt": "Render AI Kave Home",
+    "generate": "Disponi i prodotti {vendor} nella stanza",
+    "generating": "L'IA arreda lo spazio con {vendor}...",
+    "resultAlt": "Stanza arredata {vendor}",
     "beforeLabel": "La tua stanza",
     "afterLabel": "Design con hotspot Kave Home",
     "hotspotHint": "Clicca un prodotto nellâ€™immagine per dettagli e acquisto.",
@@ -113,10 +114,11 @@
     "download": "Scarica PNG",
     "restart": "Nuova stanza",
     "order": "Ordina su Kave Home â†’",
-    "designProductsTitle": "Prodotti di questo design (Kave Home)",
+    "designProductsTitle": "Prodotti di questo design - {vendor}",
     "designProductsBody": "{count} pezzi consigliati per stanza e stile.",
     "estimatedPrice": "Prezzo stimato",
-    "viewOnTheHome": "Vedi su Kave Home",
+    "viewOnTheHome": "Vedi su {vendor}",
+    "viewOnVendor": "Vedi su {vendor}",
     "addSetToCart": "Aggiungi tutto il set al carrello",
     "setTotal": "Totale set",
     "setAdded": "Il set Ã¨ stato aggiunto al carrello ({count} pezzi).",

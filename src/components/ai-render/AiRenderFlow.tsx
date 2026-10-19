@@ -11,6 +11,7 @@ import {
 } from "@/lib/ai-render/designSets";
 import type { RoomKind } from "@/lib/partner-store/catalog";
 import { useProjectDestination } from "@/lib/partner-store/ProjectDestinationProvider";
+import { getActiveVendorName } from "@/lib/partner-store/vendors";
 import { VendorChipBar } from "@/components/layout/VendorSelect";
 import { DesignProductsSection } from "./DesignProductsSection";
 
@@ -25,14 +26,15 @@ const roomLabels: Record<RoomType, string> = {
 
 export function AiRenderFlow() {
   const t = useTranslations("aiRender");
+  const tCommerce = useTranslations("commerce");
   const locale = useLocale();
   const { catalog, vendorId, countryId } = useProjectDestination();
+  const vendorName = getActiveVendorName(vendorId, tCommerce("mixMatchShort"));
   const [isMounted, setIsMounted] = useState(false);
   const [roomType, setRoomType] = useState<RoomType>("bedroom");
   const [style, setStyle] = useState<InteriorStyle>("scandinavian");
   const [budget, setBudget] = useState<BudgetTier>("medium");
   const [sourceImage, setSourceImage] = useState<string | null>(null);
-  const [usedFallback, setUsedFallback] = useState(false);
   const [rendered, setRendered] = useState<{ key: string; imageUrl: string } | null>(
     null,
   );
@@ -64,7 +66,6 @@ export function AiRenderFlow() {
       return;
     }
     setError(null);
-    setUsedFallback(false);
     setRendered(null);
     const reader = new FileReader();
     reader.onload = () => {
@@ -79,7 +80,6 @@ export function AiRenderFlow() {
   function reset() {
     setSourceImage(null);
     setRendered(null);
-    setUsedFallback(false);
     setBusy(false);
     setError(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
@@ -101,7 +101,6 @@ export function AiRenderFlow() {
     if (!isMounted) return;
 
     setError(null);
-    setUsedFallback(false);
     setBusy(true);
 
     try {
@@ -138,11 +137,8 @@ export function AiRenderFlow() {
         key: activeKey,
         imageUrl: shouldFallback ? design.sceneUrl : imageFromApi,
       });
-      setUsedFallback(shouldFallback);
     } catch {
-      // Fallback sigur în caz de eroare de rețea sau limită de la Replicate (429)
       setRendered({ key: activeKey, imageUrl: design.sceneUrl });
-      setUsedFallback(true);
     } finally {
       setBusy(false);
     }
@@ -154,6 +150,17 @@ export function AiRenderFlow() {
 
   return (
     <div className="space-y-8">
+      <div>
+        <p className="text-xs uppercase tracking-[0.28em] text-brass">
+          {vendorName}
+        </p>
+        <h1 className="mt-3 font-serif text-5xl text-linen">
+          {t("title", { vendor: vendorName })}
+        </h1>
+        <p className="mt-4 max-w-2xl text-linen/65">
+          {t("intro", { vendor: vendorName })}
+        </p>
+      </div>
       <VendorChipBar />
       {/* Selector Tip Cameră */}
       <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/5 p-4">
@@ -170,7 +177,6 @@ export function AiRenderFlow() {
               type="button"
               onClick={() => {
                 setRoomType(type);
-                setUsedFallback(false);
                 setRendered(null);
               }}
               className={`rounded-full px-4 py-2 text-xs font-medium transition ${
@@ -193,7 +199,6 @@ export function AiRenderFlow() {
             type="button"
             onClick={() => {
               setStyle(item);
-              setUsedFallback(false);
               setRendered(null);
             }}
             className={`rounded-full px-4 py-2 text-sm ${
@@ -219,7 +224,6 @@ export function AiRenderFlow() {
               type="button"
               onClick={() => {
                 setBudget(tier);
-                setUsedFallback(false);
                 setRendered(null);
               }}
               className={`rounded-full px-4 py-2 text-sm ${
@@ -234,12 +238,6 @@ export function AiRenderFlow() {
         </div>
       </div>
 
-      {usedFallback ? (
-        <p className="rounded-2xl border border-brass/30 bg-brass/10 px-4 py-3 text-sm text-linen/85">
-          {t("fallbackNotice")} (Modul optimizat de siguranță activat din cauza limitelor API externe).
-        </p>
-      ) : null}
-
       {error ? (
         <p className="rounded-2xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-200">
           {error}
@@ -250,7 +248,9 @@ export function AiRenderFlow() {
       <div className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4">
         <div>
           <p className="font-serif text-lg text-linen">{t("uploadTitle")}</p>
-          <p className="mt-1 text-sm text-linen/70">{t("uploadBody")}</p>
+          <p className="mt-1 text-sm text-linen/70">
+            {t("uploadBody", { vendor: vendorName })}
+          </p>
         </div>
         <label htmlFor="room-photo-upload" className="sr-only">
           {t("uploadCta")}
@@ -281,26 +281,34 @@ export function AiRenderFlow() {
           disabled={!isMounted || busy}
           className="rounded-full bg-brass px-8 py-3 text-sm font-medium text-ink disabled:opacity-40"
         >
-          {busy ? t("generating") : t("generate")}
+          {busy
+            ? t("generating", { vendor: vendorName })
+            : t("generate", { vendor: vendorName })}
         </button>
       </form>
 
       <div className="space-y-8">
-        <section>
-          <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-brass">
-            {rendered ? t("afterLabel") : t("beforeLabel")}
-          </p>
-          <div className="overflow-hidden rounded-[28px] border border-white/10 bg-[#1c1814]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={displayImage}
-              alt={t("resultAlt")}
-              className="mx-auto block h-auto max-h-[72vh] w-full object-contain"
-            />
-          </div>
+        <section className="relative overflow-hidden rounded-[28px] border border-white/10 bg-[#1c1814]">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={displayImage}
+            alt=""
+            className="mx-auto block h-auto min-h-[280px] w-full max-h-[80vh] object-contain"
+          />
+          {busy ? (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/55 px-6 text-center">
+              <p className="max-w-md font-serif text-xl text-linen sm:text-2xl">
+                {t("generating", { vendor: vendorName })}
+              </p>
+            </div>
+          ) : null}
         </section>
 
-        <DesignProductsSection products={displayProducts} locale={locale} />
+        <DesignProductsSection
+          products={displayProducts}
+          locale={locale}
+          vendorName={vendorName}
+        />
       </div>
     </div>
   );

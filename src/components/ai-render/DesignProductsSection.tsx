@@ -16,25 +16,15 @@ import { getVendor } from "@/lib/partner-store/vendors";
 type DesignProductsSectionProps = {
   products: PartnerProduct[];
   locale: string;
+  vendorName: string;
 };
 
 export function DesignProductsSection({
   products,
   locale,
+  vendorName,
 }: DesignProductsSectionProps) {
   const t = useTranslations("aiRender");
-  const tCommerce = useTranslations("commerce");
-  const vendorLabel = (() => {
-    const names = Array.from(
-      new Set(
-        products
-          .map((product) => getVendor(product.vendorId)?.brandName)
-          .filter((name): name is string => Boolean(name)),
-      ),
-    );
-    if (names.length === 1) return names[0];
-    return tCommerce("mixMatch");
-  })();
   const isMounted = useIsMounted();
   const [added, setAdded] = useState(false);
   const total = products.reduce((sum, product) => sum + product.price, 0);
@@ -60,13 +50,16 @@ export function DesignProductsSection({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-[10px] uppercase tracking-[0.22em] text-brass">
-            {vendorLabel}
+            {vendorName}
           </p>
           <h2 className="mt-2 font-serif text-3xl text-linen sm:text-4xl">
-            {t("designProductsTitle")}
+            {t("designProductsTitle", { vendor: vendorName })}
           </h2>
           <p className="mt-2 text-sm text-linen/60">
-            {t("designProductsBody", { count: products.length })}
+            {t("designProductsBody", {
+              count: products.length,
+              vendor: vendorName,
+            })}
           </p>
         </div>
         <p className="text-sm text-linen/70">
@@ -109,7 +102,10 @@ export function DesignProductsSection({
                 rel="sponsored noopener noreferrer"
                 className="mt-4 inline-flex justify-center rounded-full border border-brass/50 px-4 py-2.5 text-sm font-medium text-brass hover:bg-brass hover:text-ink"
               >
-                {t("viewOnTheHome")}
+                {t("viewOnVendor", {
+                  vendor:
+                    getVendor(product.vendorId)?.brandName ?? vendorName,
+                })}
               </a>
             </div>
           </li>

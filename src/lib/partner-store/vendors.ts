@@ -179,6 +179,14 @@ export function getVendor(id: string | null | undefined) {
   return furnitureVendors.find((vendor) => vendor.id === id);
 }
 
+export function getActiveVendorName(
+  vendorId: VendorId,
+  mixLabel = "Mix & Match",
+) {
+  if (vendorId === MIX_VENDOR_ID) return mixLabel;
+  return getVendor(vendorId)?.brandName ?? mixLabel;
+}
+
 export function vendorShipsTo(
   vendor: FurnitureVendor,
   country: ShippingCountry,

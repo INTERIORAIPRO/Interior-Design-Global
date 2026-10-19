@@ -15,6 +15,7 @@
     "shippingCountry": "Ship to",
     "vendor": "Vendor",
     "mixMatch": "All vendors (Mix & Match)",
+    "mixMatchShort": "Mix & Match",
     "exclusive": "Exclusive {brand}",
     "vendorHint": "Choose Mix & Match or a single brand that ships to the project destination."
   },
@@ -58,8 +59,8 @@
     "affiliateNote": "Opens thehome.ro with an Interior Design Global affiliate tag."
   },
   "aiRender": {
-    "title": "Kave Home virtual staging",
-    "intro": "Upload a photo of your room (empty or furnished). We keep the walls and camera angle, replace the old furniture with real Kave Home pieces, and show prices with buy links.",
+    "title": "Virtual Staging {vendor}",
+    "intro": "Upload a photo of your room (empty or furnished). We keep the walls and camera angle, replace the old furniture with real {vendor} pieces, and show prices with buy links.",
     "steps": {
       "upload": "Photo",
       "analyze": "Auto detect",
@@ -68,7 +69,7 @@
       "result": "Render"
     },
     "uploadTitle": "Upload a photo of your room",
-    "uploadBody": "Empty or already furnished. Your photo is the structural guide; furniture is restaged from Kave Home catalog.",
+    "uploadBody": "Empty or already furnished. Your photo is the structural guide; furniture is restaged from the {vendor} catalog.",
     "uploadCta": "Upload room photo",
     "sampleCta": "Try a sample room",
     "analyzing": "Reading perspective and scale from the photoâ€¦",
@@ -102,9 +103,9 @@
       "minimal": "Minimal"
     },
     "catalogHint": "{store}: {count} pieces in budget Â· {spent} RON",
-    "generate": "Place Kave Home products in the room",
-    "generating": "Overlaying Kave Home pieces on your photoâ€¦",
-    "resultAlt": "Room with Kave Home product overlay",
+    "generate": "Place {vendor} products in the room",
+    "generating": "AI is furnishing the room with {vendor} pieces...",
+    "resultAlt": "Furnished {vendor} room",
     "beforeLabel": "Your room",
     "afterLabel": "Design with Kave Home hotspots",
     "hotspotHint": "Click a product in the image for details and purchase.",
@@ -113,10 +114,11 @@
     "download": "Download PNG",
     "restart": "New room",
     "order": "Order on Kave Home â†’",
-    "designProductsTitle": "Products in this design - Kave Home",
-    "designProductsBody": "{count} Kave Home pieces placed in this room, with price and buy link.",
+    "designProductsTitle": "Products in this design - {vendor}",
+    "designProductsBody": "{count} {vendor} pieces placed in this room, with price and buy link.",
     "estimatedPrice": "Estimated price",
-    "viewOnTheHome": "View on Kave Home",
+    "viewOnTheHome": "View on {vendor}",
+    "viewOnVendor": "View on {vendor}",
     "addSetToCart": "Add the full set to cart",
     "setTotal": "Set total",
     "setAdded": "The set was added to your cart ({count} pieces).",

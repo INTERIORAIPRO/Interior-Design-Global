@@ -15,6 +15,7 @@
     "shippingCountry": "Livrare",
     "vendor": "Furnizor",
     "mixMatch": "Toți furnizorii (Mix & Match)",
+    "mixMatchShort": "Mix & Match",
     "exclusive": "Exclusiv {brand}",
     "vendorHint": "Alege Mix & Match sau un singur brand care livrează la destinația proiectului."
   },
@@ -58,8 +59,8 @@
     "affiliateNote": "Deschide thehome.ro cu tag-ul de afiliere Interior Design Global."
   },
   "aiRender": {
-    "title": "Virtual Staging Kave Home",
-    "intro": "Încarcă o poză cu camera ta (goală sau mobilată). Păstrăm forma, pereții și unghiul, înlocuim mobilierul vechi cu piese reale Kave Home și îți arătăm prețurile cu link de cumpărare.",
+    "title": "Virtual Staging {vendor}",
+    "intro": "Încarcă o poză cu camera ta (goală sau mobilată). Păstrăm forma, pereții și unghiul, înlocuim mobilierul vechi cu piese reale {vendor} și îți arătăm prețurile cu link de cumpărare.",
     "steps": {
       "upload": "Poză",
       "analyze": "Detectare",
@@ -68,7 +69,7 @@
       "result": "Randare"
     },
     "uploadTitle": "Încarcă fotografia camerei tale",
-    "uploadBody": "Goală sau deja mobilată. Folosim poza ta ca referință de structură și restilăm mobilierul cu catalogul Kave Home.",
+    "uploadBody": "Goală sau deja mobilată. Folosim poza ta ca referință de structură și restilăm mobilierul cu catalogul {vendor}.",
     "uploadCta": "Încarcă poza camerei",
     "sampleCta": "Încearcă o cameră exemplu",
     "analyzing": "Citesc perspectiva și scara din fotografie…",
@@ -105,9 +106,9 @@
       "boho": "Boho"
     },
     "catalogHint": "{store}: {count} piese în buget · {spent} RON",
-    "generate": "Așază produsele Kave Home în cameră",
-    "generating": "Suprapun piesele Kave Home pe fotografia ta…",
-    "resultAlt": "Cameră cu overlay Kave Home",
+    "generate": "Așază produsele {vendor} în cameră",
+    "generating": "AI-ul generează spațiul cu mobilier {vendor}...",
+    "resultAlt": "Cameră mobilată {vendor}",
     "beforeLabel": "Camera ta",
     "afterLabel": "Design cu hotspot-uri Kave Home",
     "hotspotHint": "Click pe un produs din imagine pentru detalii și cumpărare.",
@@ -116,10 +117,11 @@
     "download": "Descarcă PNG",
     "restart": "Cameră nouă",
     "order": "Comandă pe Kave Home →",
-    "designProductsTitle": "Produsele din acest design - Kave Home",
-    "designProductsBody": "{count} piese Kave Home plasate în această cameră, cu preț și link de cumpărare.",
+    "designProductsTitle": "Produsele din acest design - {vendor}",
+    "designProductsBody": "{count} piese {vendor} plasate în această cameră, cu preț și link de cumpărare.",
     "estimatedPrice": "Preț estimativ",
-    "viewOnTheHome": "Vezi pe Kave Home",
+    "viewOnTheHome": "Vezi pe {vendor}",
+    "viewOnVendor": "Vezi pe {vendor}",
     "addSetToCart": "Adaugă tot setul în coș",
     "setTotal": "Total set",
     "setAdded": "Setul a fost adăugat în coș ({count} piese).",

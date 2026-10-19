@@ -28,6 +28,11 @@ export function DesignProductsSection({
   const isMounted = useIsMounted();
   const [added, setAdded] = useState(false);
   const total = products.reduce((sum, product) => sum + product.price, 0);
+  const totalCurrency = products[0]?.currency ?? "EUR";
+  const formattedTotal = formatProductPrice(
+    { price: total, currency: totalCurrency },
+    locale,
+  );
 
   function addSet() {
     if (!products.length) return;
@@ -67,7 +72,7 @@ export function DesignProductsSection({
         <p className="text-sm text-linen/70">
           {t("setTotal")}{" "}
           <span className="font-semibold text-brass">
-            {isMounted ? `${total.toLocaleString(locale)} RON` : `${total} RON`}
+            {isMounted ? formattedTotal : `${total} ${totalCurrency}`}
           </span>
         </p>
       </div>
@@ -80,7 +85,11 @@ export function DesignProductsSection({
           >
             <div className="aspect-[4/3] overflow-hidden bg-white/[0.06]">
               <CatalogPhoto
-                src={product.image || product.image2d}
+                src={
+                  product.image ||
+                  product.imageUrl ||
+                  product.image2d
+                }
                 alt={product.name}
                 fallbackColor={product.accentColor}
                 className="h-full w-full object-cover"
@@ -105,11 +114,8 @@ export function DesignProductsSection({
                 className="mt-4 inline-flex justify-center rounded-full border border-brass/50 px-4 py-2.5 text-sm font-medium text-brass hover:bg-brass hover:text-ink"
               >
                 {locale.startsWith("ro")
-                  ? `Vezi pe ${getVendor(product.vendorId)?.brandName ?? vendorName}`
-                  : t("viewOnVendor", {
-                      vendor:
-                        getVendor(product.vendorId)?.brandName ?? vendorName,
-                    })}
+                  ? `Vezi pe ${vendorName}`
+                  : t("viewOnVendor", { vendor: vendorName })}
               </a>
             </div>
           </li>

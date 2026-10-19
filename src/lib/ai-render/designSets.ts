@@ -169,18 +169,81 @@ function productsByIds(ids: string[], pool: PartnerProduct[]) {
     .filter((product): product is PartnerProduct => Boolean(product));
 }
 
+function hasStyle(product: PartnerProduct, style: InteriorStyle) {
+  return product.styles?.includes(style) || product.style?.includes(style);
+}
+
+function diversify(products: PartnerProduct[], limit = 5) {
+  const unique: PartnerProduct[] = [];
+  const usedCategories = new Set<string>();
+  for (const product of products) {
+    if (usedCategories.has(product.category)) continue;
+    unique.push(product);
+    usedCategories.add(product.category);
+    if (unique.length >= limit) return unique;
+  }
+  for (const product of products) {
+    if (unique.some((item) => item.id === product.id)) continue;
+    unique.push(product);
+    if (unique.length >= limit) break;
+  }
+  return unique;
+}
+
 function pickForRoom(
   pool: PartnerProduct[],
   roomType: RoomKind,
   style: InteriorStyle,
+  minCount = 4,
 ) {
   const forRoom = pool.filter((product) => product.rooms?.includes(roomType));
-  const styled = forRoom.filter(
-    (product) =>
-      product.styles?.includes(style) || product.style?.includes(style),
-  );
-  const source = styled.length > 0 ? styled : forRoom.length > 0 ? forRoom : pool;
-  return source.slice(0, 5);
+  const styled = forRoom.filter((product) => hasStyle(product, style));
+  const primary = styled.length > 0 ? styled : forRoom;
+  const merged = [...primary];
+  const seen = new Set(merged.map((product) => product.id));
+  if (merged.length < minCount) {
+    for (const product of pool) {
+      if (seen.has(product.id)) continue;
+      merged.push(product);
+      seen.add(product.id);
+      if (merged.length >= minCount) break;
+    }
+  }
+  return diversify(merged, Math.max(minCount, 4));
+}
+
+export function getRecommendedProducts(
+  roomType: RoomKind,
+  style: InteriorStyle,
+  budget: BudgetTier,
+  pool: PartnerProduct[],
+  vendorId = "mix",
+) {
+  const vendorPool =
+    vendorId === "mix"
+      ? pool
+      : pool.filter((product) => product.vendorId === vendorId);
+  const source = vendorPool.length > 0 ? vendorPool : pool;
+  const packKey = `${roomType}:${style}`;
+  const ids =
+    productIdsByRoomStyle[packKey] ??
+    productIdsByRoomStyle[`${roomType}:scandinavian`] ??
+    [];
+  const fromPack =
+    vendorId === "mix"
+      ? mixMatchPack(ids, source, roomType)
+      : productsByIds(ids, source).filter((product) =>
+          product.rooms?.includes(roomType),
+        );
+  const products =
+    fromPack.length >= 3
+      ? fromPack
+      : pickForRoom(source, roomType, style, 4);
+  const withinBudget = filterByBudget(products, budget);
+  if (withinBudget.length >= 3 || withinBudget.length === products.length) {
+    return withinBudget;
+  }
+  return products.slice(0, 4);
 }
 
 function mixMatchPack(
@@ -238,31 +301,14 @@ export function getDesignScene(
   vendorId = "mix",
   countryId = "RO",
 ): DesignScene {
-  const packKey = `${roomType}:${style}`;
-  const ids =
-    productIdsByRoomStyle[packKey] ??
-    productIdsByRoomStyle[`${roomType}:scandinavian`] ??
-    [];
   const roomScenes = sceneByRoom[roomType];
   const sceneUrl =
     roomScenes[style] ?? roomScenes.default ?? roomScenes.scandinavian;
 
-  const mixed =
-    vendorId === "mix"
-      ? mixMatchPack(ids, pool, roomType)
-      : productsByIds(ids, pool).filter((product) =>
-          product.rooms?.includes(roomType),
-        );
-  const products =
-    mixed.length > 0 ? mixed : pickForRoom(pool, roomType, style);
-
   return {
     key: sceneKey(roomType, style, budget, vendorId, countryId),
     sceneUrl,
-    products: filterByBudget(
-      products.filter((product) => product.rooms?.includes(roomType)),
-      budget,
-    ),
+    products: getRecommendedProducts(roomType, style, budget, pool, vendorId),
   };
 }
 

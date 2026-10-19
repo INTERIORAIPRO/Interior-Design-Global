@@ -45,6 +45,7 @@ export type PartnerProduct = {
   category: ProductCategory;
   image2d: string;
   image?: string;
+  imageUrl?: string;
   accentColor: string;
   styles: InteriorStyle[];
   dimensions: ProductDimensions;

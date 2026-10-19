@@ -73,7 +73,7 @@ export function AiRenderFlow() {
       ? rendered.imageUrl
       : uploadedImage ?? previewUrl ?? design.sceneUrl;
   const displayImage = imageFailed ? design.sceneUrl : heroImage;
-  const displayProducts = design.products;
+  const recommendedProducts = design.products;
 
   useEffect(() => {
     setImageFailed(false);
@@ -394,7 +394,7 @@ export function AiRenderFlow() {
         </section>
 
         <DesignProductsSection
-          products={displayProducts}
+          products={recommendedProducts}
           locale={locale}
           vendorName={vendorName}
         />

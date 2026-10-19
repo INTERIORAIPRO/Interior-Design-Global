@@ -135,6 +135,46 @@
     "view": "Bei Kave Home ansehen",
     "total": "Summe",
     "clear": "Warenkorb leeren"
+  },
+  "legal": {
+    "affiliateDisclosure": "Interior Design Global nimmt an Partnerprogrammen teil. Für Käufe über unsere Links können wir eine Provision erhalten, ohne Mehrkosten für Sie.",
+    "privacy": "Datenschutz",
+    "terms": "Nutzungsbedingungen",
+    "privacyTitle": "Datenschutz und DSGVO",
+    "termsTitle": "Nutzungsbedingungen",
+    "updated": "Zuletzt aktualisiert: 19. Oktober 2026",
+    "privacySections": [
+      {
+        "title": "1. Verantwortlicher",
+        "body": "Interior Design Global ist Verantwortlicher für personenbezogene Daten auf dieser Plattform. DSGVO-Anfragen: privacy@interiordesignglobal.com."
+      },
+      {
+        "title": "2. Welche Daten wir verarbeiten",
+        "body": "Wir können Sprache, Lieferland, Anbieterwahl, hochgeladene Raumfotos für KI-Renderings, den lokal gespeicherten Warenkorb und übliche technische Daten verarbeiten."
+      },
+      {
+        "title": "3. Zweck und Rechtsgrundlage",
+        "body": "Die Daten dienen dem 3D-Studio, KI-Rendering und Affiliate-Links (Vertragserfüllung), der Verbesserung der Plattform (berechtigtes Interesse) und gesetzlichen Pflichten. Wir verkaufen Ihre Daten nicht."
+      },
+      {
+        "title": "4. Ihre Rechte",
+        "body": "Sie haben Rechte auf Auskunft, Berichtigung, Löschung, Einschränkung, Widerspruch und Datenübertragbarkeit sowie das Recht, eine Aufsichtsbehörde anzurufen."
+      }
+    ],
+    "termsSections": [
+      {
+        "title": "1. Annahme",
+        "body": "Mit der Nutzung von Interior Design Global akzeptieren Sie diese Bedingungen. Die Plattform bietet 3D-Werkzeuge, KI-Rendering und Links zu Partner-Shops. Wir sind nicht der Verkäufer der Produkte, sofern nicht anders angegeben."
+      },
+      {
+        "title": "2. 3D-Studio und KI-Rendering",
+        "body": "3D-Modelle und KI-Bilder sind Vorschauen. Prüfen Sie Angaben stets auf der Partnerseite. Laden Sie nur Fotos hoch, die Sie nutzen dürfen."
+      },
+      {
+        "title": "3. Affiliate-Links",
+        "body": "Partnerlinks können Affiliate-Links sein. Bei einer Bestellung können wir eine Provision erhalten, ohne Mehrkosten für Sie."
+      }
+    ]
   }
 }
 

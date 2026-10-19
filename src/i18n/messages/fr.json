@@ -135,6 +135,46 @@
     "view": "Voir sur Kave Home",
     "total": "Total",
     "clear": "Vider le panier"
+  },
+  "legal": {
+    "affiliateDisclosure": "Interior Design Global participe à des programmes d'affiliation. Nous pouvons percevoir une commission sur les achats effectués via nos liens, sans frais supplémentaires pour vous.",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions générales",
+    "privacyTitle": "Politique de confidentialité et RGPD",
+    "termsTitle": "Conditions générales",
+    "updated": "Dernière mise à jour : 19 octobre 2026",
+    "privacySections": [
+      {
+        "title": "1. Responsable du traitement",
+        "body": "Interior Design Global est le responsable du traitement des données personnelles de cette plateforme. Pour toute demande RGPD : privacy@interiordesignglobal.com."
+      },
+      {
+        "title": "2. Données traitées",
+        "body": "Nous pouvons traiter la langue, le pays de livraison, les préférences de fournisseur, les photos de pièce que vous importez pour le rendu IA, le contenu du panier (stocké localement) et des données techniques usuelles."
+      },
+      {
+        "title": "3. Finalité et base légale",
+        "body": "Les données servent à fournir le studio 3D, le rendu IA et les liens d'affiliation (exécution du service), à améliorer la plateforme (intérêt légitime) et à respecter la loi. Nous ne vendons pas vos données."
+      },
+      {
+        "title": "4. Vos droits",
+        "body": "Vous disposez des droits d'accès, de rectification, d'effacement, de limitation, d'opposition et de portabilité, ainsi que du droit d'introduire une réclamation auprès d'une autorité de contrôle."
+      }
+    ],
+    "termsSections": [
+      {
+        "title": "1. Acceptation",
+        "body": "En utilisant Interior Design Global, vous acceptez ces conditions. La plateforme propose des outils 3D, un rendu IA et des liens vers des boutiques partenaires. Nous ne sommes pas le vendeur des produits, sauf indication contraire."
+      },
+      {
+        "title": "2. Studio 3D et rendu IA",
+        "body": "Les modèles 3D et images IA sont des aperçus. Vérifiez toujours les caractéristiques sur le site partenaire avant de commander. Importez uniquement des photos que vous avez le droit d'utiliser."
+      },
+      {
+        "title": "3. Affiliation",
+        "body": "Les liens partenaires peuvent être affiliés. Nous pouvons percevoir une commission si vous commandez, sans frais supplémentaires pour vous."
+      }
+    ]
   }
 }
 

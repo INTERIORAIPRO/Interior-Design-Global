@@ -5,6 +5,7 @@ import { getMessages, setRequestLocale } from "next-intl/server";
 import { Cormorant_Garamond, Outfit } from "next/font/google";
 import { routing } from "@/i18n/routing";
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { SiteFooter } from "@/components/layout/SiteFooter";
 import { ProjectDestinationProvider } from "@/lib/partner-store/ProjectDestinationProvider";
 import "../globals.css";
 
@@ -58,6 +59,7 @@ export default async function LocaleLayout({
           <ProjectDestinationProvider>
             <SiteHeader />
             {children}
+            <SiteFooter />
           </ProjectDestinationProvider>
         </NextIntlClientProvider>
       </body>

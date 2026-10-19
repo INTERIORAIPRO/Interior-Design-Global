@@ -135,6 +135,46 @@
     "view": "Ver en Kave Home",
     "total": "Total",
     "clear": "Vaciar cesta"
+  },
+  "legal": {
+    "affiliateDisclosure": "Interior Design Global participa en programas de afiliación. Podemos recibir una comisión por las compras realizadas a través de nuestros enlaces, sin coste adicional para usted.",
+    "privacy": "Política de privacidad",
+    "terms": "Términos y condiciones",
+    "privacyTitle": "Política de privacidad y RGPD",
+    "termsTitle": "Términos y condiciones",
+    "updated": "Última actualización: 19 de octubre de 2026",
+    "privacySections": [
+      {
+        "title": "1. Responsable del tratamiento",
+        "body": "Interior Design Global es el responsable de los datos personales de esta plataforma. Solicitudes RGPD: privacy@interiordesignglobal.com."
+      },
+      {
+        "title": "2. Datos que tratamos",
+        "body": "Podemos tratar idioma, país de envío, preferencia de proveedor, fotos de estancia que suba para el render IA, el contenido de la cesta (almacenado en el navegador) y datos técnicos habituales."
+      },
+      {
+        "title": "3. Finalidad y base jurídica",
+        "body": "Los datos sirven para el estudio 3D, el render IA y los enlaces de afiliado (ejecución del servicio), mejorar la plataforma (interés legítimo) y cumplir la ley. No vendemos sus datos."
+      },
+      {
+        "title": "4. Sus derechos",
+        "body": "Tiene derecho de acceso, rectificación, supresión, limitación, oposición y portabilidad, y a presentar una reclamación ante una autoridad de control."
+      }
+    ],
+    "termsSections": [
+      {
+        "title": "1. Aceptación",
+        "body": "Al usar Interior Design Global acepta estos términos. La plataforma ofrece herramientas 3D, render IA y enlaces a tiendas asociadas. No somos el vendedor de los productos, salvo que se indique lo contrario."
+      },
+      {
+        "title": "2. Estudio 3D y render IA",
+        "body": "Los modelos 3D y las imágenes IA son vistas previas. Compruebe siempre las especificaciones en el sitio del partner. Suba solo fotos que tenga derecho a usar."
+      },
+      {
+        "title": "3. Afiliación",
+        "body": "Los enlaces de partners pueden ser de afiliado. Podemos recibir una comisión si realiza un pedido, sin coste extra para usted."
+      }
+    ]
   }
 }
 

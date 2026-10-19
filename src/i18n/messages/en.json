@@ -135,6 +135,74 @@
     "view": "View on Kave Home",
     "total": "Total",
     "clear": "Clear cart"
+  },
+  "legal": {
+    "affiliateDisclosure": "Interior Design Global participates in affiliate programs. We may earn a commission on purchases made through our links, at no extra cost to you.",
+    "privacy": "Privacy policy",
+    "terms": "Terms and conditions",
+    "privacyTitle": "Privacy policy and GDPR",
+    "termsTitle": "Terms and conditions",
+    "updated": "Last updated: 19 October 2026",
+    "privacySections": [
+      {
+        "title": "1. Data controller",
+        "body": "Interior Design Global is the controller of personal data processed through this platform. For GDPR requests, email privacy@interiordesignglobal.com."
+      },
+      {
+        "title": "2. Data we process",
+        "body": "We may process: selected language and shipping country, vendor preferences, room photos you upload for AI rendering, design-cart contents (stored locally in your browser), and standard technical data (IP address, browser type) needed to run the site."
+      },
+      {
+        "title": "3. Purpose and legal basis",
+        "body": "We process data to provide the 3D studio, AI rendering, product recommendations and affiliate links (performance of the service), to improve the platform (legitimate interest), and where required to meet legal obligations. We do not sell your data."
+      },
+      {
+        "title": "4. Photos and generated content",
+        "body": "Uploaded images are used only to generate design previews. We will not use them in advertising without your consent. AI outputs are visualisations, not photographs of the goods a partner will ship."
+      },
+      {
+        "title": "5. Cookies and local storage",
+        "body": "We use browser local storage for the cart, shipping country and selected vendor. These are necessary for the service. We do not use third-party advertising cookies without further notice."
+      },
+      {
+        "title": "6. Your rights",
+        "body": "You have the rights of access, rectification, erasure, restriction, objection and portability, and the right to lodge a complaint with a supervisory authority. To exercise your rights, contact us at the email above."
+      },
+      {
+        "title": "7. Retention and transfers",
+        "body": "We keep data only as long as needed for the purposes described. Infrastructure providers (hosting or AI generation) may process data outside the EEA with appropriate GDPR safeguards."
+      }
+    ],
+    "termsSections": [
+      {
+        "title": "1. Acceptance",
+        "body": "By using Interior Design Global you accept these terms. The platform provides 3D design tools, AI rendering and links to partner stores. We are not the seller of listed products unless we say otherwise."
+      },
+      {
+        "title": "2. 3D studio",
+        "body": "3D models are indicative stand-ins, not exact CAD replicas. Dimensions, materials and colours may differ from the real product. Always check the partner site before ordering."
+      },
+      {
+        "title": "3. AI rendering",
+        "body": "Generated images are artistic previews. We do not guarantee that a render matches delivered furniture. Upload only photos you have the right to use. Do not use the service for illegal content or copyright infringement."
+      },
+      {
+        "title": "4. Affiliation and prices",
+        "body": "Links to Kave Home, IKEA and other partners may be affiliate links. We may earn a commission if you order, at no extra cost to you. Prices are indicative and may change on the merchant site."
+      },
+      {
+        "title": "5. Cart and availability",
+        "body": "The design cart is a local grouping of pieces, not a binding order to Interior Design Global. Availability, shipping, returns and warranty are governed by the partner store you open."
+      },
+      {
+        "title": "6. Liability",
+        "body": "The service is provided as is. We are not liable for purchase decisions based solely on AI renders or the 3D scene, nor for outages of third-party APIs (including image generation)."
+      },
+      {
+        "title": "7. Changes",
+        "body": "We may update these terms. The version on this page applies. Continued use after a change constitutes acceptance."
+      }
+    ]
   }
 }
 

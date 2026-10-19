@@ -138,5 +138,73 @@
     "view": "Vezi pe Kave Home",
     "total": "Total",
     "clear": "Golește coșul"
+  },
+  "legal": {
+    "affiliateDisclosure": "Interior Design Global participă în programe de afiliere. Putem primi un comision pentru achizițiile efectuate prin link-urile noastre, fără niciun cost suplimentar pentru dumneavoastră.",
+    "privacy": "Politica de confidențialitate",
+    "terms": "Termeni și condiții",
+    "privacyTitle": "Politica de confidențialitate și GDPR",
+    "termsTitle": "Termeni și condiții",
+    "updated": "Ultima actualizare: 19 octombrie 2026",
+    "privacySections": [
+      {
+        "title": "1. Operatorul de date",
+        "body": "Interior Design Global este operatorul datelor cu caracter personal prelucrate prin această platformă. Pentru cereri GDPR ne puteți scrie la privacy@interiordesignglobal.com."
+      },
+      {
+        "title": "2. Date pe care le prelucrăm",
+        "body": "Putem prelucra: limba și țara de livrare alese, preferințele de furnizor, fotografiile de cameră pe care le încărcați pentru randare AI, conținutul coșului de design (salvat local în browser) și date tehnice uzuale (adresă IP, tip de browser) necesare funcționării site-ului."
+      },
+      {
+        "title": "3. Scop și temei legal",
+        "body": "Prelucrăm datele pentru a furniza studio-ul 3D, randarea AI, recomandările de produse și link-urile de afiliere (executarea serviciului), pentru a îmbunătăți platforma (interes legitim) și, acolo unde este cazul, pentru a respecta obligații legale. Nu vindem datele dumneavoastră către terți."
+      },
+      {
+        "title": "4. Fotografii și conținut generat",
+        "body": "Imaginile încărcate sunt folosite doar pentru a genera previzualizări de design. Nu le folosim în campanii publicitare fără acordul dumneavoastră. Rezultatele AI sunt previzualizări, nu fotografii ale produselor livrate de parteneri."
+      },
+      {
+        "title": "5. Cookie-uri și stocare locală",
+        "body": "Folosim stocare locală în browser pentru coș, țara de livrare și furnizorul selectat. Acestea sunt necesare pentru funcționarea serviciului. Nu folosim cookie-uri de publicitate terță fără informare suplimentară."
+      },
+      {
+        "title": "6. Drepturile dumneavoastră",
+        "body": "Aveți dreptul de acces, rectificare, ștergere, restricționare, opoziție și portabilitate, precum și dreptul de a depune o plângere la Autoritatea Națională de Supraveghere a Prelucrării Datelor cu Caracter Personal (ANSPDCP). Pentru exercitarea drepturilor, scrieți-ne la adresa de mai sus."
+      },
+      {
+        "title": "7. Păstrare și transferuri",
+        "body": "Păstrăm datele doar cât este necesar pentru scopurile descrise. Furnizorii de infrastructură (de exemplu servicii de găzduire sau generare AI) pot prelucra date în afara SEE, cu garanții adecvate conform GDPR."
+      }
+    ],
+    "termsSections": [
+      {
+        "title": "1. Acceptarea termenilor",
+        "body": "Prin utilizarea Interior Design Global acceptați acești termeni. Platforma oferă instrumente de proiectare 3D și randare AI, plus link-uri către magazine partenere. Nu suntem vânzătorul produselor afișate, cu excepția cazului în care se indică altfel."
+      },
+      {
+        "title": "2. Studio 3D",
+        "body": "Modelele 3D sunt reprezentări indicative, nu replici CAD exacte. Dimensiunile, materialele și culorile pot diferi față de produsul real. Verificați întotdeauna specificațiile pe site-ul partenerului înainte de comandă."
+      },
+      {
+        "title": "3. Randare AI",
+        "body": "Imaginile generate sunt previzualizări artistice. Nu garantăm că scena redată corespunde identic mobilierului livrat. Încărcați doar fotografii pe care aveți dreptul să le folosiți. Nu folosiți serviciul pentru conținut ilegal sau care încalcă drepturi de autor."
+      },
+      {
+        "title": "4. Afiliere și prețuri",
+        "body": "Link-urile către Kave Home, IKEA și ceilalți parteneri pot fi de afiliere. Putem primi un comision dacă plasați o comandă, fără cost suplimentar pentru dumneavoastră. Prețurile sunt informative și pot fi actualizate de comerciant."
+      },
+      {
+        "title": "5. Cont, coș și disponibilitate",
+        "body": "Coșul de design este un grupaj local de piese, nu o comandă fermă către Interior Design Global. Disponibilitatea, livrarea, returul și garanția sunt guvernate de magazinul partener pe care îl deschideți."
+      },
+      {
+        "title": "6. Limitarea răspunderii",
+        "body": "Serviciul este oferit ca atare. Nu răspundem pentru decizii de cumpărare bazate exclusiv pe randări AI sau pe scena 3D, nici pentru întreruperi ale API-urilor terțe (inclusiv generarea de imagini)."
+      },
+      {
+        "title": "7. Modificări",
+        "body": "Putem actualiza acești termeni. Versiunea publicată pe această pagină este cea aplicabilă. Continuarea utilizării după modificare constituie acceptare."
+      }
+    ]
   }
 }

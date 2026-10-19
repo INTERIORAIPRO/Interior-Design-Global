@@ -11,6 +11,13 @@
     "vendors": "Partners",
     "returns": "Devoluciones"
   },
+  "commerce": {
+    "shippingCountry": "Envío",
+    "vendor": "Proveedor",
+    "mixMatch": "Todos los proveedores (Mix & Match)",
+    "exclusive": "Exclusivo {brand}",
+    "vendorHint": "Elige Mix & Match o una sola marca que envíe al destino del proyecto."
+  },
   "welcome": {
     "kicker": "Interiores globales, un solo estudio",
     "title": "DiseÃ±a estancias. Elige piezas. EnvÃ­a al mundo.",

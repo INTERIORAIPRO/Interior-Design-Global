@@ -9,7 +9,14 @@
     "cart": "Warenkorb",
     "studio": "3D-Studio",
     "vendors": "Partner",
-    "returns": "RÃ¼cksendungen"
+    "returns": "Rücksendungen"
+  },
+  "commerce": {
+    "shippingCountry": "Lieferung",
+    "vendor": "Anbieter",
+    "mixMatch": "Alle Anbieter (Mix & Match)",
+    "exclusive": "Exklusiv {brand}",
+    "vendorHint": "Wählen Sie Mix & Match oder eine Marke, die ins Projektland liefert."
   },
   "welcome": {
     "kicker": "Weltweite Interieurs, ein Studio",

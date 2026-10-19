@@ -11,6 +11,13 @@
     "vendors": "Partenaires",
     "returns": "Retours"
   },
+  "commerce": {
+    "shippingCountry": "Livraison",
+    "vendor": "Fournisseur",
+    "mixMatch": "Tous les fournisseurs (Mix & Match)",
+    "exclusive": "Exclusif {brand}",
+    "vendorHint": "Choisissez Mix & Match ou une marque unique qui livre vers la destination du projet."
+  },
   "welcome": {
     "kicker": "Des intÃ©rieurs mondiaux, un seul studio",
     "title": "Concevez des piÃ¨ces. SourÃ§ez. ExpÃ©diez partout.",

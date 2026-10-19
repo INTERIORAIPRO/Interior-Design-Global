@@ -11,6 +11,13 @@
     "vendors": "Partners",
     "returns": "Returns"
   },
+  "commerce": {
+    "shippingCountry": "Ship to",
+    "vendor": "Vendor",
+    "mixMatch": "All vendors (Mix & Match)",
+    "exclusive": "Exclusive {brand}",
+    "vendorHint": "Choose Mix & Match or a single brand that ships to the project destination."
+  },
   "welcome": {
     "kicker": "Worldwide interiors, one studio",
     "title": "Design rooms. Source pieces. Ship globally.",

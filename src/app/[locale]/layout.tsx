@@ -5,6 +5,7 @@ import { getMessages, setRequestLocale } from "next-intl/server";
 import { Cormorant_Garamond, Outfit } from "next/font/google";
 import { routing } from "@/i18n/routing";
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { ProjectDestinationProvider } from "@/lib/partner-store/ProjectDestinationProvider";
 import "../globals.css";
 
 const outfit = Outfit({
@@ -54,8 +55,10 @@ export default async function LocaleLayout({
     >
       <body className="font-sans antialiased" suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
-          <SiteHeader />
-          {children}
+          <ProjectDestinationProvider>
+            <SiteHeader />
+            {children}
+          </ProjectDestinationProvider>
         </NextIntlClientProvider>
       </body>
     </html>

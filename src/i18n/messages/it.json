@@ -11,6 +11,13 @@
     "vendors": "Partner",
     "returns": "Resi"
   },
+  "commerce": {
+    "shippingCountry": "Consegna",
+    "vendor": "Fornitore",
+    "mixMatch": "Tutti i fornitori (Mix & Match)",
+    "exclusive": "Esclusivo {brand}",
+    "vendorHint": "Scegli Mix & Match o un singolo brand che consegna a destinazione."
+  },
   "welcome": {
     "kicker": "Interni globali, un solo studio",
     "title": "Progetta stanze. Scegli pezzi. Spedisci ovunque.",

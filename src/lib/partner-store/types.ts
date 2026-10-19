@@ -50,6 +50,7 @@ export type PartnerProduct = {
   price: number;
   currency: string;
   affiliateUrl: string;
+  vendorId?: string;
   placement?: ProductPlacement;
 };
 

@@ -4,6 +4,8 @@ import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
 import { CartNavLink } from "@/components/layout/CartNavLink";
+import { ShippingCountrySelect } from "@/components/layout/ShippingCountrySelect";
+import { HeaderVendorSelect } from "@/components/layout/VendorSelect";
 import { appConfig } from "../../../config/interior-design.config";
 
 const links = [
@@ -20,7 +22,7 @@ export function SiteHeader() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-ink/70 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+      <div className="mx-auto flex min-h-[4rem] max-w-6xl flex-wrap items-center justify-between gap-3 px-6 py-2">
         <Link href="/" className="font-serif text-xl tracking-tight text-linen">
           {appConfig.name}
         </Link>
@@ -43,7 +45,11 @@ export function SiteHeader() {
           })}
           <CartNavLink />
         </nav>
-        <LocaleSwitcher />
+        <div className="flex flex-wrap items-center gap-2">
+          <ShippingCountrySelect />
+          <HeaderVendorSelect />
+          <LocaleSwitcher />
+        </div>
       </div>
     </header>
   );

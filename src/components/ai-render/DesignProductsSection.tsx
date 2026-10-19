@@ -8,10 +8,10 @@ import { CatalogPhoto } from "@/components/catalog/CatalogPhoto";
 import { addRoomSet } from "@/lib/cart/designCart";
 import {
   formatProductPrice,
-  primaryPartnerStore,
   withAffiliateParams,
   type PartnerProduct,
 } from "@/lib/partner-store/catalog";
+import { getVendor } from "@/lib/partner-store/vendors";
 
 type DesignProductsSectionProps = {
   products: PartnerProduct[];
@@ -23,6 +23,18 @@ export function DesignProductsSection({
   locale,
 }: DesignProductsSectionProps) {
   const t = useTranslations("aiRender");
+  const tCommerce = useTranslations("commerce");
+  const vendorLabel = (() => {
+    const names = Array.from(
+      new Set(
+        products
+          .map((product) => getVendor(product.vendorId)?.brandName)
+          .filter((name): name is string => Boolean(name)),
+      ),
+    );
+    if (names.length === 1) return names[0];
+    return tCommerce("mixMatch");
+  })();
   const isMounted = useIsMounted();
   const [added, setAdded] = useState(false);
   const total = products.reduce((sum, product) => sum + product.price, 0);
@@ -48,7 +60,7 @@ export function DesignProductsSection({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-[10px] uppercase tracking-[0.22em] text-brass">
-            {primaryPartnerStore.brandName}
+            {vendorLabel}
           </p>
           <h2 className="mt-2 font-serif text-3xl text-linen sm:text-4xl">
             {t("designProductsTitle")}
@@ -80,7 +92,10 @@ export function DesignProductsSection({
               />
             </div>
             <div className="flex flex-1 flex-col p-4">
-              <h3 className="font-serif text-xl leading-snug text-linen">
+              <p className="text-[10px] uppercase tracking-[0.18em] text-brass/80">
+                {getVendor(product.vendorId)?.brandName ?? product.vendorId}
+              </p>
+              <h3 className="mt-1 font-serif text-xl leading-snug text-linen">
                 {product.name}
               </h3>
               <p className="mt-2 text-sm font-semibold text-brass">

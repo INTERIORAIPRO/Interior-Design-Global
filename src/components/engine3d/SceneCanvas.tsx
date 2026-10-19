@@ -4,7 +4,7 @@ import { Canvas } from "@react-three/fiber";
 import { ContactShadows, OrbitControls } from "@react-three/drei";
 import { materialPalettes } from "@/engine/materials/palettes";
 import { createIndicativeModels } from "@/engine/partner/createIndicativeModel";
-import { partnerProducts } from "@/lib/partner-store/catalog";
+import type { PartnerProduct } from "@/lib/partner-store/catalog";
 import { PartnerProductMesh } from "./PartnerProductMesh";
 
 function RoomShell() {
@@ -29,10 +29,11 @@ function RoomShell() {
 type SceneCanvasProps = {
   selectedId: string | null;
   onSelect: (productId: string | null) => void;
+  products: PartnerProduct[];
 };
 
-export function SceneCanvas({ selectedId, onSelect }: SceneCanvasProps) {
-  const models = createIndicativeModels(partnerProducts);
+export function SceneCanvas({ selectedId, onSelect, products }: SceneCanvasProps) {
+  const models = createIndicativeModels(products);
 
   return (
     <div className="h-full min-h-[320px] w-full overflow-hidden rounded-[28px] border border-white/10 bg-[#2a231c]">

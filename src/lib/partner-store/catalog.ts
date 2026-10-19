@@ -4,6 +4,14 @@
   PartnerStore,
   ProductCategory,
 } from "./types";
+import {
+  MIX_VENDOR_ID,
+  getShippingCountry,
+  getVendor,
+  vendorShipsTo,
+  type ShippingCountryId,
+  type VendorId,
+} from "./vendors";
 
 export type RoomKind = "living" | "bedroom" | "office" | "kitchen";
 
@@ -11,18 +19,19 @@ export type PartnerProduct = TypedPartnerProduct & {
   rooms: RoomKind[];
   style: string[];
   promptHint: string;
+  vendorId: string;
 };
 
 export type { TypedPartnerProduct };
 
 export const primaryPartnerStore: PartnerStore = {
-  id: "vnd_the_home",
-  brandName: "The Home",
-  country: "RO",
+  id: "kave-home",
+  brandName: "Kave Home",
+  country: "ES",
   status: "active",
   commissionPercent: 12,
-  storeUrl: "https://www.thehome.ro",
-  affiliateBaseUrl: "https://www.thehome.ro",
+  storeUrl: "https://kavehome.com",
+  affiliateBaseUrl: "https://kavehome.com",
 };
 
 const AFFILIATE_REF = "interior-design-global";
@@ -40,12 +49,15 @@ function product(input: {
   promptHint: string;
   price: number;
   affiliateUrl: string;
+  vendorId?: string;
+  currency?: string;
   dimensions?: TypedPartnerProduct["dimensions"];
 }): PartnerProduct {
   return {
-    currency: "RON",
-    dimensions: input.dimensions ?? { widthCm: 80, depthCm: 80, heightCm: 80 },
     ...input,
+    currency: input.currency ?? "EUR",
+    dimensions: input.dimensions ?? { widthCm: 80, depthCm: 80, heightCm: 80 },
+    vendorId: input.vendorId ?? "kave-home",
     style: input.styles,
   };
 }
@@ -263,7 +275,174 @@ export const partnerProducts: PartnerProduct[] = [
     affiliateUrl: "https://www.thehome.ro/corpuri-de-iluminat",
     dimensions: { widthCm: 22, depthCm: 22, heightCm: 38 },
   }),
+  product({
+    id: "mc-sofa-velvet",
+    sku: "MC-SOFA-VEL",
+    name: "Canapea Micadoni velvet",
+    description: "Canapea tapițată velvet, linie contemporană Micadoni Home.",
+    category: "sofas",
+    image2d: "/partner-store/sofa.svg",
+    accentColor: "#8a9a84",
+    styles: ["modern", "contemporary", "scandinavian"],
+    rooms: ["living"],
+    promptHint: "a contemporary velvet sofa with rounded arms, Micadoni silhouette",
+    price: 2190,
+    vendorId: "micadoni",
+    affiliateUrl: "https://micadoni.com",
+  }),
+  product({
+    id: "sk-lamp-steel",
+    sku: "SK-LAMP-ST",
+    name: "Lampadar Sklum oțel",
+    description: "Lampadar din oțel negru mat, design Sklum.",
+    category: "lighting",
+    image2d: "/partner-store/lamp.svg",
+    accentColor: "#4a4a4a",
+    styles: ["industrial", "minimalist", "modern"],
+    rooms: ["living", "bedroom", "office"],
+    promptHint: "a matte steel Sklum floor lamp with a thin industrial stem",
+    price: 129,
+    vendorId: "sklum",
+    affiliateUrl: "https://www.sklum.com",
+  }),
+  product({
+    id: "ww-armchair-boucle",
+    sku: "WW-CHAIR-BQ",
+    name: "Fotoliu Westwing bouclé",
+    description: "Fotoliu lounge tapițat bouclé, colecție Westwing.",
+    category: "armchair",
+    image2d: "/partner-store/armchair.svg",
+    accentColor: "#e8dfd2",
+    styles: ["contemporary", "scandinavian", "midcentury"],
+    rooms: ["living", "bedroom"],
+    promptHint: "a cream boucle lounge armchair, Westwing editorial look",
+    price: 649,
+    vendorId: "westwing",
+    affiliateUrl: "https://www.westwing.com",
+  }),
+  product({
+    id: "mdm-table-oak",
+    sku: "MDM-TABLE",
+    name: "Măsuță Maisons du Monde",
+    description: "Măsuță de cafea lemn, linie Maisons du Monde.",
+    category: "tables",
+    image2d: "/partner-store/table.svg",
+    accentColor: "#c47a5a",
+    styles: ["boho", "scandinavian", "japandi"],
+    rooms: ["living"],
+    promptHint: "a warm oak Maisons du Monde coffee table with artisan edges",
+    price: 299,
+    vendorId: "maisons-du-monde",
+    affiliateUrl: "https://www.maisonsdumonde.com",
+  }),
+  product({
+    id: "ikea-kivik-sofa",
+    sku: "IKEA-KIVIK",
+    name: "Canapea IKEA KIVIK",
+    description: "Canapea modulară KIVIK, livrare globală IKEA.",
+    category: "sofas",
+    image2d: "/partner-store/sofa.svg",
+    accentColor: "#0058a3",
+    styles: ["modern", "scandinavian", "minimalist"],
+    rooms: ["living"],
+    promptHint: "an IKEA KIVIK three-seat sofa in light grey fabric, practical Nordic volume",
+    price: 799,
+    vendorId: "ikea",
+    affiliateUrl: "https://www.ikea.com",
+  }),
+  product({
+    id: "ikea-malm-bed",
+    sku: "IKEA-MALM",
+    name: "Pat IKEA MALM",
+    description: "Pat MALM cu tăblie, finisaj stejar alb.",
+    category: "beds",
+    image2d: "/partner-store/bed.svg",
+    accentColor: "#e8dfd2",
+    styles: ["scandinavian", "minimalist", "modern"],
+    rooms: ["bedroom"],
+    promptHint: "an IKEA MALM bed with a wide oak-white headboard and simple platform",
+    price: 349,
+    vendorId: "ikea",
+    affiliateUrl: "https://www.ikea.com",
+  }),
+  product({
+    id: "wf-rug-jute",
+    sku: "WF-RUG-JT",
+    name: "Covor Wayfair jute",
+    description: "Covor din jute natural, catalog Wayfair.",
+    category: "rugs",
+    image2d: "/partner-store/rug.svg",
+    accentColor: "#cbb79a",
+    styles: ["boho", "scandinavian", "japandi"],
+    rooms: ["living", "bedroom", "office"],
+    promptHint: "a natural jute area rug from Wayfair under the main seating",
+    price: 189,
+    vendorId: "wayfair",
+    currency: "USD",
+    affiliateUrl: "https://www.wayfair.com",
+  }),
+  product({
+    id: "cb2-lamp-arc",
+    sku: "CB2-LAMP",
+    name: "Lampadar CB2 arc",
+    description: "Lampadar arc contemporan CB2 / Crate & Barrel.",
+    category: "lighting",
+    image2d: "/partner-store/lamp.svg",
+    accentColor: "#1c1c1c",
+    styles: ["modern", "contemporary", "minimalist"],
+    rooms: ["living", "office"],
+    promptHint: "a sculptural CB2 arc floor lamp in black metal",
+    price: 449,
+    vendorId: "cb2",
+    currency: "USD",
+    affiliateUrl: "https://www.cb2.com",
+  }),
+  product({
+    id: "cs-sofa-oscar",
+    sku: "CS-OSCAR",
+    name: "Canapea Castlery Oscar",
+    description: "Canapea Oscar, Castlery, linie contemporană.",
+    category: "sofas",
+    image2d: "/partner-store/sofa.svg",
+    accentColor: "#3d5a4c",
+    styles: ["modern", "contemporary", "minimalist"],
+    rooms: ["living"],
+    promptHint: "a Castlery Oscar sofa with clean contemporary cushions and low profile",
+    price: 1599,
+    vendorId: "castlery",
+    currency: "USD",
+    affiliateUrl: "https://www.castlery.com",
+  }),
+  product({
+    id: "ikea-norrasen-desk",
+    sku: "IKEA-DESK",
+    name: "Birou IKEA",
+    description: "Birou compact IKEA pentru home office.",
+    category: "tables",
+    image2d: "/partner-store/table.svg",
+    accentColor: "#cbb79a",
+    styles: ["scandinavian", "minimalist", "modern"],
+    rooms: ["office"],
+    promptHint: "a compact IKEA writing desk in white oak, home-office scale",
+    price: 149,
+    vendorId: "ikea",
+    affiliateUrl: "https://www.ikea.com",
+  }),
 ];
+
+export function productsForDestination(
+  countryId: ShippingCountryId,
+  vendorId: VendorId = MIX_VENDOR_ID,
+) {
+  const country = getShippingCountry(countryId);
+  return partnerProducts.filter((product) => {
+    const vendor = getVendor(product.vendorId);
+    if (!vendor) return false;
+    if (!vendorShipsTo(vendor, country)) return false;
+    if (vendorId !== MIX_VENDOR_ID && product.vendorId !== vendorId) return false;
+    return true;
+  });
+}
 
 export function getPartnerProducts() {
   return partnerProducts;

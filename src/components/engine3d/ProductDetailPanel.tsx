@@ -5,9 +5,9 @@ import { CatalogPhoto } from "@/components/catalog/CatalogPhoto";
 import {
   formatProductDimensions,
   formatProductPrice,
-  primaryPartnerStore,
   withAffiliateParams,
 } from "@/lib/partner-store/catalog";
+import { getVendor } from "@/lib/partner-store/vendors";
 import type { PartnerProduct } from "@/lib/partner-store/types";
 
 type ProductDetailPanelProps = {
@@ -28,7 +28,7 @@ export function ProductDetailPanel({
     <aside className="absolute bottom-4 left-4 right-4 z-10 max-h-[70%] overflow-auto rounded-2xl border border-white/15 bg-ink/90 p-4 shadow-2xl backdrop-blur-md sm:left-auto sm:w-80">
       <div className="flex items-start justify-between gap-3">
         <p className="text-[10px] uppercase tracking-[0.22em] text-brass">
-          {primaryPartnerStore.brandName}
+          {getVendor(product.vendorId)?.brandName ?? "Partner"}
         </p>
         <button
           type="button"

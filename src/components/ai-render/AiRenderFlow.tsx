@@ -10,6 +10,8 @@ import {
   type BudgetTier,
 } from "@/lib/ai-render/designSets";
 import type { RoomKind } from "@/lib/partner-store/catalog";
+import { useProjectDestination } from "@/lib/partner-store/ProjectDestinationProvider";
+import { VendorChipBar } from "@/components/layout/VendorSelect";
 import { DesignProductsSection } from "./DesignProductsSection";
 
 type RoomType = RoomKind;
@@ -24,6 +26,7 @@ const roomLabels: Record<RoomType, string> = {
 export function AiRenderFlow() {
   const t = useTranslations("aiRender");
   const locale = useLocale();
+  const { catalog, vendorId, countryId } = useProjectDestination();
   const [isMounted, setIsMounted] = useState(false);
   const [roomType, setRoomType] = useState<RoomType>("bedroom");
   const [style, setStyle] = useState<InteriorStyle>("scandinavian");
@@ -42,10 +45,10 @@ export function AiRenderFlow() {
   }, []);
 
   const design = useMemo(
-    () => getDesignScene(roomType, style, budget),
-    [roomType, style, budget],
+    () => getDesignScene(roomType, style, budget, catalog, vendorId, countryId),
+    [roomType, style, budget, catalog, vendorId, countryId],
   );
-  const activeKey = sceneKey(roomType, style, budget);
+  const activeKey = sceneKey(roomType, style, budget, vendorId, countryId);
   const displayImage =
     rendered?.key === activeKey
       ? rendered.imageUrl
@@ -151,6 +154,7 @@ export function AiRenderFlow() {
 
   return (
     <div className="space-y-8">
+      <VendorChipBar />
       {/* Selector Tip Cameră */}
       <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/5 p-4">
         <div>

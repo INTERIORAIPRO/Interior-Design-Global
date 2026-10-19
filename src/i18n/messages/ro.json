@@ -11,6 +11,13 @@
     "vendors": "Parteneri",
     "returns": "Retururi"
   },
+  "commerce": {
+    "shippingCountry": "Livrare",
+    "vendor": "Furnizor",
+    "mixMatch": "Toți furnizorii (Mix & Match)",
+    "exclusive": "Exclusiv {brand}",
+    "vendorHint": "Alege Mix & Match sau un singur brand care livrează la destinația proiectului."
+  },
   "welcome": {
     "kicker": "Interioare globale, un singur studio",
     "title": "Proiectează camere. Alege piese. Livrează oriunde.",

@@ -172,18 +172,52 @@ const productIdsByRoomStyle: Record<string, string[]> = {
   "kitchen:boho": ["th-dining-oak", "th-throw-boho", "th-decor-vase-ceramic"],
 };
 
-function productsByIds(ids: string[]) {
+function productsByIds(ids: string[], pool: PartnerProduct[]) {
   return ids
-    .map((id) => partnerProducts.find((product) => product.id === id))
+    .map((id) => pool.find((product) => product.id === id))
     .filter((product): product is PartnerProduct => Boolean(product));
+}
+
+function pickForRoom(
+  pool: PartnerProduct[],
+  roomType: RoomKind,
+  style: InteriorStyle,
+) {
+  const forRoom = pool.filter((product) => product.rooms?.includes(roomType));
+  const styled = forRoom.filter(
+    (product) =>
+      product.styles?.includes(style) || product.style?.includes(style),
+  );
+  const source = styled.length > 0 ? styled : forRoom.length > 0 ? forRoom : pool;
+  return source.slice(0, 5);
+}
+
+function mixMatchPack(ids: string[], pool: PartnerProduct[]) {
+  const preferred = productsByIds(ids, pool);
+  if (preferred.length === 0) return [];
+  const usedVendors = new Set<string>();
+  return preferred.map((product) => {
+    const alternative = pool.find(
+      (candidate) =>
+        candidate.category === product.category &&
+        candidate.vendorId !== product.vendorId &&
+        !usedVendors.has(candidate.vendorId) &&
+        candidate.rooms?.includes(product.rooms[0]),
+    );
+    const chosen = alternative ?? product;
+    usedVendors.add(chosen.vendorId);
+    return chosen;
+  });
 }
 
 export function sceneKey(
   roomType: RoomKind,
   style: InteriorStyle,
   budget: BudgetTier = "medium",
+  vendorId = "mix",
+  countryId = "RO",
 ) {
-  return `${roomType}:${style}:${budget}`;
+  return `${roomType}:${style}:${budget}:${vendorId}:${countryId}`;
 }
 
 function filterByBudget(products: PartnerProduct[], budget: BudgetTier) {
@@ -203,6 +237,9 @@ export function getDesignScene(
   roomType: RoomKind,
   style: InteriorStyle,
   budget: BudgetTier = "medium",
+  pool: PartnerProduct[] = partnerProducts,
+  vendorId = "mix",
+  countryId = "RO",
 ): DesignScene {
   const packKey = `${roomType}:${style}`;
   const ids =
@@ -213,10 +250,14 @@ export function getDesignScene(
   const sceneUrl =
     roomScenes[style] ?? roomScenes.default ?? roomScenes.scandinavian;
 
+  const mixed = vendorId === "mix" ? mixMatchPack(ids, pool) : productsByIds(ids, pool);
+  const products =
+    mixed.length > 0 ? mixed : pickForRoom(pool, roomType, style);
+
   return {
-    key: sceneKey(roomType, style, budget),
+    key: sceneKey(roomType, style, budget, vendorId, countryId),
     sceneUrl,
-    products: filterByBudget(productsByIds(ids), budget),
+    products: filterByBudget(products, budget),
   };
 }
 

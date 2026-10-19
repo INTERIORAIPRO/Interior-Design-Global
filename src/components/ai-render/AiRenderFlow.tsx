@@ -51,6 +51,7 @@ export function AiRenderFlow() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [imageFailed, setImageFailed] = useState(false);
+  const [heroView, setHeroView] = useState<"ai" | "original">("ai");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const previewUrlRef = useRef<string | null>(null);
 
@@ -68,16 +69,24 @@ export function AiRenderFlow() {
     [roomType, style, budget, catalog, vendorId, countryId],
   );
   const activeKey = sceneKey(roomType, style, budget, vendorId, countryId);
+  const originalImage = uploadedImage ?? previewUrl;
+  const hasAiResult = Boolean(rendered && rendered.key === activeKey);
   const heroImage =
-    rendered?.key === activeKey
-      ? rendered.imageUrl
-      : uploadedImage ?? previewUrl ?? design.sceneUrl;
+    hasAiResult && rendered
+      ? heroView === "original" && originalImage
+        ? originalImage
+        : rendered.imageUrl
+      : originalImage ?? design.sceneUrl;
   const displayImage = imageFailed ? design.sceneUrl : heroImage;
   const recommendedProducts = design.products;
 
   useEffect(() => {
     setImageFailed(false);
   }, [heroImage]);
+
+  useEffect(() => {
+    setHeroView("ai");
+  }, [rendered?.imageUrl, activeKey]);
 
   function revokePreview() {
     if (previewUrlRef.current?.startsWith("blob:")) {
@@ -120,11 +129,17 @@ export function AiRenderFlow() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
-  function reset() {
-    clearUploadedPhoto();
+  function resetToUpload() {
     setRendered(null);
+    setHeroView("ai");
     setBusy(false);
     setError(null);
+    setImageFailed(false);
+  }
+
+  function reset() {
+    clearUploadedPhoto();
+    resetToUpload();
   }
 
   async function toSendableImage(src: string) {
@@ -161,7 +176,7 @@ export function AiRenderFlow() {
           style,
           keepStructure: Boolean(uploadedImage),
           fallbackImageUrl: design.sceneUrl,
-          products: displayProducts.map((product) => ({
+          products: recommendedProducts.map((product) => ({
             name: product.name,
             category: product.category,
             promptHint: product.promptHint,
@@ -293,91 +308,122 @@ export function AiRenderFlow() {
         </p>
       ) : null}
 
-      {/* Upload Foto Cameră Proprie */}
-      <div className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4">
-        <div>
-          <p className="font-serif text-lg text-linen">{t("uploadTitle")}</p>
-          <p className="mt-1 text-sm text-linen/70">
-            {`Goală sau deja mobilată. Folosim poza ta ca referință de structură și restilăm mobilierul cu catalogul ${vendorName}.`}
-          </p>
-        </div>
-        {previewUrl || uploadedImage ? (
-          <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-ink/40">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={previewUrl ?? uploadedImage ?? ""}
-              alt={fileName ?? "Fotografie încărcată"}
-              className="h-40 w-full object-cover sm:h-48"
-            />
-            <div className="absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-2 bg-black/55 px-3 py-2">
-              <p className="truncate text-xs text-linen/80">{fileName ?? "Fotografie încărcată"}</p>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="rounded-full bg-brass px-3 py-1 text-[11px] font-medium text-ink"
-                >
-                  Înlocuiește fotografia
-                </button>
-                <button
-                  type="button"
-                  onClick={clearUploadedPhoto}
-                  className="rounded-full border border-white/30 px-3 py-1 text-[11px] text-linen"
-                >
-                  Șterge
-                </button>
-              </div>
+      {!hasAiResult ? (
+        <>
+          <div className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4">
+            <div>
+              <p className="font-serif text-lg text-linen">{t("uploadTitle")}</p>
+              <p className="mt-1 text-sm text-linen/70">
+                {`Goală sau deja mobilată. Folosim poza ta ca referință de structură și restilăm mobilierul cu catalogul ${vendorName}.`}
+              </p>
             </div>
+            {originalImage ? (
+              <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-ink/40">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={originalImage}
+                  alt={fileName ?? "Fotografie încărcată"}
+                  className="h-40 w-full object-cover sm:h-48"
+                />
+                <div className="absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-2 bg-black/55 px-3 py-2">
+                  <p className="truncate text-xs text-linen/80">
+                    {fileName ?? "Fotografie încărcată"}
+                  </p>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="rounded-full bg-brass px-3 py-1 text-[11px] font-medium text-ink"
+                    >
+                      Înlocuiește fotografia
+                    </button>
+                    <button
+                      type="button"
+                      onClick={clearUploadedPhoto}
+                      className="rounded-full border border-white/30 px-3 py-1 text-[11px] text-linen"
+                    >
+                      Șterge
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : null}
+            <label htmlFor="room-photo-upload" className="sr-only">
+              {t("uploadCta")}
+            </label>
+            <input
+              ref={fileInputRef}
+              id="room-photo-upload"
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className={`block w-full cursor-pointer text-sm text-linen file:mr-4 file:cursor-pointer file:rounded-full file:border-0 file:bg-brass file:px-5 file:py-2.5 file:text-sm file:font-medium file:text-ink ${
+                originalImage ? "sr-only" : ""
+              }`}
+            />
           </div>
-        ) : null}
-        <label htmlFor="room-photo-upload" className="sr-only">
-          {t("uploadCta")}
-        </label>
-        <input
-          ref={fileInputRef}
-          id="room-photo-upload"
-          type="file"
-          accept="image/*"
-          onChange={handleImageUpload}
-          className={`block w-full cursor-pointer text-sm text-linen file:mr-4 file:cursor-pointer file:rounded-full file:border-0 file:bg-brass file:px-5 file:py-2.5 file:text-sm file:font-medium file:text-ink ${
-            previewUrl || uploadedImage ? "sr-only" : ""
-          }`}
-        />
-      </div>
 
-      <form
-        className="flex flex-wrap items-center justify-end gap-3"
-        onSubmit={(event) => void handleGenerate(event)}
-      >
-        <button
-          type="button"
-          onClick={reset}
-          className="rounded-full border border-white/15 px-6 py-2.5 text-sm text-linen"
-        >
-          {t("restart")}
-        </button>
-        <button
-          type="submit"
-          disabled={!isMounted || busy}
-          className="rounded-full bg-brass px-8 py-3 text-sm font-medium text-ink disabled:opacity-40"
-        >
-          {busy
-            ? locale === "ro"
-              ? `AI-ul generează spațiul cu mobilier ${vendorName}...`
-              : t("generating", { vendor: vendorName })
-            : locale === "ro"
-              ? "Randează camera"
-              : t("generate")}
-        </button>
-      </form>
+          <form
+            className="flex flex-wrap items-center justify-end gap-3"
+            onSubmit={(event) => void handleGenerate(event)}
+          >
+            <button
+              type="button"
+              onClick={reset}
+              className="rounded-full border border-white/15 px-6 py-2.5 text-sm text-linen"
+            >
+              {locale === "ro" ? "Resetează / Încarcă o altă poză" : t("restart")}
+            </button>
+            <button
+              type="submit"
+              disabled={!isMounted || busy}
+              className="rounded-full bg-brass px-8 py-3 text-sm font-medium text-ink disabled:opacity-40"
+            >
+              {busy
+                ? locale === "ro"
+                  ? `AI-ul generează spațiul cu mobilier ${vendorName}...`
+                  : t("generating", { vendor: vendorName })
+                : locale === "ro"
+                  ? "Randează camera"
+                  : t("generate")}
+            </button>
+          </form>
+        </>
+      ) : null}
 
       <div className="space-y-8">
         <section className="relative overflow-hidden rounded-[28px] border border-white/10 bg-[#1c1814]">
+          {hasAiResult && originalImage && !busy ? (
+            <div className="absolute left-4 top-4 z-10 flex rounded-full border border-white/15 bg-black/65 p-1 text-xs">
+              <button
+                type="button"
+                onClick={() => setHeroView("original")}
+                className={`rounded-full px-3 py-1.5 ${
+                  heroView === "original" ? "bg-brass text-ink" : "text-linen/80"
+                }`}
+              >
+                Original
+              </button>
+              <button
+                type="button"
+                onClick={() => setHeroView("ai")}
+                className={`rounded-full px-3 py-1.5 ${
+                  heroView === "ai" ? "bg-brass text-ink" : "text-linen/80"
+                }`}
+              >
+                Randare AI
+              </button>
+            </div>
+          ) : null}
           {displayImage ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={displayImage}
-              alt=""
+              alt={
+                hasAiResult
+                  ? `Randare AI ${vendorName}`
+                  : fileName ?? `Previzualizare ${vendorName}`
+              }
               onError={() => setImageFailed(true)}
               className="mx-auto block h-auto w-full max-h-[80vh] object-contain"
             />
@@ -393,7 +439,30 @@ export function AiRenderFlow() {
           ) : null}
         </section>
 
+        {hasAiResult ? (
+          <div className="flex flex-wrap items-center justify-end gap-3">
+            <button
+              type="button"
+              onClick={resetToUpload}
+              className="rounded-full border border-white/15 px-6 py-2.5 text-sm text-linen"
+            >
+              {locale === "ro"
+                ? "Resetează / Încarcă o altă poză"
+                : t("restart")}
+            </button>
+            <button
+              type="button"
+              onClick={() => void handleGenerate()}
+              disabled={busy}
+              className="rounded-full bg-brass px-8 py-3 text-sm font-medium text-ink disabled:opacity-40"
+            >
+              Randează camera
+            </button>
+          </div>
+        ) : null}
+
         <DesignProductsSection
+          key={activeKey}
           products={recommendedProducts}
           locale={locale}
           vendorName={vendorName}

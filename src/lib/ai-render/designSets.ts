@@ -10,8 +10,8 @@ export type BudgetTier = "economic" | "medium" | "premium";
 export const budgetTiers: BudgetTier[] = ["economic", "medium", "premium"];
 
 const budgetCaps: Record<BudgetTier, number> = {
-  economic: 6000,
-  medium: 10000,
+  economic: 1600,
+  medium: 3500,
   premium: Number.POSITIVE_INFINITY,
 };
 
@@ -68,107 +68,6 @@ const sceneByRoom: Record<RoomKind, Record<string, string>> = {
   },
 };
 
-const productIdsByRoomStyle: Record<string, string[]> = {
-  "bedroom:scandinavian": [
-    "th-bed-nordic",
-    "th-nightstand-oak",
-    "th-bedside-lamps",
-  ],
-  "bedroom:japandi": [
-    "th-bed-nordic",
-    "th-nightstand-oak",
-    "th-bedside-lamps",
-  ],
-  "bedroom:minimalist": [
-    "th-bed-nordic",
-    "th-nightstand-oak",
-    "th-lamp-minimal",
-  ],
-  "bedroom:modern": [
-    "th-bed-nordic",
-    "th-nightstand-metal",
-    "th-lamp-minimal",
-  ],
-  "bedroom:contemporary": [
-    "th-bed-nordic",
-    "th-nightstand-metal",
-    "th-lamp-minimal",
-  ],
-  "bedroom:industrial": [
-    "th-bed-nordic",
-    "th-nightstand-metal",
-    "th-lamp-minimal",
-  ],
-  "bedroom:midcentury": [
-    "th-bed-nordic",
-    "th-nightstand-oak",
-    "th-bedside-lamps",
-  ],
-  "bedroom:boho": [
-    "th-bed-nordic",
-    "th-nightstand-oak",
-    "th-bedside-lamps",
-  ],
-  "living:scandinavian": [
-    "th-sofa-nordic-1",
-    "th-table-coffee-oak",
-    "th-lamp-brass-arc",
-    "th-rug-wool-beige",
-    "th-decor-vase-ceramic",
-  ],
-  "living:japandi": [
-    "th-sofa-nordic-1",
-    "th-table-coffee-oak",
-    "th-rug-wool-beige",
-    "th-decor-vase-ceramic",
-  ],
-  "living:minimalist": [
-    "th-sofa-nordic-1",
-    "th-lamp-minimal",
-    "th-rug-wool-beige",
-  ],
-  "living:modern": [
-    "th-sofa-nordic-1",
-    "th-armchair-nordic",
-    "th-lamp-minimal",
-  ],
-  "living:contemporary": [
-    "th-sofa-nordic-1",
-    "th-armchair-nordic",
-    "th-lamp-minimal",
-  ],
-  "living:industrial": ["th-sofa-nordic-1", "th-lamp-minimal"],
-  "living:midcentury": [
-    "th-sofa-nordic-1",
-    "th-lamp-brass-arc",
-    "th-table-coffee-oak",
-  ],
-  "living:boho": [
-    "th-sofa-nordic-1",
-    "th-table-coffee-oak",
-    "th-throw-boho",
-    "th-decor-vase-ceramic",
-  ],
-  "office:scandinavian": [
-    "th-desk-oak",
-    "th-lamp-brass-arc",
-    "th-rug-wool-beige",
-    "th-decor-vase-ceramic",
-  ],
-  "office:minimalist": ["th-desk-oak", "th-lamp-minimal"],
-  "office:modern": ["th-desk-oak", "th-lamp-minimal"],
-  "office:industrial": ["th-desk-oak", "th-lamp-minimal"],
-  "kitchen:scandinavian": ["th-dining-oak", "th-decor-vase-ceramic"],
-  "kitchen:japandi": ["th-dining-oak", "th-decor-vase-ceramic"],
-  "kitchen:boho": ["th-dining-oak", "th-throw-boho", "th-decor-vase-ceramic"],
-};
-
-function productsByIds(ids: string[], pool: PartnerProduct[]) {
-  return ids
-    .map((id) => pool.find((product) => product.id === id))
-    .filter((product): product is PartnerProduct => Boolean(product));
-}
-
 function hasStyle(product: PartnerProduct, style: InteriorStyle) {
   return product.styles?.includes(style) || product.style?.includes(style);
 }
@@ -188,6 +87,27 @@ function diversify(products: PartnerProduct[], limit = 5) {
     if (unique.length >= limit) break;
   }
   return unique;
+}
+
+const roomSlots: Record<RoomKind, PartnerProduct["category"][]> = {
+  bedroom: ["beds", "tables", "lighting", "rugs"],
+  living: ["sofas", "tables", "lighting", "rugs"],
+  office: ["tables", "lighting", "rugs", "decor"],
+  kitchen: ["tables", "decor", "lighting", "rugs"],
+};
+
+function pickForBudget(items: PartnerProduct[], budget: BudgetTier) {
+  const sorted = [...items].sort((a, b) => a.price - b.price);
+  if (sorted.length === 0) return null;
+  if (budget === "economic") return sorted[0];
+  if (budget === "premium") return sorted[sorted.length - 1];
+  return sorted[Math.floor(sorted.length / 2)];
+}
+
+function remainingByBudget(items: PartnerProduct[], budget: BudgetTier) {
+  return [...items].sort((a, b) =>
+    budget === "premium" ? b.price - a.price : a.price - b.price,
+  );
 }
 
 function pickForRoom(
@@ -224,50 +144,37 @@ export function getRecommendedProducts(
       ? pool
       : pool.filter((product) => product.vendorId === vendorId);
   const source = vendorPool.length > 0 ? vendorPool : pool;
-  const packKey = `${roomType}:${style}`;
-  const ids =
-    productIdsByRoomStyle[packKey] ??
-    productIdsByRoomStyle[`${roomType}:scandinavian`] ??
-    [];
-  const fromPack =
-    vendorId === "mix"
-      ? mixMatchPack(ids, source, roomType)
-      : productsByIds(ids, source).filter((product) =>
-          product.rooms?.includes(roomType),
-        );
-  const products =
-    fromPack.length >= 3
-      ? fromPack
-      : pickForRoom(source, roomType, style, 4);
-  const withinBudget = filterByBudget(products, budget);
-  if (withinBudget.length >= 3 || withinBudget.length === products.length) {
-    return withinBudget;
-  }
-  return products.slice(0, 4);
-}
+  const forRoom = source.filter((product) => product.rooms?.includes(roomType));
+  const base = forRoom.length > 0 ? forRoom : source;
+  const picked: PartnerProduct[] = [];
+  const used = new Set<string>();
 
-function mixMatchPack(
-  ids: string[],
-  pool: PartnerProduct[],
-  roomType: RoomKind,
-) {
-  const preferred = productsByIds(ids, pool).filter((product) =>
-    product.rooms?.includes(roomType),
-  );
-  if (preferred.length === 0) return [];
-  const usedVendors = new Set<string>();
-  return preferred.map((product) => {
-    const alternative = pool.find(
-      (candidate) =>
-        candidate.category === product.category &&
-        candidate.vendorId !== product.vendorId &&
-        !usedVendors.has(candidate.vendorId) &&
-        candidate.rooms?.includes(roomType),
+  for (const category of roomSlots[roomType] ?? []) {
+    const options = base.filter(
+      (product) => product.category === category && !used.has(product.id),
     );
-    const chosen = alternative ?? product;
-    usedVendors.add(chosen.vendorId);
-    return chosen;
-  });
+    const styled = options.filter((product) => hasStyle(product, style));
+    const choice = pickForBudget(styled.length > 0 ? styled : options, budget);
+    if (!choice) continue;
+    picked.push(choice);
+    used.add(choice.id);
+  }
+
+  if (picked.length < 3) {
+    for (const product of remainingByBudget(
+      pickForRoom(source, roomType, style, 4),
+      budget,
+    )) {
+      if (used.has(product.id)) continue;
+      picked.push(product);
+      used.add(product.id);
+      if (picked.length >= 4) break;
+    }
+  }
+
+  const withinBudget = filterByBudget(picked, budget);
+  if (withinBudget.length >= 3) return withinBudget.slice(0, 4);
+  return picked.slice(0, 4);
 }
 
 export function sceneKey(

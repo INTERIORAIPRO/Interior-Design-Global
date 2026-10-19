@@ -265,37 +265,43 @@ export function AiRenderFlow() {
         />
       </div>
 
-      {/* Previzualizare Imagine & Butoane */}
-      <form className="space-y-4" onSubmit={(event) => void handleGenerate(event)}>
-        <section className="overflow-hidden rounded-[28px] border border-white/10 bg-[#1c1814]">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={displayImage}
-            alt={t("resultAlt")}
-            className="mx-auto block h-auto max-h-[72vh] w-full object-contain"
-          />
-        </section>
-
-        <div className="flex flex-wrap items-center justify-end gap-3">
-          <button
-            type="button"
-            onClick={reset}
-            className="rounded-full border border-white/15 px-6 py-2.5 text-sm text-linen"
-          >
-            {t("restart")}
-          </button>
-          <button
-            type="submit"
-            disabled={!isMounted || busy}
-            className="rounded-full bg-brass px-8 py-3 text-sm font-medium text-ink disabled:opacity-40"
-          >
-            {busy ? t("generating") : t("generate")}
-          </button>
-        </div>
+      <form
+        className="flex flex-wrap items-center justify-end gap-3"
+        onSubmit={(event) => void handleGenerate(event)}
+      >
+        <button
+          type="button"
+          onClick={reset}
+          className="rounded-full border border-white/15 px-6 py-2.5 text-sm text-linen"
+        >
+          {t("restart")}
+        </button>
+        <button
+          type="submit"
+          disabled={!isMounted || busy}
+          className="rounded-full bg-brass px-8 py-3 text-sm font-medium text-ink disabled:opacity-40"
+        >
+          {busy ? t("generating") : t("generate")}
+        </button>
       </form>
 
-      {/* Produsele reale Kave Home corespunzătoare setului curent */}
-      <DesignProductsSection products={displayProducts} locale={locale} />
+      <div className="space-y-8">
+        <section>
+          <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-brass">
+            {rendered ? t("afterLabel") : t("beforeLabel")}
+          </p>
+          <div className="overflow-hidden rounded-[28px] border border-white/10 bg-[#1c1814]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={displayImage}
+              alt={t("resultAlt")}
+              className="mx-auto block h-auto max-h-[72vh] w-full object-contain"
+            />
+          </div>
+        </section>
+
+        <DesignProductsSection products={displayProducts} locale={locale} />
+      </div>
     </div>
   );
 }

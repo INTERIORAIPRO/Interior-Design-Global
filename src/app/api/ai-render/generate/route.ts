@@ -194,18 +194,26 @@ function buildPrompt(
   style: string | undefined,
   products?: PromptProduct[],
   vendorName = "partner catalog",
+  budget?: string,
+  refreshToken?: string,
 ) {
   const room = normalizeRoomType(roomType);
   const chosenStyle: StyleKey =
     style && style in styleBriefs ? (style as StyleKey) : "scandinavian";
   const productBlock = buildProductBlock(products, chosenStyle, vendorName);
+  const budgetLine = budget
+    ? `BUDGET LOCK: ${budget}. Furniture quality, materials and density must match this budget band. Create a completely new staging for this budget.`
+    : "";
   return [
     roomLeads[room],
+    `FRESH UNIQUE ${vendorName.toUpperCase()} STAGING, variation ${refreshToken || Date.now()}. Do not repeat a previous layout.`,
     "VIRTUAL STAGING / INTERIOR REDESIGN of the USER'S OWN ROOM PHOTOGRAPH, photorealistic, 8k, magazine interior photography, image-to-image restaging",
     "The uploaded photo is the ControlNet / img2img structural reference: keep the SAME room shape, walls, windows, doors, ceiling, floor plane, architectural lines and camera angle. Do not invent a different floor plan.",
     "REMOVE the existing old furniture, clutter and previous staging. Replace it with the listed catalog pieces only, correctly scaled and grounded on the original floor.",
     `ROOM TYPE LOCK: ${room}. This space is ${roomBriefs[room]}.`,
+    `VENDOR LOCK: ${vendorName}. Only furniture that looks like ${vendorName} catalog pieces.`,
     `${styleBriefs[chosenStyle]}. Palette and materials: ${styleLexicon(chosenStyle)}.`,
+    budgetLine,
     productBlock,
     "Natural window light matching the original photo, contact shadows, no collage, no floating objects.",
   ]
@@ -371,6 +379,8 @@ export async function POST(request: Request) {
       fallbackImageUrl: bodyFallback,
       keepStructure,
       vendorName,
+      budget,
+      refreshToken,
     } = body as {
       imageUrl?: string;
       image?: string;
@@ -381,6 +391,8 @@ export async function POST(request: Request) {
       fallbackImageUrl?: string;
       keepStructure?: boolean;
       vendorName?: string;
+      budget?: string;
+      refreshToken?: string;
     };
     const brandName =
       typeof vendorName === "string" && vendorName.trim()
@@ -404,7 +416,14 @@ export async function POST(request: Request) {
 
     try {
       const publicImageUrl = await toPublicImageUri(imageUrl);
-      const prompt = buildPrompt(roomType, style, products, brandName);
+      const prompt = buildPrompt(
+        roomType,
+        style,
+        products,
+        brandName,
+        budget,
+        refreshToken,
+      );
       const negativePrompt = buildNegativePrompt(normalizeRoomType(roomType));
       const generatedImageUrl = await runControlNet(
         publicImageUrl,

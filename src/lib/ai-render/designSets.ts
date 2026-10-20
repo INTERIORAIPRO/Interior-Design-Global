@@ -344,8 +344,9 @@ export function getRecommendedProducts(
     vendorId === "mix"
       ? pool
       : pool.filter((product) => product.vendorId === vendorId);
-  const source = vendorPool.length > 0 ? vendorPool : pool;
-  const roomPool = source.filter((product) => belongsToRoom(product, roomType));
+  const roomPool = vendorPool.filter((product) =>
+    belongsToRoom(product, roomType),
+  );
   const slots = (roomSlots[roomType] ?? []).map((slot) => {
     const matches = roomPool.filter((product) => slot.match(product));
     const styled = matches.filter((product) => hasStyle(product, style));

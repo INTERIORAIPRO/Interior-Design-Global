@@ -10,7 +10,7 @@ import {
   sceneKey,
   type BudgetTier,
 } from "@/lib/ai-render/designSets";
-import type { PartnerProduct, RoomKind } from "@/lib/partner-store/catalog";
+import type { RoomKind } from "@/lib/partner-store/catalog";
 import { useProjectDestination } from "@/lib/partner-store/ProjectDestinationProvider";
 import {
   MIX_VENDOR_ID,
@@ -40,7 +40,6 @@ export function AiRenderFlow() {
       ? tCommerce("mixMatchShort")
       : getVendor(vendorId)?.brandName ??
         getActiveVendorName(vendorId, tCommerce("mixMatchShort"));
-  const vendorName = activeVendorName;
   const [isMounted, setIsMounted] = useState(false);
   const [roomType, setRoomType] = useState<RoomType>("bedroom");
   const [style, setStyle] = useState<InteriorStyle>("scandinavian");
@@ -48,17 +47,34 @@ export function AiRenderFlow() {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
-  const [rendered, setRendered] = useState<{
-    key: string;
-    imageUrl: string;
-    products: PartnerProduct[];
-  } | null>(null);
+  const [renderedImageUrl, setRenderedImageUrl] = useState<string | null>(null);
+  const [hasGeneratedOnce, setHasGeneratedOnce] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [imageFailed, setImageFailed] = useState(false);
   const [heroView, setHeroView] = useState<"ai" | "original">("ai");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const previewUrlRef = useRef<string | null>(null);
+  const generationRef = useRef(0);
+  const skipFilterRegenRef = useRef(true);
+
+  const design = useMemo(
+    () => getDesignScene(roomType, style, budget, catalog, vendorId, countryId),
+    [roomType, style, budget, catalog, vendorId, countryId],
+  );
+  const activeKey = sceneKey(roomType, style, budget, vendorId, countryId);
+  const originalImage = uploadedImage ?? previewUrl;
+  const recommendedProducts = design.products;
+  const selectedStyleLabel = t(`styles.${style}`);
+  const displayCandidate =
+    heroView === "original" && originalImage
+      ? originalImage
+      : renderedImageUrl ?? originalImage ?? design.sceneUrl;
+  const displayImage = imageFailed
+    ? renderedImageUrl ?? design.sceneUrl
+    : displayCandidate;
+  const heroSrc =
+    extractImageUrl(displayImage) ?? extractImageUrl(design.sceneUrl) ?? "";
 
   useEffect(() => {
     setIsMounted(true);
@@ -69,34 +85,108 @@ export function AiRenderFlow() {
     };
   }, []);
 
-  const design = useMemo(
-    () => getDesignScene(roomType, style, budget, catalog, vendorId, countryId),
-    [roomType, style, budget, catalog, vendorId, countryId],
-  );
-  const activeKey = sceneKey(roomType, style, budget, vendorId, countryId);
-  const originalImage = uploadedImage ?? previewUrl;
-  const hasAiResult = Boolean(rendered && rendered.key === activeKey);
-  const heroImage =
-    hasAiResult && rendered
-      ? heroView === "original" && originalImage
-        ? originalImage
-        : rendered.imageUrl
-      : originalImage ?? design.sceneUrl;
-  const displayImage = imageFailed ? design.sceneUrl : heroImage;
-  const renderedImageUrl =
-    extractImageUrl(displayImage) ?? extractImageUrl(design.sceneUrl) ?? "";
-  const recommendedProducts =
-    hasAiResult && rendered?.products?.length
-      ? rendered.products
-      : design.products;
-
   useEffect(() => {
     setImageFailed(false);
-  }, [heroImage]);
+  }, [heroSrc]);
+
+  async function toSendableImage(src: string) {
+    if (!src.startsWith("blob:")) return src;
+    const blob = await fetch(src).then((response) => response.blob());
+    return new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  async function handleGenerate(event?: { preventDefault?: () => void }) {
+    event?.preventDefault?.();
+    if (!isMounted) return;
+
+    const requestId = ++generationRef.current;
+    setError(null);
+    setBusy(true);
+    setHeroView("ai");
+    setHasGeneratedOnce(true);
+
+    try {
+      const productsForRender = design.products;
+      const referenceImage = uploadedImage
+        ? await toSendableImage(uploadedImage)
+        : await toSendableImage(design.sceneUrl);
+      const response = await fetch("/api/ai-render/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          mode: "virtual-staging",
+          imageUrl: referenceImage,
+          image: referenceImage,
+          controlnet_image: referenceImage,
+          roomType,
+          style,
+          budget,
+          keepStructure: Boolean(uploadedImage),
+          fallbackImageUrl: design.sceneUrl,
+          vendorName: activeVendorName,
+          vendorId,
+          refreshToken: `${activeKey}:${Date.now()}`,
+          products: productsForRender.map((product) => ({
+            name: product.name,
+            category: product.category,
+            promptHint: product.promptHint,
+            vendorId: product.vendorId,
+          })),
+        }),
+      });
+
+      let data: unknown = {};
+      try {
+        data = await response.json();
+      } catch {
+        data = {};
+      }
+
+      if (requestId !== generationRef.current) return;
+
+      const payload = data as {
+        composedImageUrl?: unknown;
+        output?: unknown;
+        image?: unknown;
+        fallback?: boolean;
+      };
+      const imageFromApi =
+        extractImageUrl(
+          Array.isArray(payload.output) ? payload.output[0] : payload.output,
+        ) ??
+        extractImageUrl(payload.composedImageUrl) ??
+        extractImageUrl(payload.image);
+      const nextUrl = imageFromApi || design.sceneUrl;
+      if (nextUrl) {
+        setRenderedImageUrl(nextUrl);
+        setImageFailed(false);
+      }
+    } catch {
+      if (requestId !== generationRef.current) return;
+      if (!renderedImageUrl) setRenderedImageUrl(design.sceneUrl);
+    } finally {
+      if (requestId === generationRef.current) setBusy(false);
+    }
+  }
 
   useEffect(() => {
-    setHeroView("ai");
-  }, [rendered?.imageUrl, activeKey]);
+    if (!isMounted || !hasGeneratedOnce) return;
+    if (skipFilterRegenRef.current) {
+      skipFilterRegenRef.current = false;
+      return;
+    }
+    const timer = window.setTimeout(() => {
+      void handleGenerate();
+    }, 450);
+    return () => window.clearTimeout(timer);
+    // Filter-driven regeneration: new vendor/style/budget/room must request a new image.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [vendorId, style, budget, roomType, hasGeneratedOnce, isMounted]);
 
   function revokePreview() {
     if (previewUrlRef.current?.startsWith("blob:")) {
@@ -114,7 +204,6 @@ export function AiRenderFlow() {
       return;
     }
     setError(null);
-    setRendered(null);
     setImageFailed(false);
     revokePreview();
     const objectUrl = URL.createObjectURL(file);
@@ -139,95 +228,16 @@ export function AiRenderFlow() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
-  function resetToUpload() {
-    setRendered(null);
+  function reset() {
+    generationRef.current += 1;
+    clearUploadedPhoto();
+    setRenderedImageUrl(null);
+    setHasGeneratedOnce(false);
+    skipFilterRegenRef.current = true;
     setHeroView("ai");
     setBusy(false);
     setError(null);
     setImageFailed(false);
-  }
-
-  function reset() {
-    clearUploadedPhoto();
-    resetToUpload();
-  }
-
-  async function toSendableImage(src: string) {
-    if (!src.startsWith("blob:")) return src;
-    const blob = await fetch(src).then((response) => response.blob());
-    return new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result));
-      reader.onerror = () => reject(reader.error);
-      reader.readAsDataURL(blob);
-    });
-  }
-
-  async function handleGenerate(event?: { preventDefault?: () => void }) {
-    event?.preventDefault?.();
-    if (!isMounted) return;
-
-    setError(null);
-    setBusy(true);
-
-    try {
-      const productsForRender = design.products;
-      const referenceImage = uploadedImage
-        ? await toSendableImage(uploadedImage)
-        : await toSendableImage(design.sceneUrl);
-      const response = await fetch("/api/ai-render/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          mode: "virtual-staging",
-          imageUrl: referenceImage,
-          image: referenceImage,
-          controlnet_image: referenceImage,
-          roomType,
-          style,
-          keepStructure: Boolean(uploadedImage),
-          fallbackImageUrl: design.sceneUrl,
-          vendorName: activeVendorName,
-          products: productsForRender.map((product) => ({
-            name: product.name,
-            category: product.category,
-            promptHint: product.promptHint,
-          })),
-        }),
-      });
-
-      let data: unknown = {};
-      try {
-        data = await response.json();
-      } catch {
-        data = {};
-      }
-
-      const payload = data as {
-        composedImageUrl?: unknown;
-        output?: unknown;
-        image?: unknown;
-        fallback?: boolean;
-      };
-      const imageFromApi = extractImageUrl(
-        Array.isArray(payload.output) ? payload.output[0] : payload.output,
-      ) ?? extractImageUrl(payload.composedImageUrl) ?? extractImageUrl(payload.image);
-      const shouldFallback = !response.ok || payload.fallback || !imageFromApi;
-
-      setRendered({
-        key: activeKey,
-        imageUrl: shouldFallback ? design.sceneUrl : imageFromApi,
-        products: productsForRender,
-      });
-    } catch {
-      setRendered({
-        key: activeKey,
-        imageUrl: design.sceneUrl,
-        products: design.products,
-      });
-    } finally {
-      setBusy(false);
-    }
   }
 
   if (!isMounted) {
@@ -248,7 +258,6 @@ export function AiRenderFlow() {
         </p>
       </div>
       <VendorChipBar />
-      {/* Selector Tip Cameră */}
       <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/5 p-4">
         <div>
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-brass">
@@ -261,10 +270,7 @@ export function AiRenderFlow() {
             <button
               key={type}
               type="button"
-              onClick={() => {
-                setRoomType(type);
-                setRendered(null);
-              }}
+              onClick={() => setRoomType(type)}
               className={`rounded-full px-4 py-2 text-xs font-medium transition ${
                 roomType === type
                   ? "bg-brass text-ink"
@@ -277,16 +283,12 @@ export function AiRenderFlow() {
         </div>
       </div>
 
-      {/* Selector Stiluri */}
       <div className="flex flex-wrap gap-2">
         {interiorStyles.map((item) => (
           <button
             key={item}
             type="button"
-            onClick={() => {
-              setStyle(item);
-              setRendered(null);
-            }}
+            onClick={() => setStyle(item)}
             className={`rounded-full px-4 py-2 text-sm ${
               style === item
                 ? "bg-brass text-ink"
@@ -298,7 +300,6 @@ export function AiRenderFlow() {
         ))}
       </div>
 
-      {/* Selector Buget (Asigurat vizibil) */}
       <div>
         <p className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-brass">
           {t("budgetTitle")}
@@ -308,10 +309,7 @@ export function AiRenderFlow() {
             <button
               key={tier}
               type="button"
-              onClick={() => {
-                setBudget(tier);
-                setRendered(null);
-              }}
+              onClick={() => setBudget(tier)}
               className={`rounded-2xl px-4 py-2.5 text-left text-sm ${
                 budget === tier
                   ? "bg-brass text-ink"
@@ -337,92 +335,82 @@ export function AiRenderFlow() {
         </p>
       ) : null}
 
-      {!hasAiResult ? (
-        <>
-          <div className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4">
-            <div>
-              <p className="font-serif text-lg text-linen">{t("uploadTitle")}</p>
-              <p className="mt-1 text-sm text-linen/70">
-                {`Goală sau deja mobilată. Folosim poza ta ca referință de structură și restilăm mobilierul cu catalogul ${vendorName}.`}
-              </p>
-            </div>
-            {originalImage ? (
-              <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-ink/40">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={originalImage}
-                  alt={fileName ?? "Fotografie încărcată"}
-                  className="h-40 w-full object-cover sm:h-48"
-                />
-                <div className="absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-2 bg-black/55 px-3 py-2">
-                  <p className="truncate text-xs text-linen/80">
-                    {fileName ?? "Fotografie încărcată"}
-                  </p>
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      className="rounded-full bg-brass px-3 py-1 text-[11px] font-medium text-ink"
-                    >
-                      Înlocuiește fotografia
-                    </button>
-                    <button
-                      type="button"
-                      onClick={clearUploadedPhoto}
-                      className="rounded-full border border-white/30 px-3 py-1 text-[11px] text-linen"
-                    >
-                      Șterge
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ) : null}
-            <label htmlFor="room-photo-upload" className="sr-only">
-              {t("uploadCta")}
-            </label>
-            <input
-              ref={fileInputRef}
-              id="room-photo-upload"
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              className={`block w-full cursor-pointer text-sm text-linen file:mr-4 file:cursor-pointer file:rounded-full file:border-0 file:bg-brass file:px-5 file:py-2.5 file:text-sm file:font-medium file:text-ink ${
-                originalImage ? "sr-only" : ""
-              }`}
+      <div className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4">
+        <div>
+          <p className="font-serif text-lg text-linen">{t("uploadTitle")}</p>
+          <p className="mt-1 text-sm text-linen/70">
+            {`Goală sau deja mobilată. Folosim poza ta ca referință de structură și restilăm mobilierul cu catalogul ${activeVendorName}.`}
+          </p>
+        </div>
+        {originalImage ? (
+          <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-ink/40">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={originalImage}
+              alt={fileName ?? "Fotografie încărcată"}
+              className="h-40 w-full object-cover sm:h-48"
             />
+            <div className="absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-2 bg-black/55 px-3 py-2">
+              <p className="truncate text-xs text-linen/80">
+                {fileName ?? "Fotografie încărcată"}
+              </p>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="rounded-full bg-brass px-3 py-1 text-[11px] font-medium text-ink"
+                >
+                  Înlocuiește fotografia
+                </button>
+                <button
+                  type="button"
+                  onClick={clearUploadedPhoto}
+                  className="rounded-full border border-white/30 px-3 py-1 text-[11px] text-linen"
+                >
+                  Șterge
+                </button>
+              </div>
+            </div>
           </div>
+        ) : null}
+        <label htmlFor="room-photo-upload" className="sr-only">
+          {t("uploadCta")}
+        </label>
+        <input
+          ref={fileInputRef}
+          id="room-photo-upload"
+          type="file"
+          accept="image/*"
+          onChange={handleImageUpload}
+          className={`block w-full cursor-pointer text-sm text-linen file:mr-4 file:cursor-pointer file:rounded-full file:border-0 file:bg-brass file:px-5 file:py-2.5 file:text-sm file:font-medium file:text-ink ${
+            originalImage ? "sr-only" : ""
+          }`}
+        />
+      </div>
 
-          <form
-            className="flex flex-wrap items-center justify-end gap-3"
-            onSubmit={(event) => void handleGenerate(event)}
-          >
-            <button
-              type="button"
-              onClick={reset}
-              className="rounded-full border border-white/15 px-6 py-2.5 text-sm text-linen"
-            >
-              {locale === "ro" ? "Resetează / Încarcă o altă poză" : t("restart")}
-            </button>
-            <button
-              type="submit"
-              disabled={!isMounted || busy}
-              className="rounded-full bg-brass px-8 py-3 text-sm font-medium text-ink disabled:opacity-40"
-            >
-              {busy
-                ? locale === "ro"
-                  ? `AI-ul generează spațiul cu mobilier ${vendorName}...`
-                  : t("generating", { vendor: vendorName })
-                : locale === "ro"
-                  ? "Randează camera"
-                  : t("generate")}
-            </button>
-          </form>
-        </>
-      ) : null}
+      <form
+        className="flex flex-wrap items-center justify-end gap-3"
+        onSubmit={(event) => void handleGenerate(event)}
+      >
+        <button
+          type="button"
+          onClick={reset}
+          className="rounded-full border border-white/15 px-6 py-2.5 text-sm text-linen"
+        >
+          {locale === "ro" ? "Resetează / Încarcă o altă poză" : t("restart")}
+        </button>
+        <button
+          type="submit"
+          disabled={!isMounted || busy}
+          className="rounded-full bg-brass px-8 py-3 text-sm font-medium text-ink disabled:opacity-40"
+        >
+          {busy ? "Se generează..." : "Randează camera"}
+        </button>
+      </form>
 
       <div className="space-y-8">
         <section className="relative overflow-hidden rounded-[28px] border border-white/10 bg-[#1c1814]">
-          {hasAiResult && originalImage && !busy ? (
+          {renderedImageUrl && originalImage && !busy ? (
             <div className="absolute left-4 top-4 z-10 flex rounded-full border border-white/15 bg-black/65 p-1 text-xs">
               <button
                 type="button"
@@ -444,47 +432,31 @@ export function AiRenderFlow() {
               </button>
             </div>
           ) : null}
-          {renderedImageUrl ? (
+          {heroSrc ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={renderedImageUrl}
+              src={heroSrc}
               alt=""
               onError={() => setImageFailed(true)}
-              className="w-full max-h-[600px] object-cover rounded-xl"
+              className="w-full max-h-[600px] rounded-xl object-cover"
             />
-          ) : null}
+          ) : (
+            <div className="flex h-[360px] w-full items-center justify-center text-linen/50">
+              Așteptăm randarea camerei
+            </div>
+          )}
           {busy ? (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/55 px-6 text-center">
+            <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-4 bg-black/70 px-6 text-center">
+              <span
+                className="h-12 w-12 animate-spin rounded-full border-2 border-linen/20 border-t-brass"
+                aria-hidden
+              />
               <p className="max-w-md font-serif text-xl text-linen sm:text-2xl">
-                {locale === "ro"
-                  ? `AI-ul generează spațiul cu mobilier ${vendorName}...`
-                  : t("generating", { vendor: vendorName })}
+                {`Se generează noul design ${activeVendorName} în stil ${selectedStyleLabel}...`}
               </p>
             </div>
           ) : null}
         </section>
-
-        {hasAiResult ? (
-          <div className="flex flex-wrap items-center justify-end gap-3">
-            <button
-              type="button"
-              onClick={resetToUpload}
-              className="rounded-full border border-white/15 px-6 py-2.5 text-sm text-linen"
-            >
-              {locale === "ro"
-                ? "Resetează / Încarcă o altă poză"
-                : t("restart")}
-            </button>
-            <button
-              type="button"
-              onClick={() => void handleGenerate()}
-              disabled={busy}
-              className="rounded-full bg-brass px-8 py-3 text-sm font-medium text-ink disabled:opacity-40"
-            >
-              Randează camera
-            </button>
-          </div>
-        ) : null}
 
         <DesignProductsSection
           key={activeKey}

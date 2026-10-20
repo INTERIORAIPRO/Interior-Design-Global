@@ -17,6 +17,7 @@ import {
   getVendor,
 } from "@/lib/partner-store/vendors";
 import { VendorChipBar } from "@/components/layout/VendorSelect";
+import { extractImageUrl } from "@/lib/ai-render/extractImageUrl";
 import { DesignProductsSection } from "./DesignProductsSection";
 
 type RoomType = RoomKind;
@@ -33,11 +34,12 @@ export function AiRenderFlow() {
   const tCommerce = useTranslations("commerce");
   const locale = useLocale();
   const { catalog, vendorId, countryId } = useProjectDestination();
-  const vendorName =
+  const activeVendorName =
     vendorId === MIX_VENDOR_ID
       ? tCommerce("mixMatchShort")
       : getVendor(vendorId)?.brandName ??
         getActiveVendorName(vendorId, tCommerce("mixMatchShort"));
+  const vendorName = activeVendorName;
   const [isMounted, setIsMounted] = useState(false);
   const [roomType, setRoomType] = useState<RoomType>("bedroom");
   const [style, setStyle] = useState<InteriorStyle>("scandinavian");
@@ -78,6 +80,8 @@ export function AiRenderFlow() {
         : rendered.imageUrl
       : originalImage ?? design.sceneUrl;
   const displayImage = imageFailed ? design.sceneUrl : heroImage;
+  const renderedImageUrl =
+    extractImageUrl(displayImage) ?? extractImageUrl(design.sceneUrl) ?? "";
   const recommendedProducts = design.products;
 
   useEffect(() => {
@@ -176,6 +180,7 @@ export function AiRenderFlow() {
           style,
           keepStructure: Boolean(uploadedImage),
           fallbackImageUrl: design.sceneUrl,
+          vendorName: activeVendorName,
           products: recommendedProducts.map((product) => ({
             name: product.name,
             category: product.category,
@@ -184,16 +189,23 @@ export function AiRenderFlow() {
         }),
       });
 
-      let data: { composedImageUrl?: string; fallback?: boolean } = {};
+      let data: unknown = {};
       try {
         data = await response.json();
       } catch {
         data = {};
       }
 
-      const imageFromApi =
-        typeof data.composedImageUrl === "string" ? data.composedImageUrl : null;
-      const shouldFallback = !response.ok || data.fallback || !imageFromApi;
+      const payload = data as {
+        composedImageUrl?: unknown;
+        output?: unknown;
+        image?: unknown;
+        fallback?: boolean;
+      };
+      const imageFromApi = extractImageUrl(
+        Array.isArray(payload.output) ? payload.output[0] : payload.output,
+      ) ?? extractImageUrl(payload.composedImageUrl) ?? extractImageUrl(payload.image);
+      const shouldFallback = !response.ok || payload.fallback || !imageFromApi;
 
       setRendered({
         key: activeKey,
@@ -214,15 +226,13 @@ export function AiRenderFlow() {
     <div className="space-y-8">
       <div>
         <p className="text-xs uppercase tracking-[0.28em] text-brass">
-          {vendorName}
+          {activeVendorName}
         </p>
         <h1 className="mt-3 font-serif text-5xl text-linen">
-          Virtual Staging {vendorName}
+          {`Virtual Staging ${activeVendorName}`}
         </h1>
         <p className="mt-4 max-w-2xl text-linen/65">
-          {locale === "ro"
-            ? `Încarcă o poză cu camera ta (goală sau mobilată). Păstrăm forma, pereții și unghiul, înlocuim mobilierul vechi cu piese reale ${vendorName} și îți arătăm prețurile cu link de cumpărare.`
-            : t("intro", { vendor: vendorName })}
+          {`Păstrăm forma, pereții și unghiul, înlocuim mobilierul vechi cu piese reale ${activeVendorName} și îți arătăm prețurile cu link de cumpărare.`}
         </p>
       </div>
       <VendorChipBar />
@@ -415,17 +425,13 @@ export function AiRenderFlow() {
               </button>
             </div>
           ) : null}
-          {displayImage ? (
+          {renderedImageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={displayImage}
-              alt={
-                hasAiResult
-                  ? `Randare AI ${vendorName}`
-                  : fileName ?? `Previzualizare ${vendorName}`
-              }
+              src={renderedImageUrl}
+              alt=""
               onError={() => setImageFailed(true)}
-              className="mx-auto block h-auto w-full max-h-[80vh] object-contain"
+              className="w-full max-h-[600px] object-cover rounded-xl"
             />
           ) : null}
           {busy ? (
@@ -465,7 +471,8 @@ export function AiRenderFlow() {
           key={activeKey}
           products={recommendedProducts}
           locale={locale}
-          vendorName={vendorName}
+          vendorName={activeVendorName}
+          selectedBudget={budget}
         />
       </div>
     </div>

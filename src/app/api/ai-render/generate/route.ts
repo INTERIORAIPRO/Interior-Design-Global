@@ -2,6 +2,7 @@ import { readFile } from "fs/promises";
 import path from "path";
 import { NextResponse } from "next/server";
 import Replicate from "replicate";
+import { extractImageUrlAsync } from "@/lib/ai-render/extractImageUrl";
 
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
@@ -139,30 +140,34 @@ function styleLexicon(style: string) {
   return styleMaterials[style] ?? styleMaterials.scandinavian;
 }
 
-function productVisual(product: PromptProduct, style: string) {
-  const name = product.name?.trim() || "Kave Home piece";
+function productVisual(product: PromptProduct, style: string, vendorName: string) {
+  const name = product.name?.trim() || `${vendorName} piece`;
   const named = namedVisuals[name];
   const hint = product.promptHint?.trim();
   const fallback =
     (product.category && categoryFallback[product.category]) ||
-    "catalog-quality Nordic furniture from Kave Home";
+    `catalog-quality furniture from ${vendorName}`;
   const body = named || hint || fallback;
-  return `(${name}:1.35), MUST be clearly visible in the photograph: ${body}. Materials locked to Kave Home ${style} look: ${styleLexicon(style)}. Correct real-world scale, grounded on the floor, photoreal product photography.`;
+  return `(${name}:1.35), MUST be clearly visible in the photograph: ${body}. Materials locked to ${vendorName} ${style} look: ${styleLexicon(style)}. Correct real-world scale, grounded on the floor, photoreal product photography.`;
 }
 
-function buildProductBlock(products: PromptProduct[] | undefined, style: string) {
+function buildProductBlock(
+  products: PromptProduct[] | undefined,
+  style: string,
+  vendorName: string,
+) {
   const list = (products ?? []).filter((product) => product.name);
   if (!list.length) return "";
   const weighted = list.map((product) => `(${product.name}:1.4)`).join(", ");
   const lines = list.map(
     (product, index) =>
-      `MANDATORY ${index + 1}: ${productVisual(product, style)} Do not omit this object. Do not replace it with a different typology.`,
+      `MANDATORY ${index + 1}: ${productVisual(product, style, vendorName)} Do not omit this object. Do not replace it with a different typology.`,
   );
   return [
-    `Kave Home catalog staging, every listed piece MUST appear: ${weighted}.`,
+    `${vendorName} catalog staging, every listed piece MUST appear: ${weighted}.`,
     "Force the diffusion model to render these exact furniture objects as the main staged pieces, occupying the room, sharp and recognizable:",
     ...lines,
-    "Do not invent a generic living-room sofa unless a sofa is listed. Do not hide listed lamps, nightstands, armchairs or the bed. Keep each Kave Home piece fully in frame.",
+    `Do not invent a generic living-room sofa unless a sofa is listed. Do not hide listed lamps, nightstands, armchairs or the bed. Keep each ${vendorName} piece fully in frame.`,
   ].join(" ");
 }
 
@@ -188,11 +193,12 @@ function buildPrompt(
   roomType: string | undefined,
   style: string | undefined,
   products?: PromptProduct[],
+  vendorName = "partner catalog",
 ) {
   const room = normalizeRoomType(roomType);
   const chosenStyle: StyleKey =
     style && style in styleBriefs ? (style as StyleKey) : "scandinavian";
-  const productBlock = buildProductBlock(products, chosenStyle);
+  const productBlock = buildProductBlock(products, chosenStyle, vendorName);
   return [
     roomLeads[room],
     "VIRTUAL STAGING / INTERIOR REDESIGN of the USER'S OWN ROOM PHOTOGRAPH, photorealistic, 8k, magazine interior photography, image-to-image restaging",
@@ -225,16 +231,10 @@ function buildNegativePrompt(roomType: string | undefined) {
   return shared;
 }
 
-function outputUrl(output: unknown): string | null {
-  if (!output) return null;
-  if (typeof output === "string") return output;
-  if (Array.isArray(output)) return outputUrl(output[0]);
-  if (typeof output === "object" && output !== null) {
-    const file = output as { url?: () => string; href?: string };
-    if (typeof file.url === "function") return file.url();
-    if (typeof file.href === "string") return file.href;
-  }
-  return null;
+async function outputUrl(output: unknown): Promise<string | null> {
+  return extractImageUrlAsync(
+    Array.isArray(output) ? output[0] : output,
+  );
 }
 
 async function uploadToReplicate(bytes: Buffer, mime: string) {
@@ -319,7 +319,7 @@ async function runControlNet(
         num_inference_steps: 40,
       },
     });
-    const url = outputUrl(output);
+    const url = await outputUrl(output);
     if (!url) throw new Error("ControlNet interior nu a returnat nicio imagine.");
     return url;
   } catch (error) {
@@ -340,7 +340,7 @@ async function runControlNet(
       output_quality: 90,
     },
   });
-  const url = outputUrl(output);
+  const url = await outputUrl(output);
   if (!url) throw new Error("Flux Depth nu a returnat nicio imagine.");
   return url;
 }
@@ -351,6 +351,7 @@ const DEFAULT_FALLBACK_SCENE =
 function fallbackResponse(imageUrl: string) {
   return NextResponse.json({
     composedImageUrl: imageUrl,
+    output: imageUrl,
     fallback: true,
   });
 }
@@ -369,6 +370,7 @@ export async function POST(request: Request) {
       products,
       fallbackImageUrl: bodyFallback,
       keepStructure,
+      vendorName,
     } = body as {
       imageUrl?: string;
       image?: string;
@@ -378,7 +380,12 @@ export async function POST(request: Request) {
       products?: PromptProduct[];
       fallbackImageUrl?: string;
       keepStructure?: boolean;
+      vendorName?: string;
     };
+    const brandName =
+      typeof vendorName === "string" && vendorName.trim()
+        ? vendorName.trim()
+        : "partner catalog";
 
     const imageUrl = [bodyImageUrl, controlnet_image, image].find(
       (value): value is string => typeof value === "string" && value.length > 0,
@@ -397,7 +404,7 @@ export async function POST(request: Request) {
 
     try {
       const publicImageUrl = await toPublicImageUri(imageUrl);
-      const prompt = buildPrompt(roomType, style, products);
+      const prompt = buildPrompt(roomType, style, products, brandName);
       const negativePrompt = buildNegativePrompt(normalizeRoomType(roomType));
       const generatedImageUrl = await runControlNet(
         publicImageUrl,
@@ -410,7 +417,10 @@ export async function POST(request: Request) {
         return fallbackResponse(fallbackImageUrl);
       }
 
-      return NextResponse.json({ composedImageUrl: generatedImageUrl });
+      return NextResponse.json({
+        composedImageUrl: generatedImageUrl,
+        output: generatedImageUrl,
+      });
     } catch (error: unknown) {
       console.warn(
         "Replicate indisponibil, folosim scena de catalog:",

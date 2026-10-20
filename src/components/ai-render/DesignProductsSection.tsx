@@ -12,17 +12,26 @@ import {
   type PartnerProduct,
 } from "@/lib/partner-store/catalog";
 import { getVendor } from "@/lib/partner-store/vendors";
+import type { BudgetTier } from "@/lib/ai-render/designSets";
+
+const budgetLabels: Record<BudgetTier, string> = {
+  economic: "Economic",
+  medium: "Mediu",
+  premium: "Premium",
+};
 
 type DesignProductsSectionProps = {
   products: PartnerProduct[];
   locale: string;
   vendorName: string;
+  selectedBudget: BudgetTier;
 };
 
 export function DesignProductsSection({
   products,
   locale,
   vendorName,
+  selectedBudget,
 }: DesignProductsSectionProps) {
   const t = useTranslations("aiRender");
   const isMounted = useIsMounted();
@@ -75,6 +84,33 @@ export function DesignProductsSection({
             {isMounted ? formattedTotal : `${total} ${totalCurrency}`}
           </span>
         </p>
+      </div>
+
+      <div className="mt-6 grid gap-3 rounded-2xl border border-brass/25 bg-brass/10 p-4 sm:grid-cols-3">
+        <div>
+          <p className="text-[10px] uppercase tracking-[0.18em] text-brass/80">
+            Nivel selectat
+          </p>
+          <p className="mt-1 font-serif text-lg text-linen">
+            {budgetLabels[selectedBudget]}
+          </p>
+        </div>
+        <div>
+          <p className="text-[10px] uppercase tracking-[0.18em] text-brass/80">
+            Cost Total Set
+          </p>
+          <p className="mt-1 font-serif text-lg text-linen">
+            {isMounted ? formattedTotal : `${total} ${totalCurrency}`}
+          </p>
+        </div>
+        <div>
+          <p className="text-[10px] uppercase tracking-[0.18em] text-brass/80">
+            Garanție & Livrare
+          </p>
+          <p className="mt-1 text-sm leading-snug text-linen/85">
+            Livrare directă prin {vendorName}.
+          </p>
+        </div>
       </div>
 
       <ul className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

@@ -92,7 +92,8 @@
     "budgets": {
       "economic": "Economic",
       "medium": "Mediu",
-      "premium": "Premium"
+      "premium": "Premium",
+      "lux": "Lux"
     },
     "fallbackNotice": "Randarea AI este temporar indisponibilă. Îți arătăm scena de catalog Kave Home pentru stilul și bugetul alese.",
     "styles": {

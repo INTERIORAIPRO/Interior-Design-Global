@@ -4,12 +4,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { interiorStyles, type InteriorStyle } from "@/lib/ai-render/catalogPick";
 import {
+  budgetRanges,
   budgetTiers,
   getDesignScene,
   sceneKey,
   type BudgetTier,
 } from "@/lib/ai-render/designSets";
-import type { RoomKind } from "@/lib/partner-store/catalog";
+import type { PartnerProduct, RoomKind } from "@/lib/partner-store/catalog";
 import { useProjectDestination } from "@/lib/partner-store/ProjectDestinationProvider";
 import {
   MIX_VENDOR_ID,
@@ -47,9 +48,11 @@ export function AiRenderFlow() {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
-  const [rendered, setRendered] = useState<{ key: string; imageUrl: string } | null>(
-    null,
-  );
+  const [rendered, setRendered] = useState<{
+    key: string;
+    imageUrl: string;
+    products: PartnerProduct[];
+  } | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [imageFailed, setImageFailed] = useState(false);
@@ -82,7 +85,10 @@ export function AiRenderFlow() {
   const displayImage = imageFailed ? design.sceneUrl : heroImage;
   const renderedImageUrl =
     extractImageUrl(displayImage) ?? extractImageUrl(design.sceneUrl) ?? "";
-  const recommendedProducts = design.products;
+  const recommendedProducts =
+    hasAiResult && rendered?.products?.length
+      ? rendered.products
+      : design.products;
 
   useEffect(() => {
     setImageFailed(false);
@@ -165,6 +171,7 @@ export function AiRenderFlow() {
     setBusy(true);
 
     try {
+      const productsForRender = design.products;
       const referenceImage = uploadedImage
         ? await toSendableImage(uploadedImage)
         : await toSendableImage(design.sceneUrl);
@@ -181,7 +188,7 @@ export function AiRenderFlow() {
           keepStructure: Boolean(uploadedImage),
           fallbackImageUrl: design.sceneUrl,
           vendorName: activeVendorName,
-          products: recommendedProducts.map((product) => ({
+          products: productsForRender.map((product) => ({
             name: product.name,
             category: product.category,
             promptHint: product.promptHint,
@@ -210,9 +217,14 @@ export function AiRenderFlow() {
       setRendered({
         key: activeKey,
         imageUrl: shouldFallback ? design.sceneUrl : imageFromApi,
+        products: productsForRender,
       });
     } catch {
-      setRendered({ key: activeKey, imageUrl: design.sceneUrl });
+      setRendered({
+        key: activeKey,
+        imageUrl: design.sceneUrl,
+        products: design.products,
+      });
     } finally {
       setBusy(false);
     }
@@ -300,13 +312,20 @@ export function AiRenderFlow() {
                 setBudget(tier);
                 setRendered(null);
               }}
-              className={`rounded-full px-4 py-2 text-sm ${
+              className={`rounded-2xl px-4 py-2.5 text-left text-sm ${
                 budget === tier
                   ? "bg-brass text-ink"
                   : "border border-white/15 text-linen/75"
               }`}
             >
-              {t(`budgets.${tier}`)}
+              <span className="block font-medium">{budgetRanges[tier].label}</span>
+              <span
+                className={`mt-0.5 block text-[11px] ${
+                  budget === tier ? "text-ink/70" : "text-linen/50"
+                }`}
+              >
+                {budgetRanges[tier].hint}
+              </span>
             </button>
           ))}
         </div>

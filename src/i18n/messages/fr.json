@@ -92,7 +92,8 @@
     "budgets": {
       "economic": "Ã‰conomique",
       "medium": "Moyen",
-      "premium": "Premium"
+      "premium": "Premium",
+      "lux": "Luxe"
     },
     "fallbackNotice": "Le rendu IA est temporairement indisponible. Voici la scÃ¨ne catalogue Kave Home pour le style et le budget choisis.",
     "styles": {

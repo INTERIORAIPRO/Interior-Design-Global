@@ -12,13 +12,7 @@ import {
   type PartnerProduct,
 } from "@/lib/partner-store/catalog";
 import { getVendor } from "@/lib/partner-store/vendors";
-import type { BudgetTier } from "@/lib/ai-render/designSets";
-
-const budgetLabels: Record<BudgetTier, string> = {
-  economic: "Economic",
-  medium: "Mediu",
-  premium: "Premium",
-};
+import { budgetRanges, type BudgetTier } from "@/lib/ai-render/designSets";
 
 type DesignProductsSectionProps = {
   products: PartnerProduct[];
@@ -92,7 +86,10 @@ export function DesignProductsSection({
             Nivel selectat
           </p>
           <p className="mt-1 font-serif text-lg text-linen">
-            {budgetLabels[selectedBudget]}
+            {budgetRanges[selectedBudget].label}
+            <span className="mt-0.5 block font-sans text-[11px] tracking-normal text-linen/55">
+              {budgetRanges[selectedBudget].hint}
+            </span>
           </p>
         </div>
         <div>

@@ -92,7 +92,8 @@
     "budgets": {
       "economic": "Economy",
       "medium": "Mittel",
-      "premium": "Premium"
+      "premium": "Premium",
+      "lux": "Lux"
     },
     "fallbackNotice": "Die KI-Darstellung ist vorÃ¼bergehend nicht verfÃ¼gbar. Wir zeigen die The-Home-Katalogszene fÃ¼r Stil und Budget.",
     "styles": {

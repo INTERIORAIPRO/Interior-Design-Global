@@ -92,7 +92,8 @@
     "budgets": {
       "economic": "Economy",
       "medium": "Medium",
-      "premium": "Premium"
+      "premium": "Premium",
+      "lux": "Luxe"
     },
     "fallbackNotice": "AI rendering is temporarily unavailable. Showing the Kave Home catalog scene for your selected style and budget.",
     "styles": {

@@ -40,6 +40,24 @@ export const primaryPartnerStore: PartnerStore = {
 
 const AFFILIATE_REF = "interior-design-global";
 
+const DISTRIBUTOR_HOSTS = ["thehome.ro", "thehome.com"];
+
+export function officialManufacturerUrl(vendorId?: string, fallbackUrl?: string) {
+  const vendor = getVendor(vendorId);
+  if (vendor?.storeUrl) return vendor.storeUrl;
+  const fallback = fallbackUrl?.trim() ?? "";
+  if (!fallback) return "https://kavehome.com";
+  try {
+    const host = new URL(fallback).hostname.replace(/^www\./, "");
+    if (DISTRIBUTOR_HOSTS.some((blocked) => host.endsWith(blocked))) {
+      return "https://kavehome.com";
+    }
+  } catch {
+    return "https://kavehome.com";
+  }
+  return fallback;
+}
+
 export function isRealProductPhoto(url?: string | null) {
   const value = url?.trim() ?? "";
   if (!value || /\.svg(\?|$)/i.test(value)) return false;
@@ -132,14 +150,17 @@ function product(input: {
   dimensions?: TypedPartnerProduct["dimensions"];
 }): PartnerProduct {
   const uniqueImage = studioCatalogImage(input);
+  const vendorId = input.vendorId ?? "kave-home";
+  const buyUrl = officialManufacturerUrl(vendorId, input.affiliateUrl);
   return {
     ...input,
     currency: input.currency ?? "EUR",
     dimensions: input.dimensions ?? { widthCm: 80, depthCm: 80, heightCm: 80 },
-    vendorId: input.vendorId ?? "kave-home",
+    vendorId,
     style: input.styles,
     title: input.name,
-    buyUrl: input.affiliateUrl,
+    affiliateUrl: buyUrl,
+    buyUrl,
     image: uniqueImage,
     imageUrl: uniqueImage,
     image2d: uniqueImage,
@@ -160,7 +181,7 @@ export const partnerProducts: PartnerProduct[] = [
     promptHint:
       "a light oatmeal linen 3-seat sofa with slender oak legs, Scandinavian, clearly visible in the living room",
     price: 3499,
-    affiliateUrl: "https://www.thehome.ro/canapele",
+    affiliateUrl: "https://kavehome.com/canapele",
     dimensions: { widthCm: 210, depthCm: 90, heightCm: 85 },
   }),
   product({
@@ -175,7 +196,7 @@ export const partnerProducts: PartnerProduct[] = [
     rooms: ["living"],
     promptHint: "a round pale-oak coffee table in front of the sofa",
     price: 899,
-    affiliateUrl: "https://www.thehome.ro/mese",
+    affiliateUrl: "https://kavehome.com/mese",
     dimensions: { widthCm: 90, depthCm: 90, heightCm: 42 },
   }),
   product({
@@ -206,7 +227,7 @@ export const partnerProducts: PartnerProduct[] = [
     rooms: ["living", "office"],
     promptHint: "a brass arc floor lamp with a warm linen shade",
     price: 1299,
-    affiliateUrl: "https://www.thehome.ro/corpuri-de-iluminat",
+    affiliateUrl: "https://kavehome.com/corpuri-de-iluminat",
     dimensions: { widthCm: 40, depthCm: 120, heightCm: 175 },
   }),
   product({
@@ -221,7 +242,7 @@ export const partnerProducts: PartnerProduct[] = [
     rooms: ["living", "bedroom", "office"],
     promptHint: "a plush beige wool rug covering the floor under the furniture",
     price: 1599,
-    affiliateUrl: "https://www.thehome.ro/covoare",
+    affiliateUrl: "https://kavehome.com/covoare",
     dimensions: { widthCm: 200, depthCm: 300, heightCm: 2 },
   }),
   product({
@@ -236,7 +257,7 @@ export const partnerProducts: PartnerProduct[] = [
     rooms: ["living", "bedroom", "kitchen"],
     promptHint: "a terracotta woven throw with fringe draped on furniture",
     price: 249,
-    affiliateUrl: "https://www.thehome.ro/decoratiuni",
+    affiliateUrl: "https://kavehome.com/decoratiuni",
     dimensions: { widthCm: 130, depthCm: 20, heightCm: 8 },
   }),
   product({
@@ -252,7 +273,7 @@ export const partnerProducts: PartnerProduct[] = [
     promptHint:
       "an upholstered oatmeal Nordic bed as the main bedroom piece, oak legs, neatly made linen bedding",
     price: 4299,
-    affiliateUrl: "https://www.thehome.ro/paturi",
+    affiliateUrl: "https://kavehome.com/paturi",
     dimensions: { widthCm: 180, depthCm: 200, heightCm: 110 },
   }),
   product({
@@ -267,7 +288,7 @@ export const partnerProducts: PartnerProduct[] = [
     rooms: ["bedroom"],
     promptHint: "a compact oatmeal upholstered bed, simple Essential model, neatly made",
     price: 1190,
-    affiliateUrl: "https://www.thehome.ro/paturi",
+    affiliateUrl: "https://kavehome.com/paturi",
     dimensions: { widthCm: 160, depthCm: 200, heightCm: 95 },
   }),
   product({
@@ -282,7 +303,7 @@ export const partnerProducts: PartnerProduct[] = [
     rooms: ["bedroom"],
     promptHint: "a pale oak bedside nightstand with one drawer beside the bed",
     price: 799,
-    affiliateUrl: "https://www.thehome.ro/noptiere",
+    affiliateUrl: "https://kavehome.com/noptiere",
     dimensions: { widthCm: 45, depthCm: 40, heightCm: 55 },
   }),
   product({
@@ -297,7 +318,7 @@ export const partnerProducts: PartnerProduct[] = [
     rooms: ["living", "bedroom"],
     promptHint: "a Nordic lounge armchair in oatmeal fabric with oak legs",
     price: 1899,
-    affiliateUrl: "https://www.thehome.ro/fotolii",
+    affiliateUrl: "https://kavehome.com/fotolii",
     dimensions: { widthCm: 80, depthCm: 85, heightCm: 90 },
   }),
   product({
@@ -312,7 +333,7 @@ export const partnerProducts: PartnerProduct[] = [
     rooms: ["kitchen"],
     promptHint: "a rectangular pale-oak dining table in the kitchen dining area",
     price: 2499,
-    affiliateUrl: "https://www.thehome.ro/mese-dining",
+    affiliateUrl: "https://kavehome.com/mese-dining",
     dimensions: { widthCm: 180, depthCm: 90, heightCm: 75 },
   }),
   product({
@@ -327,7 +348,7 @@ export const partnerProducts: PartnerProduct[] = [
     rooms: ["bedroom"],
     promptHint: "a graphite metal bedside table with a thin wood top",
     price: 649,
-    affiliateUrl: "https://www.thehome.ro/noptiere",
+    affiliateUrl: "https://kavehome.com/noptiere",
     dimensions: { widthCm: 42, depthCm: 38, heightCm: 52 },
   }),
   product({
@@ -342,7 +363,7 @@ export const partnerProducts: PartnerProduct[] = [
     rooms: ["office"],
     promptHint: "a pale oak writing desk as the main home-office piece",
     price: 1899,
-    affiliateUrl: "https://www.thehome.ro/birouri",
+    affiliateUrl: "https://kavehome.com/birouri",
     dimensions: { widthCm: 140, depthCm: 70, heightCm: 75 },
   }),
   product({
@@ -357,7 +378,7 @@ export const partnerProducts: PartnerProduct[] = [
     rooms: ["living", "bedroom", "office", "kitchen"],
     promptHint: "a matte ceramic vase with a simple organic silhouette",
     price: 349,
-    affiliateUrl: "https://www.thehome.ro/decoratiuni",
+    affiliateUrl: "https://kavehome.com/decoratiuni",
     dimensions: { widthCm: 18, depthCm: 18, heightCm: 32 },
   }),
   product({
@@ -372,7 +393,7 @@ export const partnerProducts: PartnerProduct[] = [
     rooms: ["living", "bedroom", "office"],
     promptHint: "a slim matte-black minimalist floor lamp",
     price: 699,
-    affiliateUrl: "https://www.thehome.ro/corpuri-de-iluminat",
+    affiliateUrl: "https://kavehome.com/corpuri-de-iluminat",
     dimensions: { widthCm: 28, depthCm: 28, heightCm: 155 },
   }),
   product({
@@ -387,7 +408,7 @@ export const partnerProducts: PartnerProduct[] = [
     rooms: ["bedroom"],
     promptHint: "a pair of ceramic Scandinavian bedside table lamps on the nightstands",
     price: 459,
-    affiliateUrl: "https://www.thehome.ro/corpuri-de-iluminat",
+    affiliateUrl: "https://kavehome.com/corpuri-de-iluminat",
     dimensions: { widthCm: 22, depthCm: 22, heightCm: 38 },
   }),
   product({
@@ -402,7 +423,7 @@ export const partnerProducts: PartnerProduct[] = [
     rooms: ["bedroom", "living"],
     promptHint: "a compact pale-oak bedroom stool at the foot of the bed",
     price: 249,
-    affiliateUrl: "https://www.thehome.ro/scaune",
+    affiliateUrl: "https://kavehome.com/scaune",
     dimensions: { widthCm: 40, depthCm: 40, heightCm: 45 },
   }),
   product({

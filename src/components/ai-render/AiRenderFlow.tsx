@@ -398,7 +398,7 @@ export function AiRenderFlow() {
       {pieceOptionsForRoom(roomType).length > 0 ? (
         <div>
           <p className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-brass">
-            Alege piesele pe care le dorești în cameră
+            Alege piesele dorite în cameră
           </p>
           <div className="flex flex-wrap gap-2">
             {pieceOptionsForRoom(roomType).map((option) => {

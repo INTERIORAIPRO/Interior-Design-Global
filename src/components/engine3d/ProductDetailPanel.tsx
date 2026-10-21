@@ -5,6 +5,7 @@ import { CatalogPhoto } from "@/components/catalog/CatalogPhoto";
 import {
   formatProductDimensions,
   formatProductPrice,
+  officialManufacturerUrl,
   withAffiliateParams,
 } from "@/lib/partner-store/catalog";
 import { getVendor } from "@/lib/partner-store/vendors";
@@ -22,7 +23,9 @@ export function ProductDetailPanel({
   onClose,
 }: ProductDetailPanelProps) {
   const t = useTranslations("product");
-  const orderUrl = withAffiliateParams(product.affiliateUrl);
+  const orderUrl = withAffiliateParams(
+    officialManufacturerUrl(product.vendorId, product.affiliateUrl),
+  );
 
   return (
     <aside className="absolute bottom-4 left-4 right-4 z-10 max-h-[70%] overflow-auto rounded-2xl border border-white/15 bg-ink/90 p-4 shadow-2xl backdrop-blur-md sm:left-auto sm:w-80">

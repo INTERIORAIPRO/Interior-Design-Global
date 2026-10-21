@@ -11,7 +11,7 @@
     "dimensions": { "widthCm": 210, "depthCm": 90, "heightCm": 85 },
     "price": 3499,
     "currency": "RON",
-    "affiliateUrl": "https://www.thehome.ro",
+    "affiliateUrl": "https://kavehome.com",
     "placement": { "x": 0.1, "z": -1.85, "rotation": 0 }
   },
   {
@@ -26,7 +26,7 @@
     "dimensions": { "widthCm": 85, "depthCm": 82, "heightCm": 90 },
     "price": 1299,
     "currency": "RON",
-    "affiliateUrl": "https://www.thehome.ro",
+    "affiliateUrl": "https://kavehome.com",
     "placement": { "x": 1.95, "z": -0.45, "rotation": -0.6 }
   },
   {
@@ -41,7 +41,7 @@
     "dimensions": { "widthCm": 100, "depthCm": 60, "heightCm": 45 },
     "price": 799,
     "currency": "RON",
-    "affiliateUrl": "https://www.thehome.ro",
+    "affiliateUrl": "https://kavehome.com",
     "placement": { "x": 0.0, "z": -1.0, "rotation": 0 }
   },
   {
@@ -56,7 +56,7 @@
     "dimensions": { "widthCm": 200, "depthCm": 300, "heightCm": 1 },
     "price": 1199,
     "currency": "RON",
-    "affiliateUrl": "https://www.thehome.ro",
+    "affiliateUrl": "https://kavehome.com",
     "placement": { "x": 0.0, "z": -0.5, "rotation": 0 }
   }
 ]

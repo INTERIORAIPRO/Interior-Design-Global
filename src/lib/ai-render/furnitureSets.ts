@@ -1,5 +1,6 @@
 import type { InteriorStyle } from "@/lib/ai-render/catalogPick";
 import {
+  officialManufacturerUrl,
   partnerProducts,
   uniqueProductImage,
   type PartnerProduct,
@@ -355,8 +356,11 @@ export function toRenderProduct(product: PartnerProduct) {
     imageUrl,
     image: imageUrl,
     image2d: imageUrl || product.image2d,
-    buyUrl: product.buyUrl || product.affiliateUrl,
-    affiliateUrl: product.affiliateUrl,
+    buyUrl: officialManufacturerUrl(product.vendorId, product.buyUrl),
+    affiliateUrl: officialManufacturerUrl(
+      product.vendorId,
+      product.affiliateUrl,
+    ),
     vendorId: product.vendorId,
     accentColor: product.accentColor,
     styles: product.styles,

@@ -8,6 +8,7 @@ import { CatalogPhoto } from "@/components/catalog/CatalogPhoto";
 import { addRoomSet } from "@/lib/cart/designCart";
 import {
   formatProductPrice,
+  officialManufacturerUrl,
   uniqueProductImage,
   withAffiliateParams,
   type PartnerProduct,
@@ -48,7 +49,10 @@ export function DesignProductsSection({
         currency: product.currency,
         image2d: product.image2d,
         accentColor: product.accentColor,
-        affiliateUrl: withAffiliateParams(product.affiliateUrl, "ai-render-set"),
+        affiliateUrl: withAffiliateParams(
+          officialManufacturerUrl(product.vendorId, product.affiliateUrl),
+          "ai-render-set",
+        ),
       })),
     );
     setAdded(true);
@@ -114,7 +118,10 @@ export function DesignProductsSection({
       <ul className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {products.filter((product) => uniqueProductImage(product)).map((product, index) => {
           const title = product.title || product.name;
-          const buyUrl = product.buyUrl || product.affiliateUrl;
+          const buyUrl = officialManufacturerUrl(
+            product.vendorId,
+            product.buyUrl || product.affiliateUrl,
+          );
           const imageUrl = uniqueProductImage(product);
           const usedRemote = products.slice(0, index).some((other) => {
             const otherImage = uniqueProductImage(other);

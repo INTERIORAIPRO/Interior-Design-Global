@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { isDisplayableProductImage } from "@/lib/partner-store/catalog";
+import { isRealProductPhoto } from "@/lib/partner-store/catalog";
 
 type CatalogPhotoProps = {
   src?: string | null;
@@ -16,7 +16,7 @@ export function CatalogPhoto({
   fallbackColor = "#2a231c",
   className,
 }: CatalogPhotoProps) {
-  const usable = isDisplayableProductImage(src) ? src!.trim() : "";
+  const usable = isRealProductPhoto(src) ? src!.trim() : "";
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {

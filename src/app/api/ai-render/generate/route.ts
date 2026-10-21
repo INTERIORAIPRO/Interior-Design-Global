@@ -127,6 +127,22 @@ const namedVisuals: Record<string, string> = {
     "a sculptural Scandinavian lounge armchair in oatmeal boucle or light linen, rounded back, visible pale-oak legs, one-seat accent chair not a sofa",
   "Veioze ceramice scandinave":
     "a matching pair of ceramic bedside table lamps (veioze) with round matte off-white bases and linen drum shades, one on each nightstand, warm practical glow",
+  "Pat Mid-Century din lemn de nuc":
+    "a walnut Mid-Century double bed with a wood headboard, tapered legs, white linen, fully in frame",
+  "Noptieră Mid-Century din lemn de nuc":
+    "a pair of walnut Mid-Century nightstands with tapered legs, one on each side of the bed, fully visible not cropped",
+  "Pendul suspendat negru Mid-Century":
+    "a pair of matte-black suspended pendant lamps left and right of the bed, hanging from the ceiling, not table lamps",
+  "Pouf textil gri Mid-Century":
+    "two round grey textile poufs at the foot of the bed",
+  "Pat Mid-Century Westwing din lemn de nuc":
+    "a walnut Mid-Century Westwing double bed with a wood headboard and tapered legs",
+  "Noptieră Mid-Century Westwing din stejar":
+    "matching oak/walnut Westwing nightstands on both sides of the bed",
+  "Pendul suspendat negru Westwing":
+    "matte-black Westwing pendant lamps suspended left and right of the bed",
+  "Pouf textil gri Westwing":
+    "two round grey Westwing textile poufs in front of the bed",
 };
 
 const categoryFallback: Record<string, string> = {

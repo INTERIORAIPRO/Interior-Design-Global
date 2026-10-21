@@ -12,6 +12,7 @@ import {
   type ShippingCountryId,
   type VendorId,
 } from "./vendors";
+import { productPhotoById } from "./productPhotos";
 
 export type RoomKind = "living" | "bedroom" | "office" | "kitchen";
 
@@ -40,70 +41,24 @@ export const primaryPartnerStore: PartnerStore = {
 
 const AFFILIATE_REF = "interior-design-global";
 
-export function isRemoteStockImage(url?: string | null) {
+export function isRealProductPhoto(url?: string | null) {
   const value = url?.trim() ?? "";
-  if (!value) return false;
-  if (/unsplash\.com/i.test(value)) return false;
-  return /^https?:\/\//i.test(value);
-}
-
-export function isPublicCatalogAsset(url?: string | null) {
-  const value = url?.trim() ?? "";
-  return value.startsWith("/partner-store/") && /\.(svg|png|jpe?g|webp)(\?|$)/i.test(value);
+  if (!value || /\.svg(\?|$)/i.test(value)) return false;
+  if (!/\.(jpe?g|webp)(\?|$)/i.test(value)) return false;
+  if (value.includes("/partner-store/")) return false;
+  return value.startsWith("/products/") || /^https?:\/\//i.test(value);
 }
 
 export function isDisplayableProductImage(url?: string | null) {
-  const value = url?.trim() ?? "";
-  if (!value) return false;
-  if (value.startsWith("data:image/")) return true;
-  if (isRemoteStockImage(value)) return true;
-  if (isPublicCatalogAsset(value)) return true;
-  return value.startsWith("/") && !value.includes("unsplash");
-}
-
-export function publicCatalogFallback(
-  product: Pick<PartnerProduct, "name" | "category" | "image2d">,
-) {
-  if (isPublicCatalogAsset(product.image2d)) return product.image2d;
-  const name = product.name.toLowerCase();
-  if (name.includes("noptier")) return "/partner-store/nightstand.svg";
-  if (name.includes("covor") || product.category === "rugs") {
-    return "/partner-store/rug.svg";
-  }
-  if (name.includes("canapea") || product.category === "sofas") {
-    return "/partner-store/sofa.svg";
-  }
-  if (
-    name.includes("pat") ||
-    product.category === "beds"
-  ) {
-    return "/partner-store/bed.svg";
-  }
-  if (
-    name.includes("lamp") ||
-    name.includes("veioz") ||
-    name.includes("pendul") ||
-    product.category === "lighting"
-  ) {
-    return "/partner-store/lamp.svg";
-  }
-  if (name.includes("fotoliu") || name.includes("taburet") || name.includes("banchet")) {
-    return "/partner-store/armchair.svg";
-  }
-  if (name.includes("vaz") || product.category === "decor") {
-    return "/partner-store/vase.svg";
-  }
-  return "/partner-store/table.svg";
+  return isRealProductPhoto(url);
 }
 
 export function uniqueProductImage(
-  product: Pick<PartnerProduct, "imageUrl" | "image" | "image2d" | "name" | "category">,
+  product: Pick<PartnerProduct, "id" | "imageUrl" | "image">,
 ) {
-  const stock = [product.imageUrl, product.image].find((candidate) =>
-    isRemoteStockImage(candidate),
-  );
-  if (stock) return stock;
-  return publicCatalogFallback(product);
+  const mapped = product.id ? productPhotoById[product.id] : "";
+  const candidates = [product.imageUrl, product.image, mapped];
+  return candidates.find((candidate) => isRealProductPhoto(candidate)) ?? "";
 }
 
 function product(input: {
@@ -124,7 +79,10 @@ function product(input: {
   currency?: string;
   dimensions?: TypedPartnerProduct["dimensions"];
 }): PartnerProduct {
-  const uniqueImage = isDisplayableProductImage(input.image) ? input.image!.trim() : "";
+  const mapped = productPhotoById[input.id];
+  const uniqueImage = [input.image, mapped].find((value) =>
+    isRealProductPhoto(value),
+  ) ?? "";
   return {
     ...input,
     currency: input.currency ?? "EUR",
@@ -135,7 +93,7 @@ function product(input: {
     buyUrl: input.affiliateUrl,
     image: uniqueImage,
     imageUrl: uniqueImage,
-    image2d: input.image2d,
+    image2d: uniqueImage || input.image2d,
   };
 }
 
@@ -180,7 +138,7 @@ export const partnerProducts: PartnerProduct[] = [
     image2d: "/partner-store/lamp.svg",
     accentColor: "#c4a574",
     styles: ["midcentury", "scandinavian", "modern"],
-    rooms: ["living", "office", "bedroom"],
+    rooms: ["living", "office"],
     promptHint: "a brass arc floor lamp with a warm linen shade",
     price: 1299,
     affiliateUrl: "https://www.thehome.ro/corpuri-de-iluminat",
@@ -224,7 +182,7 @@ export const partnerProducts: PartnerProduct[] = [
     category: "beds",
     image2d: "/partner-store/bed.svg",
     accentColor: "#e8dfd2",
-    styles: ["scandinavian", "japandi", "minimalist", "modern", "contemporary", "industrial", "midcentury", "boho"],
+    styles: ["scandinavian", "japandi", "minimalist", "modern", "contemporary", "industrial", "boho"],
     rooms: ["bedroom"],
     promptHint:
       "an upholstered oatmeal Nordic bed as the main bedroom piece, oak legs, neatly made linen bedding",
@@ -255,7 +213,7 @@ export const partnerProducts: PartnerProduct[] = [
     category: "tables",
     image2d: "/partner-store/nightstand.svg",
     accentColor: "#d4a373",
-    styles: ["scandinavian", "japandi", "minimalist", "midcentury", "boho"],
+    styles: ["scandinavian", "japandi", "minimalist", "boho"],
     rooms: ["bedroom"],
     promptHint: "a pale oak bedside nightstand with one drawer beside the bed",
     price: 799,
@@ -411,6 +369,74 @@ export const partnerProducts: PartnerProduct[] = [
     price: 1190,
     affiliateUrl: "https://kavehome.com",
     dimensions: { widthCm: 120, depthCm: 40, heightCm: 45 },
+  }),
+  product({
+    id: "th-bed-midcentury",
+    sku: "TH-BED-MCM",
+    name: "Pat Mid-Century din lemn de nuc",
+    description: "Pat dublu din lemn de nuc, tăblie lemn, picioare conice Mid-Century.",
+    category: "beds",
+    image2d: "/products/th-bed-midcentury.jpg",
+    image: "/products/th-bed-midcentury.jpg",
+    accentColor: "#6b4f3a",
+    styles: ["midcentury"],
+    rooms: ["bedroom"],
+    promptHint:
+      "a walnut Mid-Century double bed with a wood headboard, tapered wood legs, white linen bedding, fully visible in frame, clearly a wooden bed not a sofa",
+    price: 2190,
+    affiliateUrl: "https://kavehome.com",
+    dimensions: { widthCm: 180, depthCm: 200, heightCm: 100 },
+  }),
+  product({
+    id: "th-nightstand-midcentury",
+    sku: "TH-NS-MCM",
+    name: "Noptieră Mid-Century din lemn de nuc",
+    description: "Noptieră din nuc/stejar, picioare conice, potrivită în pereche lângă pat.",
+    category: "tables",
+    image2d: "/products/th-nightstand-midcentury.jpg",
+    image: "/products/th-nightstand-midcentury.jpg",
+    accentColor: "#6b4f3a",
+    styles: ["midcentury"],
+    rooms: ["bedroom"],
+    promptHint:
+      "a matching pair of walnut Mid-Century nightstands with tapered legs, one on each side of the bed, fully visible, not cropped",
+    price: 420,
+    affiliateUrl: "https://kavehome.com",
+    dimensions: { widthCm: 50, depthCm: 40, heightCm: 55 },
+  }),
+  product({
+    id: "th-pendant-midcentury",
+    sku: "TH-PENDANT-MCM",
+    name: "Pendul suspendat negru Mid-Century",
+    description: "Pendul / lampă suspendată neagră, stânga și dreapta patului.",
+    category: "lighting",
+    image2d: "/products/th-pendant-midcentury.jpg",
+    image: "/products/th-pendant-midcentury.jpg",
+    accentColor: "#2a2a2a",
+    styles: ["midcentury"],
+    rooms: ["bedroom"],
+    promptHint:
+      "a pair of matte-black Mid-Century suspended pendant lamps hanging left and right of the bed, not table lamps, not floor lamps",
+    price: 290,
+    affiliateUrl: "https://kavehome.com",
+    dimensions: { widthCm: 22, depthCm: 22, heightCm: 28 },
+  }),
+  product({
+    id: "th-pouf-midcentury",
+    sku: "TH-POUF-MCM",
+    name: "Pouf textil gri Mid-Century",
+    description: "Pouf rotund textil gri, pentru capătul patului.",
+    category: "armchair",
+    image2d: "/products/th-pouf-midcentury.jpg",
+    image: "/products/th-pouf-midcentury.jpg",
+    accentColor: "#8a8a8a",
+    styles: ["midcentury"],
+    rooms: ["bedroom"],
+    promptHint:
+      "two round grey upholstered poufs at the foot of the bed, textile ottomans, not a wooden bench, not a sofa",
+    price: 210,
+    affiliateUrl: "https://kavehome.com",
+    dimensions: { widthCm: 50, depthCm: 50, heightCm: 38 },
   }),
   product({
     id: "mc-sofa-velvet",
@@ -690,7 +716,7 @@ export const partnerProducts: PartnerProduct[] = [
     category: "beds",
     image2d: "/partner-store/bed.svg",
     accentColor: "#e8dfd2",
-    styles: ["contemporary", "scandinavian", "midcentury"],
+    styles: ["contemporary", "scandinavian"],
     rooms: ["bedroom"],
     promptHint: "a cream Westwing upholstered bed with boucle headboard",
     price: 1290,
@@ -705,7 +731,7 @@ export const partnerProducts: PartnerProduct[] = [
     category: "tables",
     image2d: "/partner-store/nightstand.svg",
     accentColor: "#d4a373",
-    styles: ["contemporary", "scandinavian", "midcentury"],
+    styles: ["contemporary", "scandinavian"],
     rooms: ["bedroom"],
     promptHint: "a pale wood Westwing nightstand beside the bed",
     price: 279,
@@ -720,7 +746,7 @@ export const partnerProducts: PartnerProduct[] = [
     category: "lighting",
     image2d: "/partner-store/lamp.svg",
     accentColor: "#c4a574",
-    styles: ["contemporary", "scandinavian", "midcentury"],
+    styles: ["contemporary", "scandinavian"],
     rooms: ["bedroom", "living"],
     promptHint: "a Westwing bedside lamp with a warm linen shade",
     price: 129,
@@ -735,7 +761,7 @@ export const partnerProducts: PartnerProduct[] = [
     category: "rugs",
     image2d: "/partner-store/rug.svg",
     accentColor: "#f4f1de",
-    styles: ["contemporary", "scandinavian", "japandi", "midcentury"],
+    styles: ["contemporary", "scandinavian", "japandi"],
     rooms: ["bedroom", "living"],
     promptHint: "a Westwing wool rug under the bed",
     price: 390,
@@ -750,10 +776,78 @@ export const partnerProducts: PartnerProduct[] = [
     category: "armchair",
     image2d: "/partner-store/armchair.svg",
     accentColor: "#e8dfd2",
-    styles: ["contemporary", "scandinavian", "midcentury"],
+    styles: ["contemporary", "scandinavian"],
     rooms: ["bedroom"],
     promptHint: "a cream Westwing boucle bench at the foot of the bed",
     price: 449,
+    vendorId: "westwing",
+    affiliateUrl: "https://www.westwing.com",
+  }),
+  product({
+    id: "ww-bed-midcentury",
+    sku: "WW-BED-MCM",
+    name: "Pat Mid-Century Westwing din lemn de nuc",
+    description: "Pat dublu lemn de nuc, linie Mid-Century Westwing.",
+    category: "beds",
+    image2d: "/products/ww-bed-midcentury.jpg",
+    image: "/products/ww-bed-midcentury.jpg",
+    accentColor: "#6b4f3a",
+    styles: ["midcentury"],
+    rooms: ["bedroom"],
+    promptHint:
+      "a walnut Mid-Century Westwing double bed with a wood headboard and tapered legs, fully in frame",
+    price: 1890,
+    vendorId: "westwing",
+    affiliateUrl: "https://www.westwing.com",
+  }),
+  product({
+    id: "ww-nightstand-midcentury",
+    sku: "WW-NS-MCM",
+    name: "Noptieră Mid-Century Westwing din stejar",
+    description: "Noptieră lemn nuc/stejar, picioare conice, Westwing.",
+    category: "tables",
+    image2d: "/products/ww-nightstand-midcentury.jpg",
+    image: "/products/ww-nightstand-midcentury.jpg",
+    accentColor: "#6b4f3a",
+    styles: ["midcentury"],
+    rooms: ["bedroom"],
+    promptHint:
+      "matching walnut Mid-Century Westwing nightstands on both sides of the bed, fully visible",
+    price: 349,
+    vendorId: "westwing",
+    affiliateUrl: "https://www.westwing.com",
+  }),
+  product({
+    id: "ww-pendant-midcentury",
+    sku: "WW-PENDANT-MCM",
+    name: "Pendul suspendat negru Westwing",
+    description: "Lămpi suspendate negre, stânga și dreapta patului.",
+    category: "lighting",
+    image2d: "/products/ww-pendant-midcentury.jpg",
+    image: "/products/ww-pendant-midcentury.jpg",
+    accentColor: "#2a2a2a",
+    styles: ["midcentury"],
+    rooms: ["bedroom"],
+    promptHint:
+      "matte-black Westwing pendant lamps suspended left and right of the bed",
+    price: 259,
+    vendorId: "westwing",
+    affiliateUrl: "https://www.westwing.com",
+  }),
+  product({
+    id: "ww-pouf-midcentury",
+    sku: "WW-POUF-MCM",
+    name: "Pouf textil gri Westwing",
+    description: "Pouf-uri rotunde textile gri, la capătul patului.",
+    category: "armchair",
+    image2d: "/products/ww-pouf-midcentury.jpg",
+    image: "/products/ww-pouf-midcentury.jpg",
+    accentColor: "#8a8a8a",
+    styles: ["midcentury"],
+    rooms: ["bedroom"],
+    promptHint:
+      "two round grey Westwing textile poufs in front of the bed",
+    price: 229,
     vendorId: "westwing",
     affiliateUrl: "https://www.westwing.com",
   }),

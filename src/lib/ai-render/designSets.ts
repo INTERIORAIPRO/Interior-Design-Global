@@ -1,5 +1,7 @@
 import {
+  isRealProductPhoto,
   partnerProducts,
+  uniqueProductImage,
   type PartnerProduct,
   type RoomKind,
 } from "@/lib/partner-store/catalog";
@@ -139,7 +141,19 @@ function isRugOrBench(product: PartnerProduct) {
     name.includes("bench") ||
     name.includes("taburet") ||
     name.includes("ottoman") ||
-    name.includes("puf")
+    name.includes("puf") ||
+    name.includes("pouf")
+  );
+}
+
+function isBedroomPendant(product: PartnerProduct) {
+  const name = nameOf(product);
+  return (
+    name.includes("pendul") ||
+    name.includes("pendant") ||
+    name.includes("suspend") ||
+    name.includes("applique") ||
+    name.includes("perete")
   );
 }
 
@@ -235,7 +249,8 @@ const roomSlots: Record<RoomKind, RoomSlot[]> = {
     {
       id: "lamp",
       required: true,
-      match: isLighting,
+      match: (product) =>
+        isBedroomPendant(product) || isLighting(product),
     },
     {
       id: "rugBench",
@@ -438,11 +453,23 @@ export function getRecommendedProducts(
   const slots = definedSlots.map((slot) => {
     const matches = roomPool.filter((product) => slot.match(product));
     const options = rankedSlotOptions(matches, style, slot.required);
+    const sorted = [...options].sort((a, b) => {
+      if (roomType === "bedroom" && slot.id === "lamp") {
+        const pendantDelta =
+          Number(isBedroomPendant(b)) - Number(isBedroomPendant(a));
+        if (pendantDelta) return pendantDelta;
+      }
+      if (roomType === "bedroom" && slot.id === "rugBench") {
+        const poufDelta =
+          Number(nameOf(b).includes("puf") || nameOf(b).includes("pouf")) -
+          Number(nameOf(a).includes("puf") || nameOf(a).includes("pouf"));
+        if (poufDelta) return poufDelta;
+      }
+      return budget === "economic" ? a.price - b.price : b.price - a.price;
+    });
     return {
       required: slot.required,
-      options: [...options].sort((a, b) =>
-        budget === "economic" ? a.price - b.price : b.price - a.price,
-      ),
+      options: sorted,
     };
   });
   const extras =
@@ -470,7 +497,9 @@ export function getRecommendedProducts(
     style,
   );
   if (roomType === "bedroom") {
-    return dedupeProducts(filled.filter(isBedroomFurniture)).slice(0, 4);
+    return dedupeProducts(filled.filter(isBedroomFurniture))
+      .filter((product) => isRealProductPhoto(uniqueProductImage(product)))
+      .slice(0, 4);
   }
   if (roomType === "living") {
     return dedupeProducts(
@@ -481,9 +510,13 @@ export function getRecommendedProducts(
           isLivingLamp(product) ||
           isLivingRug(product),
       ),
-    ).slice(0, 4);
+    )
+      .filter((product) => isRealProductPhoto(uniqueProductImage(product)))
+      .slice(0, 4);
   }
-  return dedupeProducts(filled);
+  return dedupeProducts(filled).filter((product) =>
+    isRealProductPhoto(uniqueProductImage(product)),
+  );
 }
 
 function fillComplementarySlots(

@@ -112,7 +112,7 @@ export function DesignProductsSection({
       </div>
 
       <ul className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {products.map((product, index) => {
+        {products.filter((product) => uniqueProductImage(product)).map((product, index) => {
           const title = product.title || product.name;
           const buyUrl = product.buyUrl || product.affiliateUrl;
           const imageUrl = uniqueProductImage(product);
@@ -138,7 +138,7 @@ export function DesignProductsSection({
                 src={cardImage}
                 alt={title}
                 fallbackColor={product.accentColor}
-                className="h-full w-full object-contain p-4"
+                className="h-full w-full object-cover"
               />
             </div>
             <div className="flex flex-1 flex-col p-4">

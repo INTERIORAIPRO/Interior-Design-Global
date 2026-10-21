@@ -72,6 +72,7 @@ type PromptProduct = {
   name?: string;
   category?: string;
   promptHint?: string;
+  description?: string;
 };
 
 const styleMaterials: Record<string, string> = {
@@ -149,10 +150,11 @@ function productVisual(product: PromptProduct, style: string, vendorName: string
   const name = product.name?.trim() || `${vendorName} piece`;
   const named = namedVisuals[name];
   const hint = product.promptHint?.trim();
+  const description = product.description?.trim();
   const fallback =
     (product.category && categoryFallback[product.category]) ||
     `catalog-quality furniture from ${vendorName}`;
-  const body = named || hint || fallback;
+  const body = named || hint || description || fallback;
   return `(${name}:1.35), MUST be clearly visible in the photograph: ${body}. Materials locked to ${vendorName} ${style} look: ${styleLexicon(style)}. Correct real-world scale, grounded on the floor, photoreal product photography.`;
 }
 
@@ -274,7 +276,10 @@ function buildPrompt(
   return [
     styleOpeningLine(chosenStyle, room),
     room === "bedroom"
-      ? `NO living-room sofa, NO green sofa, NO lounge sectional. This is a strictly ${keyword} BEDROOM with a bed, nightstands, lighting or pendants, and a rug or bench only.`
+      ? `NO living-room sofa, NO green sofa, NO lounge sectional. This is a strictly ${keyword} BEDROOM with exactly these complementary catalog pieces: bed, nightstand, lighting/pendant, and rug or bench.`
+      : "",
+    room === "living"
+      ? `NO bedroom bed, NO nightstands. This is a strictly ${keyword} LIVING ROOM with complementary catalog pieces: sofa, coffee table, floor lamp and rug.`
       : "",
     roomLeads[room],
     `FRESH UNIQUE ${vendorName.toUpperCase()} STAGING, variation ${refreshToken || Date.now()}. Do not repeat a previous layout.`,
@@ -287,6 +292,8 @@ function buildPrompt(
     budgetLine,
     productBlock,
     "Natural window light matching the original photo, contact shadows, no collage, no floating objects.",
+    "wide angle interior photo, full view of the room, well framed composition, complete furniture pieces visible without clipping",
+    "Keep the original photograph aspect ratio. Show nightstands, side tables and lamps fully in frame, not cropped at the edges.",
     "ultra-realistic, 8k resolution, interior design photography, magazine style, architectural digest lighting",
   ]
     .filter(Boolean)
@@ -297,7 +304,7 @@ function buildNegativePrompt(roomType: string | undefined) {
   const artifacts =
     "visual artifacts, jpeg artifacts, compression artifacts, noise, grain, glitches, banding, chromatic aberration, lens flare, motion blur, pixelation, low resolution, oversharpening, halos, ghosting, melted geometry, warped walls, deformed furniture, distorted perspective, extra limbs, extra fingers, duplicate objects, broken edges, CGI look, 3d render, plastic surfaces, fake lighting, oversaturated HDR, muddy textures, watermark, text overlay, logo";
   const shared =
-    `keep original old furniture, leftover previous sofa, unchanged existing clutter, empty unfinished room, generic unbranded lumps, cartoon, illustration, collage, floating furniture, wrong scale, different floor plan, moved walls, baroque gold, crystal chandelier, dark mahogany luxury, neon colors, blurry objects, extra duplicate furniture, ${artifacts}`;
+    `keep original old furniture, leftover previous sofa, unchanged existing clutter, empty unfinished room, generic unbranded lumps, cartoon, illustration, collage, floating furniture, wrong scale, different floor plan, moved walls, baroque gold, crystal chandelier, dark mahogany luxury, neon colors, blurry objects, extra duplicate furniture, cropped furniture, cut-off nightstands, clipped bed, truncated sofa, incomplete furniture at frame edges, tight zoom crop, ${artifacts}`;
   if (roomType === "bedroom") {
     return `${shared}, living room, lounge sofa, green sofa, velvet sofa, sectional couch instead of a bed, dining table as the focus, no bed, missing nightstands, missing bedside lamps`;
   }
@@ -317,6 +324,71 @@ async function outputUrl(output: unknown): Promise<string | null> {
   return extractImageUrlAsync(
     Array.isArray(output) ? output[0] : output,
   );
+}
+
+function readPngSize(bytes: Buffer) {
+  if (bytes.length < 24 || bytes[0] !== 0x89 || bytes[1] !== 0x50) return null;
+  return {
+    width: bytes.readUInt32BE(16),
+    height: bytes.readUInt32BE(20),
+  };
+}
+
+function readJpegSize(bytes: Buffer) {
+  if (bytes.length < 4 || bytes[0] !== 0xff || bytes[1] !== 0xd8) return null;
+  let offset = 2;
+  while (offset + 9 < bytes.length) {
+    if (bytes[offset] !== 0xff) break;
+    const marker = bytes[offset + 1];
+    const length = bytes.readUInt16BE(offset + 2);
+    const isSof =
+      marker >= 0xc0 &&
+      marker <= 0xcf &&
+      marker !== 0xc4 &&
+      marker !== 0xc8 &&
+      marker !== 0xcc;
+    if (isSof) {
+      return {
+        height: bytes.readUInt16BE(offset + 5),
+        width: bytes.readUInt16BE(offset + 7),
+      };
+    }
+    offset += 2 + length;
+  }
+  return null;
+}
+
+function imageSizeFromDataUrl(dataUrl: string) {
+  const match = dataUrl.match(/^data:image\/([a-zA-Z0-9.+-]+);base64,(.+)$/);
+  if (!match) return null;
+  const bytes = Buffer.from(match[2], "base64");
+  return readPngSize(bytes) || readJpegSize(bytes);
+}
+
+function closestAspectRatio(width: number, height: number) {
+  const ratio = width / Math.max(height, 1);
+  const options = [
+    { label: "16:9", value: 16 / 9 },
+    { label: "4:3", value: 4 / 3 },
+    { label: "3:2", value: 3 / 2 },
+    { label: "1:1", value: 1 },
+    { label: "2:3", value: 2 / 3 },
+    { label: "3:4", value: 3 / 4 },
+    { label: "9:16", value: 9 / 16 },
+  ];
+  return [...options].sort(
+    (left, right) => Math.abs(left.value - ratio) - Math.abs(right.value - ratio),
+  )[0].label;
+}
+
+function scaledOutputSize(width: number, height: number) {
+  const maxEdge = 1024;
+  const scale = Math.min(maxEdge / width, maxEdge / height, 1);
+  const round = (value: number) => Math.max(512, Math.round((value * scale) / 8) * 8);
+  return {
+    width: round(width),
+    height: round(height),
+  };
 }
 
 function toDataUrlFromBytes(bytes: Buffer, mime: string) {
@@ -403,8 +475,19 @@ async function runControlNet(
   prompt: string,
   negativePrompt: string,
   keepStructure: boolean,
+  frame?: { width?: number; height?: number },
 ) {
   const promptStrength = keepStructure ? 0.58 : 0.7;
+  const measured = imageSizeFromDataUrl(dataUrl);
+  const width = frame?.width || measured?.width;
+  const height = frame?.height || measured?.height;
+  const aspect =
+    width && height ? closestAspectRatio(width, height) : undefined;
+  const size = width && height ? scaledOutputSize(width, height) : undefined;
+  const frameInput = {
+    ...(aspect ? { aspect_ratio: aspect } : {}),
+    ...(size ? { width: size.width, height: size.height } : {}),
+  };
   try {
     const output = await replicate.run(CONTROLNET_MODELS.interior, {
       input: {
@@ -414,6 +497,7 @@ async function runControlNet(
         guidance_scale: 15,
         prompt_strength: promptStrength,
         num_inference_steps: 40,
+        ...frameInput,
       },
     });
     const url = await outputUrl(output);
@@ -437,6 +521,7 @@ async function runControlNet(
       num_inference_steps: 32,
       output_format: "jpg",
       output_quality: 90,
+      ...frameInput,
     },
   });
   const url = await outputUrl(output);
@@ -478,6 +563,8 @@ export async function POST(request: Request) {
       vendorName,
       budget,
       refreshToken,
+      imageWidth,
+      imageHeight,
     } = body as {
       imageUrl?: string;
       image?: string;
@@ -489,6 +576,8 @@ export async function POST(request: Request) {
       vendorName?: string;
       budget?: string;
       refreshToken?: string;
+      imageWidth?: number;
+      imageHeight?: number;
     };
     const brandName =
       typeof vendorName === "string" && vendorName.trim()
@@ -522,6 +611,10 @@ export async function POST(request: Request) {
       prompt,
       negativePrompt,
       Boolean(keepStructure) || imageUrl.startsWith("data:"),
+      {
+        width: Number(imageWidth) || undefined,
+        height: Number(imageHeight) || undefined,
+      },
     );
 
     if (!generatedImageUrl) {

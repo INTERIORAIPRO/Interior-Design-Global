@@ -40,21 +40,70 @@ export const primaryPartnerStore: PartnerStore = {
 
 const AFFILIATE_REF = "interior-design-global";
 
+export function isRemoteStockImage(url?: string | null) {
+  const value = url?.trim() ?? "";
+  if (!value) return false;
+  if (/unsplash\.com/i.test(value)) return false;
+  return /^https?:\/\//i.test(value);
+}
+
+export function isPublicCatalogAsset(url?: string | null) {
+  const value = url?.trim() ?? "";
+  return value.startsWith("/partner-store/") && /\.(svg|png|jpe?g|webp)(\?|$)/i.test(value);
+}
+
 export function isDisplayableProductImage(url?: string | null) {
   const value = url?.trim() ?? "";
   if (!value) return false;
   if (value.startsWith("data:image/")) return true;
-  if (/unsplash\.com/i.test(value)) return false;
-  if (value.includes("/partner-store/")) return false;
-  if (value.startsWith("/") && /\.svg(\?|$)/i.test(value)) return false;
-  return /^https?:\/\//i.test(value) || value.startsWith("/");
+  if (isRemoteStockImage(value)) return true;
+  if (isPublicCatalogAsset(value)) return true;
+  return value.startsWith("/") && !value.includes("unsplash");
+}
+
+export function publicCatalogFallback(
+  product: Pick<PartnerProduct, "name" | "category" | "image2d">,
+) {
+  if (isPublicCatalogAsset(product.image2d)) return product.image2d;
+  const name = product.name.toLowerCase();
+  if (name.includes("noptier")) return "/partner-store/nightstand.svg";
+  if (name.includes("covor") || product.category === "rugs") {
+    return "/partner-store/rug.svg";
+  }
+  if (name.includes("canapea") || product.category === "sofas") {
+    return "/partner-store/sofa.svg";
+  }
+  if (
+    name.includes("pat") ||
+    product.category === "beds"
+  ) {
+    return "/partner-store/bed.svg";
+  }
+  if (
+    name.includes("lamp") ||
+    name.includes("veioz") ||
+    name.includes("pendul") ||
+    product.category === "lighting"
+  ) {
+    return "/partner-store/lamp.svg";
+  }
+  if (name.includes("fotoliu") || name.includes("taburet") || name.includes("banchet")) {
+    return "/partner-store/armchair.svg";
+  }
+  if (name.includes("vaz") || product.category === "decor") {
+    return "/partner-store/vase.svg";
+  }
+  return "/partner-store/table.svg";
 }
 
 export function uniqueProductImage(
-  product: Pick<PartnerProduct, "imageUrl" | "image" | "image2d">,
+  product: Pick<PartnerProduct, "imageUrl" | "image" | "image2d" | "name" | "category">,
 ) {
-  const candidates = [product.imageUrl, product.image, product.image2d];
-  return candidates.find((candidate) => isDisplayableProductImage(candidate)) ?? "";
+  const stock = [product.imageUrl, product.image].find((candidate) =>
+    isRemoteStockImage(candidate),
+  );
+  if (stock) return stock;
+  return publicCatalogFallback(product);
 }
 
 function product(input: {

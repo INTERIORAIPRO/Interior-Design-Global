@@ -143,6 +143,38 @@ function isRugOrBench(product: PartnerProduct) {
   );
 }
 
+function isSofa(product: PartnerProduct) {
+  return product.category === "sofas" || nameOf(product).includes("canapea");
+}
+
+function isCoffeeTable(product: PartnerProduct) {
+  const name = nameOf(product);
+  if (name.includes("noptier") || name.includes("birou") || name.includes("dining")) {
+    return false;
+  }
+  return (
+    name.includes("cafea") ||
+    name.includes("masut") ||
+    name.includes("coffee") ||
+    product.category === "tables" ||
+    product.category === "coffee-table"
+  );
+}
+
+function isLivingLamp(product: PartnerProduct) {
+  const name = nameOf(product);
+  if (name.includes("veioz") || name.includes("noptier")) return false;
+  return (
+    product.category === "lighting" ||
+    name.includes("lampadar") ||
+    name.includes("floor lamp")
+  );
+}
+
+function isLivingRug(product: PartnerProduct) {
+  return product.category === "rugs" || nameOf(product).includes("covor");
+}
+
 function isBedroomFurniture(product: PartnerProduct) {
   const name = nameOf(product);
   if (isLivingLeak(product)) return false;
@@ -162,7 +194,12 @@ function belongsToRoom(product: PartnerProduct, roomType: RoomKind) {
     if (name.includes("noptier") || name.startsWith("pat ") || name.includes("pat tapi")) {
       return false;
     }
-    return true;
+    return (
+      isSofa(product) ||
+      isCoffeeTable(product) ||
+      isLivingLamp(product) ||
+      isLivingRug(product)
+    );
   }
   if (roomType === "office") {
     return product.category !== "beds" && product.category !== "sofas";
@@ -202,7 +239,7 @@ const roomSlots: Record<RoomKind, RoomSlot[]> = {
     },
     {
       id: "rugBench",
-      required: false,
+      required: true,
       match: isRugOrBench,
     },
   ],
@@ -210,28 +247,22 @@ const roomSlots: Record<RoomKind, RoomSlot[]> = {
     {
       id: "sofa",
       required: true,
-      match: (product) =>
-        product.category === "sofas" || nameOf(product).includes("canapea"),
+      match: isSofa,
     },
     {
       id: "table",
       required: true,
-      match: (product) =>
-        nameOf(product).includes("cafea") ||
-        (product.category === "tables" &&
-          !nameOf(product).includes("noptier") &&
-          !nameOf(product).includes("birou") &&
-          !nameOf(product).includes("dining")),
+      match: isCoffeeTable,
     },
     {
       id: "lamp",
-      required: false,
-      match: (product) => product.category === "lighting",
+      required: true,
+      match: isLivingLamp,
     },
     {
       id: "rug",
       required: false,
-      match: (product) => product.category === "rugs",
+      match: isLivingRug,
     },
   ],
   office: [
@@ -432,10 +463,49 @@ export function getRecommendedProducts(
           );
         });
   const picked = bestSetForBudget(slots, extras, budget, style);
+  const filled = fillComplementarySlots(
+    picked,
+    definedSlots,
+    roomPool,
+    style,
+  );
   if (roomType === "bedroom") {
-    return dedupeProducts(picked.filter(isBedroomFurniture));
+    return dedupeProducts(filled.filter(isBedroomFurniture)).slice(0, 4);
   }
-  return dedupeProducts(picked);
+  if (roomType === "living") {
+    return dedupeProducts(
+      filled.filter(
+        (product) =>
+          isSofa(product) ||
+          isCoffeeTable(product) ||
+          isLivingLamp(product) ||
+          isLivingRug(product),
+      ),
+    ).slice(0, 4);
+  }
+  return dedupeProducts(filled);
+}
+
+function fillComplementarySlots(
+  picked: PartnerProduct[],
+  definedSlots: RoomSlot[],
+  roomPool: PartnerProduct[],
+  style: InteriorStyle,
+) {
+  const result = [...picked];
+  for (const slot of definedSlots) {
+    if (result.some((product) => slot.match(product))) continue;
+    const options = rankedSlotOptions(
+      roomPool.filter((product) => slot.match(product)),
+      style,
+      true,
+    );
+    const next = options.find(
+      (product) => !result.some((item) => item.id === product.id),
+    );
+    if (next) result.push(next);
+  }
+  return result;
 }
 
 export function sceneKey(

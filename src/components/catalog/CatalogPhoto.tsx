@@ -10,16 +10,6 @@ type CatalogPhotoProps = {
   className?: string;
 };
 
-function initialsFrom(alt: string) {
-  const parts = alt
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2);
-  if (!parts.length) return "ID";
-  return parts.map((part) => part[0]?.toUpperCase() ?? "").join("");
-}
-
 export function CatalogPhoto({
   src,
   alt,
@@ -36,26 +26,18 @@ export function CatalogPhoto({
   if (!usable || failed) {
     return (
       <div
-        className={`flex h-full w-full flex-col items-center justify-center gap-2 border border-white/10 bg-ink/80 ${className ?? ""}`}
-        style={{ background: `linear-gradient(160deg, ${fallbackColor}33, #1a1612 70%)` }}
+        className={`h-full w-full border border-white/10 ${className ?? ""}`}
+        style={{
+          background: `linear-gradient(160deg, ${fallbackColor}55, #1a1612 78%)`,
+        }}
         role="img"
         aria-label={alt}
-      >
-        <span
-          className="flex h-14 w-14 items-center justify-center rounded-full border border-brass/40 font-serif text-lg text-brass"
-          aria-hidden
-        >
-          {initialsFrom(alt)}
-        </span>
-        <span className="px-4 text-center text-[10px] uppercase tracking-[0.18em] text-linen/45">
-          Imagine indisponibilă
-        </span>
-      </div>
+      />
     );
   }
 
   return (
-    // Catalog assets are optional remote photos; placeholders render above.
+    // Catalog assets are stock photos or public /partner-store fallbacks.
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src={usable}

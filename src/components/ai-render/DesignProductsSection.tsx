@@ -116,10 +116,15 @@ export function DesignProductsSection({
           const title = product.title || product.name;
           const buyUrl = product.buyUrl || product.affiliateUrl;
           const imageUrl = uniqueProductImage(product);
-          const usedBefore = products
-            .slice(0, index)
-            .some((other) => uniqueProductImage(other) === imageUrl && imageUrl);
-          const cardImage = usedBefore ? "" : imageUrl;
+          const usedRemote = products.slice(0, index).some((other) => {
+            const otherImage = uniqueProductImage(other);
+            return (
+              Boolean(imageUrl) &&
+              otherImage === imageUrl &&
+              /^https?:\/\//i.test(imageUrl)
+            );
+          });
+          const cardImage = usedRemote ? "" : imageUrl;
           const productVendor =
             getVendor(product.vendorId)?.brandName ?? vendorName;
           return (
@@ -133,7 +138,7 @@ export function DesignProductsSection({
                 src={cardImage}
                 alt={title}
                 fallbackColor={product.accentColor}
-                className="h-full w-full object-cover"
+                className="h-full w-full object-contain p-4"
               />
             </div>
             <div className="flex flex-1 flex-col p-4">

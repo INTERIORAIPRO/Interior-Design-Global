@@ -83,6 +83,16 @@ export function AiRenderFlow() {
     };
   }, []);
 
+  async function measureImage(src: string) {
+    return new Promise<{ width: number; height: number } | null>((resolve) => {
+      const image = new window.Image();
+      image.onload = () =>
+        resolve({ width: image.naturalWidth, height: image.naturalHeight });
+      image.onerror = () => resolve(null);
+      image.src = src;
+    });
+  }
+
   async function toSendableImage(src: string) {
     if (!src.startsWith("blob:")) return src;
     const blob = await fetch(src).then((response) => response.blob());
@@ -113,6 +123,7 @@ export function AiRenderFlow() {
     try {
       const productsForRender = recommendedProducts;
       const referenceImage = await toSendableImage(sourcePhoto);
+      const frame = await measureImage(referenceImage);
       const response = await fetch("/api/ai-render/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -130,10 +141,14 @@ export function AiRenderFlow() {
           vendorName: activeVendorName,
           vendorId,
           refreshToken: `${activeKey}:${Date.now()}`,
+          imageWidth: frame?.width,
+          imageHeight: frame?.height,
           products: productsForRender.map((product) => ({
             name: product.name,
+            title: product.title || product.name,
             category: product.category,
             promptHint: product.promptHint,
+            description: product.description || product.promptHint,
             vendorId: product.vendorId,
             image: product.image || product.imageUrl,
           })),
@@ -458,7 +473,7 @@ export function AiRenderFlow() {
               src={heroSrc}
               alt=""
               onError={() => setImageFailed(true)}
-              className="w-full max-h-[600px] rounded-xl object-cover"
+              className="w-full max-h-[600px] rounded-xl bg-ink object-contain"
             />
           ) : (
             <div className="flex h-[360px] w-full items-center justify-center px-6 text-center text-linen/50">

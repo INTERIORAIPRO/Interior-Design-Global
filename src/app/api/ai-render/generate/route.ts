@@ -4,9 +4,17 @@ import { NextResponse } from "next/server";
 import Replicate from "replicate";
 import { extractImageUrlAsync } from "@/lib/ai-render/extractImageUrl";
 
-const replicate = new Replicate({
-  auth: process.env.REPLICATE_API_TOKEN,
-});
+function getReplicateToken() {
+  return process.env.REPLICATE_API_TOKEN?.trim() || "";
+}
+
+function createReplicateClient() {
+  const token = getReplicateToken();
+  if (!token) {
+    throw new Error("MISSING_REPLICATE_TOKEN");
+  }
+  return new Replicate({ auth: token });
+}
 
 const CONTROLNET_MODELS = {
   depth:
@@ -311,25 +319,18 @@ async function outputUrl(output: unknown): Promise<string | null> {
   );
 }
 
-async function uploadToReplicate(bytes: Buffer, mime: string) {
-  const blob = new Blob([new Uint8Array(bytes)], { type: mime || "image/jpeg" });
-  const uploaded = (await replicate.files.create(blob)) as {
-    urls?: { get?: string };
-  };
-  const url = uploaded.urls?.get;
-  if (!url) {
-    throw new Error("Replicate nu a putut stoca imaginea camerei.");
-  }
-  return url;
+function toDataUrlFromBytes(bytes: Buffer, mime: string) {
+  const type = mime || "image/jpeg";
+  return `data:${type};base64,${bytes.toString("base64")}`;
 }
 
-async function toPublicImageUri(imageUrl: string) {
+async function toDataUrl(imageUrl: string) {
   if (imageUrl.startsWith("data:")) {
     const match = imageUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/);
     if (!match) {
       throw new Error("Formatul imaginii nu este un data URI valid.");
     }
-    return uploadToReplicate(Buffer.from(match[2], "base64"), match[1]);
+    return imageUrl;
   }
 
   if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
@@ -337,9 +338,10 @@ async function toPublicImageUri(imageUrl: string) {
     if (!response.ok) {
       throw new Error("Nu am putut descărca imaginea camerei.");
     }
-    const mime = response.headers.get("content-type")?.split(";")[0] || "image/jpeg";
+    const mime =
+      response.headers.get("content-type")?.split(";")[0] || "image/jpeg";
     const bytes = Buffer.from(await response.arrayBuffer());
-    return uploadToReplicate(bytes, mime);
+    return toDataUrlFromBytes(bytes, mime);
   }
 
   if (imageUrl.startsWith("/") && !imageUrl.startsWith("//")) {
@@ -349,7 +351,7 @@ async function toPublicImageUri(imageUrl: string) {
     const ext = path.extname(filePath).toLowerCase();
     const mime =
       ext === ".png" ? "image/png" : ext === ".webp" ? "image/webp" : "image/jpeg";
-    return uploadToReplicate(bytes, mime);
+    return toDataUrlFromBytes(bytes, mime);
   }
 
   throw new Error(
@@ -367,16 +369,36 @@ function isCreditOrRateLimit(error: unknown) {
   );
 }
 
+function isAuthError(error: unknown) {
+  return /401|unauthoriz|unauthenticated|invalid.?token|invalid.?api.?key|Unauthenticated/i.test(
+    errorText(error),
+  );
+}
+
 function isUnavailable(error: unknown) {
   const message = errorText(error);
-  if (isCreditOrRateLimit(error)) return false;
-  return /422|404|not permitted|Invalid version|does not exist|unauthenticated|Forbidden/i.test(
+  if (isCreditOrRateLimit(error) || isAuthError(error)) return false;
+  return /422|404|not permitted|Invalid version|does not exist|Forbidden|\/v1\/files/i.test(
     message,
   );
 }
 
+function friendlyApiError(error: unknown) {
+  if (!getReplicateToken() || errorText(error) === "MISSING_REPLICATE_TOKEN") {
+    return "Cheia Replicate lipsește. Adaugă REPLICATE_API_TOKEN în fișierul .env.local și repornește serverul.";
+  }
+  if (isAuthError(error)) {
+    return "Autentificarea Replicate a eșuat (401). Verifică REPLICATE_API_TOKEN — cheia poate fi invalidă sau expirată.";
+  }
+  if (isCreditOrRateLimit(error)) {
+    return "Replicate a atins limita de utilizare. Încearcă din nou în câteva minute.";
+  }
+  return "Nu am putut genera randarea acum. Încearcă din nou peste puțin timp.";
+}
+
 async function runControlNet(
-  controlImageUrl: string,
+  replicate: Replicate,
+  dataUrl: string,
   prompt: string,
   negativePrompt: string,
   keepStructure: boolean,
@@ -385,7 +407,7 @@ async function runControlNet(
   try {
     const output = await replicate.run(CONTROLNET_MODELS.interior, {
       input: {
-        image: controlImageUrl,
+        image: dataUrl,
         prompt,
         negative_prompt: negativePrompt,
         guidance_scale: 15,
@@ -397,6 +419,7 @@ async function runControlNet(
     if (!url) throw new Error("ControlNet interior nu a returnat nicio imagine.");
     return url;
   } catch (error) {
+    if (isAuthError(error) || isCreditOrRateLimit(error)) throw error;
     if (!isUnavailable(error)) throw error;
     console.warn(
       "Pipeline-ul interior ControlNet indisponibil, folosim Flux Depth pe fotografia utilizatorului.",
@@ -407,7 +430,8 @@ async function runControlNet(
   const output = await replicate.run(CONTROLNET_MODELS.depth, {
     input: {
       prompt: `${prompt} Avoid: ${negativePrompt}.`,
-      control_image: controlImageUrl,
+      image: dataUrl,
+      control_image: dataUrl,
       guidance: 8,
       num_inference_steps: 32,
       output_format: "jpg",
@@ -421,6 +445,14 @@ async function runControlNet(
 
 export async function POST(request: Request) {
   try {
+    if (!getReplicateToken()) {
+      return NextResponse.json(
+        { error: friendlyApiError(new Error("MISSING_REPLICATE_TOKEN")) },
+        { status: 401 },
+      );
+    }
+
+    const replicate = createReplicateClient();
     const body = await request.json();
     const {
       imageUrl: bodyImageUrl,
@@ -461,7 +493,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const publicImageUrl = await toPublicImageUri(imageUrl);
+    const dataUrl = await toDataUrl(imageUrl);
     const prompt = buildPrompt(
       roomType,
       style,
@@ -472,7 +504,8 @@ export async function POST(request: Request) {
     );
     const negativePrompt = buildNegativePrompt(normalizeRoomType(roomType));
     const generatedImageUrl = await runControlNet(
-      publicImageUrl,
+      replicate,
+      dataUrl,
       prompt,
       negativePrompt,
       Boolean(keepStructure) || imageUrl.startsWith("data:"),
@@ -492,9 +525,12 @@ export async function POST(request: Request) {
     });
   } catch (error: unknown) {
     console.error("Eroare la generarea cu Replicate:", errorText(error));
+    const status = isAuthError(error) || errorText(error) === "MISSING_REPLICATE_TOKEN"
+      ? 401
+      : 502;
     return NextResponse.json(
-      { error: errorText(error) || "Randarea Replicate a eșuat." },
-      { status: 502 },
+      { error: friendlyApiError(error) },
+      { status },
     );
   }
 }

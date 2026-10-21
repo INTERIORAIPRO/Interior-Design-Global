@@ -186,9 +186,17 @@ export function AiRenderFlow() {
         extractImageUrl(payload.image) ??
         extractImageUrl(payload.url);
       if (!response.ok || !imageFromApi) {
+        const raw = payload.error || "";
+        const looksLikeJson = raw.trim().startsWith("{") || raw.includes("\"detail\"");
         setError(
-          payload.error ||
-            "Replicate nu a returnat o imagine. Încearcă din nou.",
+          looksLikeJson
+            ? response.status === 401
+              ? "Autentificarea Replicate a eșuat. Verifică REPLICATE_API_TOKEN în .env.local."
+              : "Nu am putut genera randarea acum. Încearcă din nou peste puțin timp."
+            : raw ||
+                (response.status === 401
+                  ? "Autentificarea Replicate a eșuat. Verifică REPLICATE_API_TOKEN în .env.local."
+                  : "Replicate nu a returnat o imagine. Încearcă din nou."),
         );
         return;
       }

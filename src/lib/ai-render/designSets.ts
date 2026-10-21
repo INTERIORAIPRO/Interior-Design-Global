@@ -44,12 +44,48 @@ export type DesignScene = {
   products: PartnerProduct[];
 };
 
-function hasStyle(product: PartnerProduct, style: InteriorStyle) {
-  return product.styles?.includes(style) || product.style?.includes(style);
+const styleAliases: Record<string, string[]> = {
+  scandinavian: ["scandinavian", "japandi"],
+  modern: ["modern", "contemporary"],
+  contemporary: ["contemporary", "modern"],
+  classic: ["classic"],
+  industrial: ["industrial"],
+  minimal: ["minimal", "minimalist", "japandi"],
+  minimalist: ["minimalist", "minimal", "japandi"],
+  midcentury: ["midcentury"],
+  japandi: ["japandi", "scandinavian", "minimalist", "minimal"],
+  boho: ["boho"],
+};
+
+function productStyleTags(product: PartnerProduct) {
+  return [...(product.styles ?? []), ...(product.style ?? [])];
+}
+
+function hasExactStyle(product: PartnerProduct, style: InteriorStyle) {
+  const tags = productStyleTags(product);
+  if (tags.includes(style)) return true;
+  if (style === "minimalist") return tags.includes("minimal");
+  return false;
+}
+
+function hasRelatedStyle(product: PartnerProduct, style: InteriorStyle) {
+  const wanted = styleAliases[style] ?? [style];
+  return productStyleTags(product).some((tag) => wanted.includes(tag));
 }
 
 function nameOf(product: PartnerProduct) {
   return product.name.toLowerCase();
+}
+
+function dedupeProducts(products: PartnerProduct[]) {
+  const seen = new Set<string>();
+  return products.filter((product) => {
+    const key = `${product.id}::${product.sku}`;
+    if (seen.has(key) || seen.has(product.id)) return false;
+    seen.add(key);
+    seen.add(product.id);
+    return true;
+  });
 }
 
 function isLivingLeak(product: PartnerProduct) {
@@ -66,23 +102,53 @@ function isLivingLeak(product: PartnerProduct) {
   );
 }
 
+function isBed(product: PartnerProduct) {
+  const name = nameOf(product);
+  return (
+    product.category === "beds" ||
+    name.includes("pat tapi") ||
+    name.startsWith("pat ")
+  );
+}
+
+function isNightstand(product: PartnerProduct) {
+  return nameOf(product).includes("noptier");
+}
+
+function isLighting(product: PartnerProduct) {
+  const name = nameOf(product);
+  return (
+    product.category === "lighting" ||
+    name.includes("veioz") ||
+    name.includes("lamp") ||
+    name.includes("pendul") ||
+    name.includes("pendant") ||
+    name.includes("lustra") ||
+    name.includes("plafonier")
+  );
+}
+
+function isRugOrBench(product: PartnerProduct) {
+  const name = nameOf(product);
+  if (isBed(product) || isNightstand(product) || isLighting(product)) return false;
+  return (
+    product.category === "rugs" ||
+    name.includes("covor") ||
+    name.includes("banchet") ||
+    name.includes("banquette") ||
+    name.includes("bench") ||
+    name.includes("taburet") ||
+    name.includes("ottoman") ||
+    name.includes("puf")
+  );
+}
+
 function isBedroomFurniture(product: PartnerProduct) {
   const name = nameOf(product);
   if (isLivingLeak(product)) return false;
-  if (name.includes("birou") || name.includes("dining") || name.includes("covor")) {
-    return false;
-  }
-  const isBed =
-    product.category === "beds" ||
-    name.includes("pat tapi") ||
-    name.startsWith("pat ");
-  const isNightstand = name.includes("noptier");
-  const isLighting = product.category === "lighting";
-  const isStool =
-    name.includes("taburet") ||
-    name.includes("ottoman") ||
-    name.includes("puf");
-  return isBed || isNightstand || isLighting || isStool;
+  if (name.includes("birou") || name.includes("dining")) return false;
+  if (product.category === "armchair" && !isRugOrBench(product)) return false;
+  return isBed(product) || isNightstand(product) || isLighting(product) || isRugOrBench(product);
 }
 
 function belongsToRoom(product: PartnerProduct, roomType: RoomKind) {
@@ -122,32 +188,22 @@ const roomSlots: Record<RoomKind, RoomSlot[]> = {
     {
       id: "bed",
       required: true,
-      match: (product) =>
-        product.category === "beds" ||
-        nameOf(product).includes("pat tapi") ||
-        nameOf(product).startsWith("pat "),
+      match: isBed,
     },
     {
       id: "nightstand",
       required: true,
-      match: (product) => nameOf(product).includes("noptier"),
+      match: isNightstand,
     },
     {
       id: "lamp",
       required: true,
-      match: (product) =>
-        product.category === "lighting" &&
-        (nameOf(product).includes("veioz") ||
-          nameOf(product).includes("lamp") ||
-          nameOf(product).includes("noptier")),
+      match: isLighting,
     },
     {
-      id: "stool",
+      id: "rugBench",
       required: false,
-      match: (product) =>
-        nameOf(product).includes("taburet") ||
-        nameOf(product).includes("ottoman") ||
-        nameOf(product).includes("puf"),
+      match: isRugOrBench,
     },
   ],
   living: [
@@ -221,37 +277,63 @@ function setTotal(products: PartnerProduct[]) {
   return products.reduce((sum, product) => sum + product.price, 0);
 }
 
-function scoreSet(products: PartnerProduct[], budget: BudgetTier) {
+function scoreSet(
+  products: PartnerProduct[],
+  budget: BudgetTier,
+  style?: InteriorStyle,
+) {
   const { min, max } = budgetRanges[budget];
   const sum = setTotal(products);
   const inRange = sum >= min && sum <= max;
   const midpoint = Number.isFinite(max) ? (min + max) / 2 : min + 2500;
   const distance = inRange ? 0 : sum < min ? min - sum : sum - max;
+  const styleHits = style
+    ? products.filter((product) => hasExactStyle(product, style)).length
+    : 0;
   return (
     (inRange ? 1_000_000 : 0) +
-    products.length * 250 -
+    products.length * 250 +
+    styleHits * 400 -
     distance * 4 -
     Math.abs(sum - midpoint) * 0.02
   );
 }
 
+function rankedSlotOptions(
+  matches: PartnerProduct[],
+  style: InteriorStyle,
+  allowUnstyled: boolean,
+) {
+  const unique = dedupeProducts(matches);
+  const exact = unique.filter((product) => hasExactStyle(product, style));
+  const related = unique.filter(
+    (product) =>
+      !hasExactStyle(product, style) && hasRelatedStyle(product, style),
+  );
+  const rest = unique.filter(
+    (product) =>
+      !hasExactStyle(product, style) && !hasRelatedStyle(product, style),
+  );
+  if (exact.length || related.length) {
+    return [...exact, ...related];
+  }
+  return allowUnstyled ? rest : [];
+}
+
 function bestSetForBudget(
-  slots: PartnerProduct[][],
+  slots: { required: boolean; options: PartnerProduct[] }[],
   extras: PartnerProduct[],
   budget: BudgetTier,
+  style?: InteriorStyle,
 ) {
   const { min, max } = budgetRanges[budget];
-  const filledSlots = slots.filter((slot) => slot.length > 0);
   let best: PartnerProduct[] = [];
   let bestScore = Number.NEGATIVE_INFINITY;
 
   function consider(set: PartnerProduct[]) {
-    const unique = set.filter(
-      (product, index, all) =>
-        all.findIndex((item) => item.id === product.id) === index,
-    );
+    const unique = dedupeProducts(set);
     if (!unique.length) return;
-    const score = scoreSet(unique, budget);
+    const score = scoreSet(unique, budget, style);
     if (score > bestScore) {
       best = unique;
       bestScore = score;
@@ -262,14 +344,16 @@ function bestSetForBudget(
     const used = new Set(base.map((product) => product.id));
     let current = [...base];
     let sum = setTotal(current);
-    const ordered = [...extras]
+    const ordered = dedupeProducts(extras)
       .filter((product) => !used.has(product.id))
       .sort((a, b) =>
         budget === "economic" ? a.price - b.price : b.price - a.price,
       );
     for (const product of ordered) {
       const next = sum + product.price;
-      if (next <= max || (budget === "lux" && sum < min)) {
+      const underMax = next <= max;
+      const needsLux = budget === "lux" && sum < min;
+      if (underMax || needsLux) {
         current.push(product);
         used.add(product.id);
         sum = next;
@@ -280,24 +364,26 @@ function bestSetForBudget(
   }
 
   function walk(index: number, acc: PartnerProduct[]) {
-    if (index >= filledSlots.length) {
+    if (index >= slots.length) {
       addExtras(acc);
       consider(acc);
       return;
     }
-    const slot = filledSlots[index];
-    const isRequired = index === 0;
-    for (const product of slot) {
+    const slot = slots[index];
+    const options = slot.options.slice(0, 8);
+    let branched = false;
+    for (const product of options) {
       if (acc.some((item) => item.id === product.id)) continue;
+      branched = true;
       walk(index + 1, [...acc, product]);
     }
-    if (!isRequired) walk(index + 1, acc);
+    if (!slot.required || !branched) walk(index + 1, acc);
   }
 
   walk(0, []);
 
-  if (!best.length && filledSlots[0]?.length) {
-    return [filledSlots[0][0]];
+  if (!best.length) {
+    return dedupeProducts(slots.flatMap((slot) => slot.options.slice(0, 1)));
   }
   return best;
 }
@@ -309,43 +395,47 @@ export function getRecommendedProducts(
   pool: PartnerProduct[],
   vendorId = "mix",
 ) {
-  const vendorPool =
+  const vendorPool = dedupeProducts(
     vendorId === "mix"
       ? pool
-      : pool.filter((product) => product.vendorId === vendorId);
+      : pool.filter((product) => product.vendorId === vendorId),
+  );
   const roomPool = vendorPool.filter((product) =>
     belongsToRoom(product, roomType),
   );
-  const slots = (roomSlots[roomType] ?? []).map((slot) => {
+  const definedSlots = roomSlots[roomType] ?? [];
+  const slots = definedSlots.map((slot) => {
     const matches = roomPool.filter((product) => slot.match(product));
-    const styled = matches.filter((product) => hasStyle(product, style));
-    const options = styled.length > 0 ? styled : matches;
-    return [...options].sort((a, b) => a.price - b.price);
+    const options = rankedSlotOptions(matches, style, slot.required);
+    return {
+      required: slot.required,
+      options: [...options].sort((a, b) =>
+        budget === "economic" ? a.price - b.price : b.price - a.price,
+      ),
+    };
   });
-  const usedTypes = new Set(
-    slots.flatMap((slotProducts, index) =>
-      slotProducts.length ? [roomSlots[roomType][index].id] : [],
-    ),
-  );
   const extras =
     roomType === "bedroom"
-      ? []
+      ? roomPool.filter(
+          (product) =>
+            (isLighting(product) || isRugOrBench(product)) &&
+            rankedSlotOptions([product], style, false).length > 0,
+        )
       : roomPool.filter((product) => {
-          const claimed = (roomSlots[roomType] ?? []).some(
-            (slot) => usedTypes.has(slot.id) && slot.match(product),
+          const claimed = definedSlots.some(
+            (slot, index) =>
+              slot.match(product) &&
+              slots[index]?.options.some((item) => item.id === product.id),
           );
-          return !claimed;
+          return (
+            !claimed && rankedSlotOptions([product], style, false).length > 0
+          );
         });
-  const picked = bestSetForBudget(slots, extras, budget);
+  const picked = bestSetForBudget(slots, extras, budget, style);
   if (roomType === "bedroom") {
-    return picked.filter(
-      (product) =>
-        isBedroomFurniture(product) &&
-        product.category !== "sofas" &&
-        !nameOf(product).includes("canapea"),
-    );
+    return dedupeProducts(picked.filter(isBedroomFurniture));
   }
-  return picked;
+  return dedupeProducts(picked);
 }
 
 export function sceneKey(

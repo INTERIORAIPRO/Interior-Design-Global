@@ -274,11 +274,11 @@ function buildPrompt(
   return [
     styleOpeningLine(chosenStyle, room),
     room === "bedroom"
-      ? `NO living-room sofa, NO green sofa, NO lounge sectional. This is a strictly ${keyword} BEDROOM with a bed, nightstands, bedside lamps and a pouf/stool only.`
+      ? `NO living-room sofa, NO green sofa, NO lounge sectional. This is a strictly ${keyword} BEDROOM with a bed, nightstands, lighting or pendants, and a rug or bench only.`
       : "",
     roomLeads[room],
     `FRESH UNIQUE ${vendorName.toUpperCase()} STAGING, variation ${refreshToken || Date.now()}. Do not repeat a previous layout.`,
-    "VIRTUAL STAGING / INTERIOR REDESIGN of the USER'S OWN ROOM PHOTOGRAPH, photorealistic, 8k, magazine interior photography, image-to-image restaging",
+    "VIRTUAL STAGING / INTERIOR REDESIGN of the USER'S OWN ROOM PHOTOGRAPH, image-to-image restaging",
     "The uploaded photo is the ControlNet / img2img structural reference: keep the SAME room shape, walls, windows, doors, ceiling, floor plane, architectural lines and camera angle. Do not invent a different floor plan.",
     "REMOVE the existing old furniture, clutter and previous staging. Replace it with the listed catalog pieces only, correctly scaled and grounded on the original floor.",
     `ROOM TYPE LOCK: ${room}. This space is ${roomBriefs[room]}.`,
@@ -287,14 +287,17 @@ function buildPrompt(
     budgetLine,
     productBlock,
     "Natural window light matching the original photo, contact shadows, no collage, no floating objects.",
+    "ultra-realistic, 8k resolution, interior design photography, magazine style, architectural digest lighting",
   ]
     .filter(Boolean)
     .join(" ");
 }
 
 function buildNegativePrompt(roomType: string | undefined) {
+  const artifacts =
+    "visual artifacts, jpeg artifacts, compression artifacts, noise, grain, glitches, banding, chromatic aberration, lens flare, motion blur, pixelation, low resolution, oversharpening, halos, ghosting, melted geometry, warped walls, deformed furniture, distorted perspective, extra limbs, extra fingers, duplicate objects, broken edges, CGI look, 3d render, plastic surfaces, fake lighting, oversaturated HDR, muddy textures, watermark, text overlay, logo";
   const shared =
-    "keep original old furniture, leftover previous sofa, unchanged existing clutter, empty unfinished room, generic unbranded lumps, cartoon, illustration, collage, floating furniture, wrong scale, different floor plan, moved walls, baroque gold, crystal chandelier, dark mahogany luxury, neon colors, blurry objects, watermark, text overlay, extra duplicate furniture";
+    `keep original old furniture, leftover previous sofa, unchanged existing clutter, empty unfinished room, generic unbranded lumps, cartoon, illustration, collage, floating furniture, wrong scale, different floor plan, moved walls, baroque gold, crystal chandelier, dark mahogany luxury, neon colors, blurry objects, extra duplicate furniture, ${artifacts}`;
   if (roomType === "bedroom") {
     return `${shared}, living room, lounge sofa, green sofa, velvet sofa, sectional couch instead of a bed, dining table as the focus, no bed, missing nightstands, missing bedside lamps`;
   }

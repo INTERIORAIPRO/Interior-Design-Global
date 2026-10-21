@@ -138,7 +138,7 @@ export function DesignProductsSection({
                 src={cardImage}
                 alt={title}
                 fallbackColor={product.accentColor}
-                className="h-full w-full object-cover"
+                className="h-full w-full bg-white object-contain p-3"
               />
             </div>
             <div className="flex flex-1 flex-col p-4">

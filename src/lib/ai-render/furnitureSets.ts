@@ -6,6 +6,10 @@ import {
   type RoomKind,
 } from "@/lib/partner-store/catalog";
 import { MIX_VENDOR_ID } from "@/lib/partner-store/vendors";
+import {
+  defaultSelectedSlots,
+  type PieceSlotId,
+} from "@/lib/ai-render/furniturePieces";
 
 export type CatalogSetIds = {
   bed?: string;
@@ -278,16 +282,60 @@ export function lookupFurnitureSetIds(
   );
 }
 
+const livingTvByVendor: Record<string, string> = {
+  "kave-home": "th-tv-unit",
+  westwing: "ww-tv-unit",
+  ikea: "ikea-tv-unit",
+  sklum: "sk-tv-unit",
+  micadoni: "mc-tv-unit",
+  "maisons-du-monde": "th-tv-unit",
+};
+
+function slotsFromSetIds(
+  roomType: RoomKind,
+  ids: string[],
+  vendorId?: string,
+): Partial<Record<PieceSlotId, string>> {
+  if (roomType === "bedroom") {
+    return {
+      bed: ids[0],
+      nightstand: ids[1],
+      pendant: ids[2],
+      pouf: ids[3],
+    };
+  }
+  if (roomType === "living") {
+    return {
+      sofa: ids[0],
+      table: ids[1],
+      lamp: ids[2],
+      rug: ids[3],
+      tv: livingTvByVendor[vendorKey(vendorId)] || "th-tv-unit",
+    };
+  }
+  return {};
+}
+
 export function resolveFurnitureSet(
   roomType: RoomKind,
   style: InteriorStyle | string | undefined,
   vendorId?: string,
   pool: PartnerProduct[] = partnerProducts,
+  selectedSlots?: PieceSlotId[],
 ) {
   const ids = lookupFurnitureSetIds(roomType, style, vendorId);
   const byId = new Map(pool.map((product) => [product.id, product]));
   const catalog = new Map(partnerProducts.map((product) => [product.id, product]));
-  return ids
+  const slots = slotsFromSetIds(roomType, ids, vendorId);
+  const wanted =
+    selectedSlots && selectedSlots.length > 0
+      ? selectedSlots
+      : defaultSelectedSlots(roomType);
+  const chosenIds =
+    wanted.length > 0
+      ? wanted.map((slot) => slots[slot]).filter((id): id is string => Boolean(id))
+      : ids;
+  return chosenIds
     .map((id) => byId.get(id) || catalog.get(id))
     .filter((product): product is PartnerProduct => Boolean(product));
 }
@@ -343,7 +391,11 @@ export function buildCatalogSetPrompt(input: {
     pieces[2] || "coordinated lighting",
     pieces[3] || "textile accessory",
   ];
+  const strictList = input.products
+    .map((product) => product.description || product.promptHint || product.name)
+    .join(", ");
   return [
+    `Render a ${roomWord} in ${input.style} style containing strictly: ${strictList}.`,
     `A high-end photorealistic interior design render of a ${roomWord}. Include a ${first}, ${second}, ${third}, and ${fourth}. Style: ${input.style}. Clean lighting, architectural digest photo quality.`,
     `VENDOR: ${input.vendorName}. Render ONLY these catalog pieces, recognizable and fully in frame: ${named}.`,
     "VIRTUAL STAGING of the USER'S OWN ROOM PHOTOGRAPH: keep the same walls, windows, doors, ceiling, floor and camera angle.",

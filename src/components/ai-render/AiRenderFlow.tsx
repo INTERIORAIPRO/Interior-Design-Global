@@ -19,6 +19,11 @@ import {
 } from "@/lib/partner-store/vendors";
 import { VendorChipBar } from "@/components/layout/VendorSelect";
 import { extractImageUrl } from "@/lib/ai-render/extractImageUrl";
+import {
+  defaultSelectedSlots,
+  pieceOptionsForRoom,
+  type PieceSlotId,
+} from "@/lib/ai-render/furniturePieces";
 import { DesignProductsSection } from "./DesignProductsSection";
 
 type RoomType = RoomKind;
@@ -56,6 +61,9 @@ export function AiRenderFlow() {
   const [renderedProducts, setRenderedProducts] = useState<PartnerProduct[] | null>(
     null,
   );
+  const [selectedSlots, setSelectedSlots] = useState<PieceSlotId[]>(() =>
+    defaultSelectedSlots("bedroom"),
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
   const previewUrlRef = useRef<string | null>(null);
   const generationRef = useRef(0);
@@ -65,8 +73,15 @@ export function AiRenderFlow() {
   const originalImage = uploadedImage ?? previewUrl;
   const previewProducts = useMemo(
     () =>
-      getRecommendedProducts(roomType, style, budget, catalog, vendorId),
-    [roomType, style, budget, catalog, vendorId],
+      getRecommendedProducts(
+        roomType,
+        style,
+        budget,
+        catalog,
+        vendorId,
+        selectedSlots,
+      ),
+    [roomType, style, budget, catalog, vendorId, selectedSlots],
   );
   const recommendedProducts = renderedProducts ?? previewProducts;
   const selectedStyleLabel = t(`styles.${style}`);
@@ -80,7 +95,11 @@ export function AiRenderFlow() {
 
   useEffect(() => {
     setRenderedProducts(null);
-  }, [roomType, style, budget, vendorId]);
+  }, [roomType, style, budget, vendorId, selectedSlots]);
+
+  useEffect(() => {
+    setSelectedSlots(defaultSelectedSlots(roomType));
+  }, [roomType]);
 
   useEffect(() => {
     setIsMounted(true);
@@ -148,6 +167,7 @@ export function AiRenderFlow() {
           keepStructure: true,
           vendorName: activeVendorName,
           vendorId,
+          selectedSlots,
           refreshToken: `${activeKey}:${Date.now()}`,
           imageWidth: frame?.width,
           imageHeight: frame?.height,
@@ -230,9 +250,9 @@ export function AiRenderFlow() {
       void handleGenerate();
     }, 450);
     return () => window.clearTimeout(timer);
-    // Filter-driven regeneration: new vendor/style/budget/room must request a new image.
+    // Filter-driven regeneration: new vendor/style/budget/room/pieces must request a new image.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [vendorId, style, budget, roomType, hasGeneratedOnce, isMounted]);
+  }, [vendorId, style, budget, roomType, selectedSlots, hasGeneratedOnce, isMounted]);
 
   function revokePreview() {
     if (previewUrlRef.current?.startsWith("blob:")) {
@@ -374,6 +394,45 @@ export function AiRenderFlow() {
           ))}
         </div>
       </div>
+
+      {pieceOptionsForRoom(roomType).length > 0 ? (
+        <div>
+          <p className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-brass">
+            Alege piesele pe care le dorești în cameră
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {pieceOptionsForRoom(roomType).map((option) => {
+              const checked = selectedSlots.includes(option.id);
+              return (
+                <label
+                  key={option.id}
+                  className={`flex cursor-pointer items-center gap-2 rounded-full px-4 py-2 text-sm ${
+                    checked
+                      ? "bg-brass text-ink"
+                      : "border border-white/15 text-linen/75"
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    className="accent-ink"
+                    onChange={() => {
+                      setSelectedSlots((current) => {
+                        if (current.includes(option.id)) {
+                          if (current.length <= 1) return current;
+                          return current.filter((slot) => slot !== option.id);
+                        }
+                        return [...current, option.id];
+                      });
+                    }}
+                  />
+                  {option.label}
+                </label>
+              );
+            })}
+          </div>
+        </div>
+      ) : null}
 
       {error ? (
         <p className="rounded-2xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-200">

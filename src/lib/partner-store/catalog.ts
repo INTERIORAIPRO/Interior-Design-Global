@@ -12,7 +12,6 @@ import {
   type ShippingCountryId,
   type VendorId,
 } from "./vendors";
-import { productPhotoById } from "./productPhotos";
 
 export type RoomKind = "living" | "bedroom" | "office" | "kitchen";
 
@@ -53,12 +52,65 @@ export function isDisplayableProductImage(url?: string | null) {
   return isRealProductPhoto(url);
 }
 
-export function uniqueProductImage(
-  product: Pick<PartnerProduct, "id" | "imageUrl" | "image">,
+export function studioCatalogImage(
+  product: Pick<PartnerProduct, "name" | "category">,
 ) {
-  const mapped = product.id ? productPhotoById[product.id] : "";
-  const candidates = [product.imageUrl, product.image, mapped];
-  return candidates.find((candidate) => isRealProductPhoto(candidate)) ?? "";
+  const name = product.name.toLowerCase();
+  if (
+    name.includes("tv") ||
+    name.includes("media") ||
+    product.category === "sideboard"
+  ) {
+    return "/products/studio/tv.jpg";
+  }
+  if (product.category === "beds" || name.startsWith("pat ") || name.includes("pat ")) {
+    return "/products/studio/bed.jpg";
+  }
+  if (name.includes("noptier")) return "/products/studio/nightstand.jpg";
+  if (
+    name.includes("pendul") ||
+    name.includes("pendant") ||
+    name.includes("suspend")
+  ) {
+    return "/products/studio/pendant.jpg";
+  }
+  if (
+    name.includes("pouf") ||
+    name.includes("puf") ||
+    name.includes("taburet") ||
+    name.includes("banchet") ||
+    name.includes("ottoman")
+  ) {
+    return "/products/studio/pouf.jpg";
+  }
+  if (product.category === "sofas" || name.includes("canapea")) {
+    return "/products/studio/sofa.jpg";
+  }
+  if (
+    name.includes("cafea") ||
+    name.includes("masut") ||
+    product.category === "tables" ||
+    product.category === "coffee-table"
+  ) {
+    return "/products/studio/table.jpg";
+  }
+  if (product.category === "rugs" || name.includes("covor")) {
+    return "/products/studio/rug.jpg";
+  }
+  if (
+    product.category === "lighting" ||
+    name.includes("lamp") ||
+    name.includes("veioz")
+  ) {
+    return "/products/studio/lamp.jpg";
+  }
+  return "/products/studio/table.jpg";
+}
+
+export function uniqueProductImage(
+  product: Pick<PartnerProduct, "id" | "imageUrl" | "image" | "name" | "category">,
+) {
+  return studioCatalogImage(product);
 }
 
 function product(input: {
@@ -79,10 +131,7 @@ function product(input: {
   currency?: string;
   dimensions?: TypedPartnerProduct["dimensions"];
 }): PartnerProduct {
-  const mapped = productPhotoById[input.id];
-  const uniqueImage = [input.image, mapped].find((value) =>
-    isRealProductPhoto(value),
-  ) ?? "";
+  const uniqueImage = studioCatalogImage(input);
   return {
     ...input,
     currency: input.currency ?? "EUR",
@@ -93,7 +142,7 @@ function product(input: {
     buyUrl: input.affiliateUrl,
     image: uniqueImage,
     imageUrl: uniqueImage,
-    image2d: uniqueImage || input.image2d,
+    image2d: uniqueImage,
   };
 }
 
@@ -128,6 +177,22 @@ export const partnerProducts: PartnerProduct[] = [
     price: 899,
     affiliateUrl: "https://www.thehome.ro/mese",
     dimensions: { widthCm: 90, depthCm: 90, heightCm: 42 },
+  }),
+  product({
+    id: "th-tv-unit",
+    sku: "TH-TV-UNIT",
+    name: "TV Unit stejar",
+    description: "Corp TV jos din stejar, rafturi deschise, linie de living.",
+    category: "sideboard",
+    image2d: "/products/studio/tv.jpg",
+    image: "/products/studio/tv.jpg",
+    accentColor: "#d4a373",
+    styles: ["scandinavian", "japandi", "modern", "contemporary", "minimalist", "midcentury", "boho"],
+    rooms: ["living"],
+    promptHint: "a low pale-oak TV media unit against the wall, open shelves, no bedroom furniture",
+    price: 890,
+    affiliateUrl: "https://kavehome.com",
+    dimensions: { widthCm: 180, depthCm: 42, heightCm: 50 },
   }),
   product({
     id: "th-lamp-brass-arc",
@@ -522,6 +587,22 @@ export const partnerProducts: PartnerProduct[] = [
     affiliateUrl: "https://micadoni.com",
   }),
   product({
+    id: "mc-tv-unit",
+    sku: "MC-TV",
+    name: "TV Unit Micadoni",
+    description: "Corp TV jos Micadoni Home, blat lemn.",
+    category: "sideboard",
+    image2d: "/products/studio/tv.jpg",
+    image: "/products/studio/tv.jpg",
+    accentColor: "#8a9a84",
+    styles: ["modern", "contemporary", "scandinavian"],
+    rooms: ["living"],
+    promptHint: "a low Micadoni wood TV media unit in the living room",
+    price: 690,
+    vendorId: "micadoni",
+    affiliateUrl: "https://micadoni.com",
+  }),
+  product({
     id: "mc-bed-velvet",
     sku: "MC-BED-VEL",
     name: "Pat Micadoni velvet",
@@ -762,6 +843,22 @@ export const partnerProducts: PartnerProduct[] = [
     affiliateUrl: "https://www.sklum.com",
   }),
   product({
+    id: "sk-tv-unit",
+    sku: "SK-TV",
+    name: "TV Unit Sklum",
+    description: "Corp TV metalic Sklum, linie industrială joasă.",
+    category: "sideboard",
+    image2d: "/products/studio/tv.jpg",
+    image: "/products/studio/tv.jpg",
+    accentColor: "#4a4a4a",
+    styles: ["industrial", "minimalist", "modern"],
+    rooms: ["living"],
+    promptHint: "a low graphite Sklum metal TV media unit",
+    price: 249,
+    vendorId: "sklum",
+    affiliateUrl: "https://www.sklum.com",
+  }),
+  product({
     id: "ww-armchair-boucle",
     sku: "WW-CHAIR-BQ",
     name: "Fotoliu Westwing bouclé",
@@ -833,6 +930,22 @@ export const partnerProducts: PartnerProduct[] = [
     rooms: ["bedroom", "living"],
     promptHint: "a Westwing wool rug under the bed",
     price: 390,
+    vendorId: "westwing",
+    affiliateUrl: "https://www.westwing.com",
+  }),
+  product({
+    id: "ww-tv-unit",
+    sku: "WW-TV",
+    name: "TV Unit Westwing",
+    description: "Corp TV editorial Westwing, lemn deschis, linie joasă.",
+    category: "sideboard",
+    image2d: "/products/studio/tv.jpg",
+    image: "/products/studio/tv.jpg",
+    accentColor: "#d4a373",
+    styles: ["contemporary", "scandinavian", "midcentury"],
+    rooms: ["living"],
+    promptHint: "a low Westwing oak TV media unit",
+    price: 449,
     vendorId: "westwing",
     affiliateUrl: "https://www.westwing.com",
   }),
@@ -991,6 +1104,22 @@ export const partnerProducts: PartnerProduct[] = [
     rooms: ["living"],
     promptHint: "an IKEA KIVIK three-seat sofa in light grey fabric, practical Nordic volume",
     price: 799,
+    vendorId: "ikea",
+    affiliateUrl: "https://www.ikea.com",
+  }),
+  product({
+    id: "ikea-tv-unit",
+    sku: "IKEA-TV",
+    name: "TV Unit IKEA",
+    description: "Corp TV jos IKEA, finisaj stejar alb.",
+    category: "sideboard",
+    image2d: "/products/studio/tv.jpg",
+    image: "/products/studio/tv.jpg",
+    accentColor: "#e8dfd2",
+    styles: ["scandinavian", "minimalist", "modern"],
+    rooms: ["living"],
+    promptHint: "a low IKEA oak-white TV media unit",
+    price: 199,
     vendorId: "ikea",
     affiliateUrl: "https://www.ikea.com",
   }),

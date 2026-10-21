@@ -7,6 +7,7 @@ import {
 } from "@/lib/partner-store/catalog";
 import type { InteriorStyle } from "@/lib/ai-render/catalogPick";
 import { resolveFurnitureSet } from "@/lib/ai-render/furnitureSets";
+import type { PieceSlotId } from "@/lib/ai-render/furniturePieces";
 
 export type BudgetTier = "economic" | "medium" | "premium" | "lux";
 
@@ -441,8 +442,15 @@ export function getRecommendedProducts(
   budget: BudgetTier,
   pool: PartnerProduct[],
   vendorId = "mix",
+  selectedSlots?: PieceSlotId[],
 ) {
-  const lockedSet = resolveFurnitureSet(roomType, style, vendorId, pool);
+  const lockedSet = resolveFurnitureSet(
+    roomType,
+    style,
+    vendorId,
+    pool,
+    selectedSlots,
+  );
   if (lockedSet.length >= 3) {
     return lockedSet.slice(0, 4);
   }

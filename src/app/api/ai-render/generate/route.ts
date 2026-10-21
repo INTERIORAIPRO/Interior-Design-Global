@@ -8,6 +8,7 @@ import {
   resolveFurnitureSet,
   toRenderProduct,
 } from "@/lib/ai-render/furnitureSets";
+import type { PieceSlotId } from "@/lib/ai-render/furniturePieces";
 import { partnerProducts } from "@/lib/partner-store/catalog";
 
 function getReplicateToken() {
@@ -588,6 +589,7 @@ export async function POST(request: Request) {
       refreshToken,
       imageWidth,
       imageHeight,
+      selectedSlots,
     } = body as {
       imageUrl?: string;
       image?: string;
@@ -602,6 +604,7 @@ export async function POST(request: Request) {
       refreshToken?: string;
       imageWidth?: number;
       imageHeight?: number;
+      selectedSlots?: string[];
     };
     const brandName =
       typeof vendorName === "string" && vendorName.trim()
@@ -626,6 +629,7 @@ export async function POST(request: Request) {
       style,
       vendorId,
       partnerProducts,
+      selectedSlots as PieceSlotId[] | undefined,
     );
     const promptProducts: PromptProduct[] = selectedSet.map((product) => ({
       name: product.name,
@@ -634,7 +638,7 @@ export async function POST(request: Request) {
       description: product.description,
     }));
     const prompt =
-      selectedSet.length >= 3
+      selectedSet.length >= 1
         ? [
             buildCatalogSetPrompt({
               roomType: room,

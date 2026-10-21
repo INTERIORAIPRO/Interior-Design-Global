@@ -22,6 +22,8 @@ export type PartnerProduct = TypedPartnerProduct & {
   vendorId: string;
   image: string;
   imageUrl: string;
+  title: string;
+  buyUrl: string;
 };
 
 export type { TypedPartnerProduct };
@@ -38,108 +40,21 @@ export const primaryPartnerStore: PartnerStore = {
 
 const AFFILIATE_REF = "interior-design-global";
 
-const catalogPhotos = {
-  bed: [
-    "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80",
-    "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=900&q=80",
-    "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=900&q=80",
-    "https://images.unsplash.com/photo-1615874958473-d2780e0a9e8d?auto=format&fit=crop&w=900&q=80",
-    "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=900&q=80",
-  ],
-  nightstand: [
-    "https://images.unsplash.com/photo-1594026112284-02bb6f3352fe?auto=format&fit=crop&w=900&q=80",
-    "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=900&q=80",
-    "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80",
-  ],
-  lamp: [
-    "https://images.unsplash.com/photo-1507473883500-6e47245f1fba?auto=format&fit=crop&w=900&q=80",
-    "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=900&q=80",
-    "https://images.unsplash.com/photo-1543198126-a8ad8e47fb22?auto=format&fit=crop&w=900&q=80",
-  ],
-  sofa: [
-    "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=900&q=80",
-    "https://images.unsplash.com/photo-1550254478-ead259890577?auto=format&fit=crop&w=900&q=80",
-    "https://images.unsplash.com/photo-1540574163026-643ea20ade25?auto=format&fit=crop&w=900&q=80",
-  ],
-  table: [
-    "https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?auto=format&fit=crop&w=900&q=80",
-    "https://images.unsplash.com/photo-1532372320572-cda25653a26d?auto=format&fit=crop&w=900&q=80",
-  ],
-  armchair: [
-    "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&w=900&q=80",
-    "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=900&q=80",
-  ],
-  stool: [
-    "https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=900&q=80",
-    "https://images.unsplash.com/photo-1519947486511-42434ff1d34e?auto=format&fit=crop&w=900&q=80",
-  ],
-  rug: [
-    "https://images.unsplash.com/photo-1600166898405-eeb7126d395f?auto=format&fit=crop&w=900&q=80",
-  ],
-  vase: [
-    "https://images.unsplash.com/photo-1578500494198-3448ba75c6f9?auto=format&fit=crop&w=900&q=80",
-  ],
-  desk: [
-    "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?auto=format&fit=crop&w=900&q=80",
-  ],
-  dining: [
-    "https://images.unsplash.com/photo-1617806118233-18e1de3d13f4?auto=format&fit=crop&w=900&q=80",
-  ],
-} as const;
-
-function hashId(id: string) {
-  let hash = 0;
-  for (let index = 0; index < id.length; index += 1) {
-    hash = (hash * 31 + id.charCodeAt(index)) >>> 0;
-  }
-  return hash;
+export function isDisplayableProductImage(url?: string | null) {
+  const value = url?.trim() ?? "";
+  if (!value) return false;
+  if (value.startsWith("data:image/")) return true;
+  if (/unsplash\.com/i.test(value)) return false;
+  if (value.includes("/partner-store/")) return false;
+  if (value.startsWith("/") && /\.svg(\?|$)/i.test(value)) return false;
+  return /^https?:\/\//i.test(value) || value.startsWith("/");
 }
 
-function pickPhoto(list: readonly string[], id: string) {
-  return list[hashId(id) % list.length];
-}
-
-function photoFor(input: {
-  id?: string;
-  name: string;
-  category: ProductCategory;
-  image?: string;
-}) {
-  if (input.image) return input.image;
-  const name = input.name.toLowerCase();
-  const id = input.id ?? input.name;
-  if (
-    name.includes("taburet") ||
-    name.includes("ottoman") ||
-    name.includes("banchet") ||
-    name.includes("bench")
-  ) {
-    return pickPhoto(catalogPhotos.stool, id);
-  }
-  if (name.includes("noptier")) return pickPhoto(catalogPhotos.nightstand, id);
-  if (name.includes("veioz") || name.includes("lampadar") || name.includes("lamp")) {
-    return pickPhoto(catalogPhotos.lamp, id);
-  }
-  if (name.includes("pat ") || name.startsWith("pat") || input.category === "beds") {
-    return pickPhoto(catalogPhotos.bed, id);
-  }
-  if (name.includes("canapea") || input.category === "sofas") {
-    return pickPhoto(catalogPhotos.sofa, id);
-  }
-  if (name.includes("fotoliu") || input.category === "armchair") {
-    return pickPhoto(catalogPhotos.armchair, id);
-  }
-  if (name.includes("covor") || input.category === "rugs") {
-    return pickPhoto(catalogPhotos.rug, id);
-  }
-  if (name.includes("vaz") || input.category === "decor") {
-    return pickPhoto(catalogPhotos.vase, id);
-  }
-  if (name.includes("birou")) return pickPhoto(catalogPhotos.desk, id);
-  if (name.includes("dining")) return pickPhoto(catalogPhotos.dining, id);
-  if (input.category === "tables") return pickPhoto(catalogPhotos.table, id);
-  if (input.category === "lighting") return pickPhoto(catalogPhotos.lamp, id);
-  return pickPhoto(catalogPhotos.sofa, id);
+export function uniqueProductImage(
+  product: Pick<PartnerProduct, "imageUrl" | "image" | "image2d">,
+) {
+  const candidates = [product.imageUrl, product.image, product.image2d];
+  return candidates.find((candidate) => isDisplayableProductImage(candidate)) ?? "";
 }
 
 function product(input: {
@@ -160,16 +75,18 @@ function product(input: {
   currency?: string;
   dimensions?: TypedPartnerProduct["dimensions"];
 }): PartnerProduct {
-  const image = photoFor({ ...input, id: input.id });
+  const uniqueImage = isDisplayableProductImage(input.image) ? input.image!.trim() : "";
   return {
     ...input,
     currency: input.currency ?? "EUR",
     dimensions: input.dimensions ?? { widthCm: 80, depthCm: 80, heightCm: 80 },
     vendorId: input.vendorId ?? "kave-home",
     style: input.styles,
-    image,
-    image2d: image,
-    imageUrl: image,
+    title: input.name,
+    buyUrl: input.affiliateUrl,
+    image: uniqueImage,
+    imageUrl: uniqueImage,
+    image2d: input.image2d,
   };
 }
 

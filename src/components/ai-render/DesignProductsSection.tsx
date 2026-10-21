@@ -8,6 +8,7 @@ import { CatalogPhoto } from "@/components/catalog/CatalogPhoto";
 import { addRoomSet } from "@/lib/cart/designCart";
 import {
   formatProductPrice,
+  uniqueProductImage,
   withAffiliateParams,
   type PartnerProduct,
 } from "@/lib/partner-store/catalog";
@@ -111,30 +112,36 @@ export function DesignProductsSection({
       </div>
 
       <ul className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {products.map((product) => (
+        {products.map((product, index) => {
+          const title = product.title || product.name;
+          const buyUrl = product.buyUrl || product.affiliateUrl;
+          const imageUrl = uniqueProductImage(product);
+          const usedBefore = products
+            .slice(0, index)
+            .some((other) => uniqueProductImage(other) === imageUrl && imageUrl);
+          const cardImage = usedBefore ? "" : imageUrl;
+          const productVendor =
+            getVendor(product.vendorId)?.brandName ?? vendorName;
+          return (
           <li
             key={product.id}
             className="flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-ink/50"
           >
             <div className="aspect-[4/3] overflow-hidden bg-white/[0.06]">
               <CatalogPhoto
-                key={`${product.id}-${product.image || product.imageUrl || product.image2d}`}
-                src={
-                  product.image ||
-                  product.imageUrl ||
-                  product.image2d
-                }
-                alt={product.name}
+                key={`${product.id}-${cardImage || "placeholder"}`}
+                src={cardImage}
+                alt={title}
                 fallbackColor={product.accentColor}
                 className="h-full w-full object-cover"
               />
             </div>
             <div className="flex flex-1 flex-col p-4">
               <p className="text-[10px] uppercase tracking-[0.18em] text-brass/80">
-                {getVendor(product.vendorId)?.brandName ?? product.vendorId}
+                {productVendor}
               </p>
               <h3 className="mt-1 font-serif text-xl leading-snug text-linen">
-                {product.name}
+                {title}
               </h3>
               <p className="mt-2 text-sm font-semibold text-brass">
                 {isMounted
@@ -142,18 +149,19 @@ export function DesignProductsSection({
                   : `${product.price} ${product.currency}`}
               </p>
               <a
-                href={withAffiliateParams(product.affiliateUrl, "ai-render")}
+                href={withAffiliateParams(buyUrl, "ai-render")}
                 target="_blank"
                 rel="sponsored noopener noreferrer"
                 className="mt-4 inline-flex justify-center rounded-full border border-brass/50 px-4 py-2.5 text-sm font-medium text-brass hover:bg-brass hover:text-ink"
               >
                 {locale.startsWith("ro")
-                  ? `Vezi pe ${vendorName}`
-                  : t("viewOnVendor", { vendor: vendorName })}
+                  ? `Vezi pe ${productVendor}`
+                  : t("viewOnVendor", { vendor: productVendor })}
               </a>
             </div>
           </li>
-        ))}
+          );
+        })}
       </ul>
 
       <div className="mt-8 border-t border-white/10 pt-6">

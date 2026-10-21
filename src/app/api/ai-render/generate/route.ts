@@ -6,14 +6,11 @@ import { extractImageUrlAsync } from "@/lib/ai-render/extractImageUrl";
 
 function getReplicateToken() {
   return (
-    process.env.REPLICATE_API_TOKEN?.trim() ||
-    process.env.REPLICATE_API_KEY?.trim() ||
+    process.env.REPLICATE_API_TOKEN ||
+    process.env.REPLICATE_API_KEY ||
+    process.env.NEXT_PUBLIC_REPLICATE_API_TOKEN ||
     ""
   );
-}
-
-function isValidReplicateToken(token: string) {
-  return token.startsWith("r8_");
 }
 
 const CONTROLNET_MODELS = {
@@ -385,7 +382,7 @@ function isUnavailable(error: unknown) {
 
 function friendlyApiError(error: unknown) {
   const token = getReplicateToken();
-  if (!token || !isValidReplicateToken(token) || errorText(error) === "MISSING_REPLICATE_TOKEN") {
+  if (!token || errorText(error) === "MISSING_REPLICATE_TOKEN") {
     return "Cheia Replicate nu a fost configurată corect în Environment Variables.";
   }
   if (isAuthError(error)) {
@@ -446,9 +443,14 @@ async function runControlNet(
 
 export async function POST(request: Request) {
   try {
-    const replicateToken =
-      process.env.REPLICATE_API_TOKEN || process.env.REPLICATE_API_KEY;
-    if (!replicateToken || !String(replicateToken).startsWith("r8_")) {
+    const apiToken =
+      process.env.REPLICATE_API_TOKEN ||
+      process.env.REPLICATE_API_KEY ||
+      process.env.NEXT_PUBLIC_REPLICATE_API_TOKEN;
+    if (!apiToken) {
+      console.error(
+        "Cheia Replicate nu a fost configurată corect în Environment Variables.",
+      );
       return NextResponse.json(
         {
           error:
@@ -459,7 +461,7 @@ export async function POST(request: Request) {
     }
 
     const replicate = new Replicate({
-      auth: process.env.REPLICATE_API_TOKEN || process.env.REPLICATE_API_KEY,
+      auth: apiToken,
     });
     const body = await request.json();
     const {

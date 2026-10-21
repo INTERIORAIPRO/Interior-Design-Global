@@ -5,15 +5,15 @@ import Replicate from "replicate";
 import { extractImageUrlAsync } from "@/lib/ai-render/extractImageUrl";
 
 function getReplicateToken() {
-  return process.env.REPLICATE_API_TOKEN?.trim() || "";
+  return (
+    process.env.REPLICATE_API_TOKEN?.trim() ||
+    process.env.REPLICATE_API_KEY?.trim() ||
+    ""
+  );
 }
 
-function createReplicateClient() {
-  const token = getReplicateToken();
-  if (!token) {
-    throw new Error("MISSING_REPLICATE_TOKEN");
-  }
-  return new Replicate({ auth: token });
+function isValidReplicateToken(token: string) {
+  return token.startsWith("r8_");
 }
 
 const CONTROLNET_MODELS = {
@@ -384,14 +384,15 @@ function isUnavailable(error: unknown) {
 }
 
 function friendlyApiError(error: unknown) {
-  if (!getReplicateToken() || errorText(error) === "MISSING_REPLICATE_TOKEN") {
-    return "Cheia Replicate lipsește. Adaugă REPLICATE_API_TOKEN în fișierul .env.local și repornește serverul.";
+  const token = getReplicateToken();
+  if (!token || !isValidReplicateToken(token) || errorText(error) === "MISSING_REPLICATE_TOKEN") {
+    return "Cheia Replicate nu a fost configurată corect în Environment Variables.";
   }
   if (isAuthError(error)) {
-    return "Autentificarea Replicate a eșuat (401). Verifică REPLICATE_API_TOKEN — cheia poate fi invalidă sau expirată.";
+    return "Cheia Replicate nu a fost configurată corect în Environment Variables.";
   }
   if (isCreditOrRateLimit(error)) {
-    return "Replicate a atins limita de utilizare. Încearcă din nou în câteva minute.";
+    return "Serviciul de randare este ocupat momentan. Încearcă din nou în câteva minute.";
   }
   return "Nu am putut genera randarea acum. Încearcă din nou peste puțin timp.";
 }
@@ -445,14 +446,21 @@ async function runControlNet(
 
 export async function POST(request: Request) {
   try {
-    if (!getReplicateToken()) {
+    const replicateToken =
+      process.env.REPLICATE_API_TOKEN || process.env.REPLICATE_API_KEY;
+    if (!replicateToken || !String(replicateToken).startsWith("r8_")) {
       return NextResponse.json(
-        { error: friendlyApiError(new Error("MISSING_REPLICATE_TOKEN")) },
-        { status: 401 },
+        {
+          error:
+            "Cheia Replicate nu a fost configurată corect în Environment Variables.",
+        },
+        { status: 200 },
       );
     }
 
-    const replicate = createReplicateClient();
+    const replicate = new Replicate({
+      auth: process.env.REPLICATE_API_TOKEN || process.env.REPLICATE_API_KEY,
+    });
     const body = await request.json();
     const {
       imageUrl: bodyImageUrl,
@@ -525,12 +533,9 @@ export async function POST(request: Request) {
     });
   } catch (error: unknown) {
     console.error("Eroare la generarea cu Replicate:", errorText(error));
-    const status = isAuthError(error) || errorText(error) === "MISSING_REPLICATE_TOKEN"
-      ? 401
-      : 502;
     return NextResponse.json(
       { error: friendlyApiError(error) },
-      { status },
+      { status: 200 },
     );
   }
 }

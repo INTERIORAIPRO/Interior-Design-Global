@@ -185,18 +185,18 @@ export function AiRenderFlow() {
         extractImageUrl(payload.composedImageUrl) ??
         extractImageUrl(payload.image) ??
         extractImageUrl(payload.url);
-      if (!response.ok || !imageFromApi) {
-        const raw = payload.error || "";
-        const looksLikeJson = raw.trim().startsWith("{") || raw.includes("\"detail\"");
+      if (!imageFromApi) {
+        const raw = typeof payload.error === "string" ? payload.error.trim() : "";
+        const looksLikeJson =
+          raw.startsWith("{") ||
+          raw.includes("\"detail\"") ||
+          raw.includes("401") ||
+          /unauthoriz|unauthenticated/i.test(raw);
         setError(
           looksLikeJson
-            ? response.status === 401
-              ? "Autentificarea Replicate a eșuat. Verifică REPLICATE_API_TOKEN în .env.local."
-              : "Nu am putut genera randarea acum. Încearcă din nou peste puțin timp."
+            ? "Cheia Replicate nu a fost configurată corect în Environment Variables."
             : raw ||
-                (response.status === 401
-                  ? "Autentificarea Replicate a eșuat. Verifică REPLICATE_API_TOKEN în .env.local."
-                  : "Replicate nu a returnat o imagine. Încearcă din nou."),
+                "Nu am putut genera randarea acum. Încearcă din nou peste puțin timp.",
         );
         return;
       }

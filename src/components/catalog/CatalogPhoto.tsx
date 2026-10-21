@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type CatalogPhotoProps = {
   src: string;
@@ -16,6 +16,10 @@ export function CatalogPhoto({
   className,
 }: CatalogPhotoProps) {
   const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    setFailed(false);
+  }, [src]);
 
   if (failed) {
     return (

@@ -118,6 +118,7 @@ export function DesignProductsSection({
           >
             <div className="aspect-[4/3] overflow-hidden bg-white/[0.06]">
               <CatalogPhoto
+                key={`${product.id}-${product.image || product.imageUrl || product.image2d}`}
                 src={
                   product.image ||
                   product.imageUrl ||

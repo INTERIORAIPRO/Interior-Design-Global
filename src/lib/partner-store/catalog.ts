@@ -39,41 +39,102 @@ export const primaryPartnerStore: PartnerStore = {
 const AFFILIATE_REF = "interior-design-global";
 
 const catalogPhotos = {
-  bed: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80",
-  nightstand:
+  bed: [
+    "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80",
+    "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=900&q=80",
+    "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=900&q=80",
+    "https://images.unsplash.com/photo-1615874958473-d2780e0a9e8d?auto=format&fit=crop&w=900&q=80",
+    "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=900&q=80",
+  ],
+  nightstand: [
     "https://images.unsplash.com/photo-1594026112284-02bb6f3352fe?auto=format&fit=crop&w=900&q=80",
-  lamp: "https://images.unsplash.com/photo-1507473883500-6e47245f1fba?auto=format&fit=crop&w=900&q=80",
-  sofa: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=900&q=80",
-  table:
+    "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=900&q=80",
+    "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&w=900&q=80",
+  ],
+  lamp: [
+    "https://images.unsplash.com/photo-1507473883500-6e47245f1fba?auto=format&fit=crop&w=900&q=80",
+    "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=900&q=80",
+    "https://images.unsplash.com/photo-1543198126-a8ad8e47fb22?auto=format&fit=crop&w=900&q=80",
+  ],
+  sofa: [
+    "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=900&q=80",
+    "https://images.unsplash.com/photo-1550254478-ead259890577?auto=format&fit=crop&w=900&q=80",
+    "https://images.unsplash.com/photo-1540574163026-643ea20ade25?auto=format&fit=crop&w=900&q=80",
+  ],
+  table: [
     "https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?auto=format&fit=crop&w=900&q=80",
-  armchair:
+    "https://images.unsplash.com/photo-1532372320572-cda25653a26d?auto=format&fit=crop&w=900&q=80",
+  ],
+  armchair: [
     "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&w=900&q=80",
-  rug: "https://images.unsplash.com/photo-1600166898405-eeb7126d395f?auto=format&fit=crop&w=900&q=80",
-  vase: "https://images.unsplash.com/photo-1578500494198-3448ba75c6f9?auto=format&fit=crop&w=900&q=80",
-  desk: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?auto=format&fit=crop&w=900&q=80",
-  dining:
+    "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=900&q=80",
+  ],
+  stool: [
+    "https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=900&q=80",
+    "https://images.unsplash.com/photo-1519947486511-42434ff1d34e?auto=format&fit=crop&w=900&q=80",
+  ],
+  rug: [
+    "https://images.unsplash.com/photo-1600166898405-eeb7126d395f?auto=format&fit=crop&w=900&q=80",
+  ],
+  vase: [
+    "https://images.unsplash.com/photo-1578500494198-3448ba75c6f9?auto=format&fit=crop&w=900&q=80",
+  ],
+  desk: [
+    "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?auto=format&fit=crop&w=900&q=80",
+  ],
+  dining: [
     "https://images.unsplash.com/photo-1617806118233-18e1de3d13f4?auto=format&fit=crop&w=900&q=80",
+  ],
 } as const;
 
-function photoFor(input: { name: string; category: ProductCategory; image?: string }) {
+function hashId(id: string) {
+  let hash = 0;
+  for (let index = 0; index < id.length; index += 1) {
+    hash = (hash * 31 + id.charCodeAt(index)) >>> 0;
+  }
+  return hash;
+}
+
+function pickPhoto(list: readonly string[], id: string) {
+  return list[hashId(id) % list.length];
+}
+
+function photoFor(input: {
+  id?: string;
+  name: string;
+  category: ProductCategory;
+  image?: string;
+}) {
   if (input.image) return input.image;
   const name = input.name.toLowerCase();
-  if (name.includes("noptier")) return catalogPhotos.nightstand;
+  const id = input.id ?? input.name;
+  if (name.includes("taburet") || name.includes("ottoman")) {
+    return pickPhoto(catalogPhotos.stool, id);
+  }
+  if (name.includes("noptier")) return pickPhoto(catalogPhotos.nightstand, id);
   if (name.includes("veioz") || name.includes("lampadar") || name.includes("lamp")) {
-    return catalogPhotos.lamp;
+    return pickPhoto(catalogPhotos.lamp, id);
   }
   if (name.includes("pat ") || name.startsWith("pat") || input.category === "beds") {
-    return catalogPhotos.bed;
+    return pickPhoto(catalogPhotos.bed, id);
   }
-  if (name.includes("canapea") || input.category === "sofas") return catalogPhotos.sofa;
-  if (name.includes("fotoliu") || input.category === "armchair") return catalogPhotos.armchair;
-  if (name.includes("covor") || input.category === "rugs") return catalogPhotos.rug;
-  if (name.includes("vaz") || input.category === "decor") return catalogPhotos.vase;
-  if (name.includes("birou")) return catalogPhotos.desk;
-  if (name.includes("dining")) return catalogPhotos.dining;
-  if (input.category === "tables") return catalogPhotos.table;
-  if (input.category === "lighting") return catalogPhotos.lamp;
-  return catalogPhotos.sofa;
+  if (name.includes("canapea") || input.category === "sofas") {
+    return pickPhoto(catalogPhotos.sofa, id);
+  }
+  if (name.includes("fotoliu") || input.category === "armchair") {
+    return pickPhoto(catalogPhotos.armchair, id);
+  }
+  if (name.includes("covor") || input.category === "rugs") {
+    return pickPhoto(catalogPhotos.rug, id);
+  }
+  if (name.includes("vaz") || input.category === "decor") {
+    return pickPhoto(catalogPhotos.vase, id);
+  }
+  if (name.includes("birou")) return pickPhoto(catalogPhotos.desk, id);
+  if (name.includes("dining")) return pickPhoto(catalogPhotos.dining, id);
+  if (input.category === "tables") return pickPhoto(catalogPhotos.table, id);
+  if (input.category === "lighting") return pickPhoto(catalogPhotos.lamp, id);
+  return pickPhoto(catalogPhotos.sofa, id);
 }
 
 function product(input: {
@@ -94,7 +155,7 @@ function product(input: {
   currency?: string;
   dimensions?: TypedPartnerProduct["dimensions"];
 }): PartnerProduct {
-  const image = photoFor(input);
+  const image = photoFor({ ...input, id: input.id });
   return {
     ...input,
     currency: input.currency ?? "EUR",

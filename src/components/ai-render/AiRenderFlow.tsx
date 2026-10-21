@@ -7,6 +7,7 @@ import {
   budgetRanges,
   budgetTiers,
   getDesignScene,
+  getRecommendedProducts,
   sceneKey,
   type BudgetTier,
 } from "@/lib/ai-render/designSets";
@@ -64,17 +65,23 @@ export function AiRenderFlow() {
   );
   const activeKey = sceneKey(roomType, style, budget, vendorId, countryId);
   const originalImage = uploadedImage ?? previewUrl;
-  const recommendedProducts = design.products;
+  const recommendedProducts = useMemo(
+    () =>
+      getRecommendedProducts(roomType, style, budget, catalog, vendorId),
+    [roomType, style, budget, catalog, vendorId],
+  );
   const selectedStyleLabel = t(`styles.${style}`);
-  const displayCandidate =
-    heroView === "original" && originalImage
-      ? originalImage
-      : renderedImageUrl ?? originalImage ?? design.sceneUrl;
-  const displayImage = imageFailed
-    ? renderedImageUrl ?? design.sceneUrl
-    : displayCandidate;
-  const heroSrc =
-    extractImageUrl(displayImage) ?? extractImageUrl(design.sceneUrl) ?? "";
+  const showResult = hasGeneratedOnce;
+  const heroSrc = (() => {
+    if (showResult && heroView === "original" && originalImage) {
+      return originalImage;
+    }
+    if (showResult && renderedImageUrl && !imageFailed) {
+      return renderedImageUrl;
+    }
+    if (showResult) return design.sceneUrl;
+    return originalImage ?? design.sceneUrl;
+  })();
 
   useEffect(() => {
     setIsMounted(true);
@@ -84,10 +91,6 @@ export function AiRenderFlow() {
       }
     };
   }, []);
-
-  useEffect(() => {
-    setImageFailed(false);
-  }, [heroSrc]);
 
   async function toSendableImage(src: string) {
     if (!src.startsWith("blob:")) return src;
@@ -111,7 +114,7 @@ export function AiRenderFlow() {
     setHasGeneratedOnce(true);
 
     try {
-      const productsForRender = design.products;
+      const productsForRender = recommendedProducts;
       const referenceImage = uploadedImage
         ? await toSendableImage(uploadedImage)
         : await toSendableImage(design.sceneUrl);
@@ -153,22 +156,22 @@ export function AiRenderFlow() {
         composedImageUrl?: unknown;
         output?: unknown;
         image?: unknown;
+        url?: unknown;
         fallback?: boolean;
       };
       const imageFromApi =
+        extractImageUrl(data) ??
         extractImageUrl(
           Array.isArray(payload.output) ? payload.output[0] : payload.output,
         ) ??
         extractImageUrl(payload.composedImageUrl) ??
-        extractImageUrl(payload.image);
-      const nextUrl = imageFromApi || design.sceneUrl;
-      if (nextUrl) {
-        setRenderedImageUrl(nextUrl);
-        setImageFailed(false);
-      }
+        extractImageUrl(payload.image) ??
+        extractImageUrl(payload.url);
+      setRenderedImageUrl(imageFromApi || design.sceneUrl);
+      setImageFailed(false);
     } catch {
       if (requestId !== generationRef.current) return;
-      if (!renderedImageUrl) setRenderedImageUrl(design.sceneUrl);
+      setRenderedImageUrl((current) => current || design.sceneUrl);
     } finally {
       if (requestId === generationRef.current) setBusy(false);
     }
@@ -335,6 +338,7 @@ export function AiRenderFlow() {
         </p>
       ) : null}
 
+      {!showResult ? (
       <div className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4">
         <div>
           <p className="font-serif text-lg text-linen">{t("uploadTitle")}</p>
@@ -387,6 +391,7 @@ export function AiRenderFlow() {
           }`}
         />
       </div>
+      ) : null}
 
       <form
         className="flex flex-wrap items-center justify-end gap-3"
@@ -410,7 +415,7 @@ export function AiRenderFlow() {
 
       <div className="space-y-8">
         <section className="relative overflow-hidden rounded-[28px] border border-white/10 bg-[#1c1814]">
-          {renderedImageUrl && originalImage && !busy ? (
+          {showResult && originalImage && !busy ? (
             <div className="absolute left-4 top-4 z-10 flex rounded-full border border-white/15 bg-black/65 p-1 text-xs">
               <button
                 type="button"
@@ -435,8 +440,13 @@ export function AiRenderFlow() {
           {heroSrc ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
+              key={heroSrc}
               src={heroSrc}
-              alt=""
+              alt={
+                showResult && heroView === "ai"
+                  ? `Randare AI ${activeVendorName}`
+                  : fileName ?? "Camera"
+              }
               onError={() => setImageFailed(true)}
               className="w-full max-h-[600px] rounded-xl object-cover"
             />
@@ -459,7 +469,7 @@ export function AiRenderFlow() {
         </section>
 
         <DesignProductsSection
-          key={activeKey}
+          key={`${activeKey}:${recommendedProducts.map((product) => product.id).join("|")}`}
           products={recommendedProducts}
           locale={locale}
           vendorName={activeVendorName}

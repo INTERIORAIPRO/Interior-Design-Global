@@ -2,9 +2,15 @@ function looksLikeImageUrl(value: string) {
   const trimmed = value.trim();
   return (
     /^https?:\/\//i.test(trimmed) ||
+    trimmed.startsWith("//") ||
     trimmed.startsWith("data:image") ||
     trimmed.startsWith("blob:")
   );
+}
+
+function urlFromText(value: string) {
+  const match = value.match(/https?:\/\/[^\s"'<>]+/i);
+  return match?.[0] ?? null;
 }
 
 export function extractImageUrl(value: unknown): string | null {
@@ -17,7 +23,12 @@ export function extractImageUrl(value: unknown): string | null {
   if (typeof value === "string") {
     const trimmed = value.trim();
     if (!trimmed || trimmed === "[object Object]") return null;
+    if (trimmed.startsWith("//") && trimmed.includes(".")) {
+      return `https:${trimmed}`;
+    }
     if (looksLikeImageUrl(trimmed)) return trimmed;
+    const embedded = urlFromText(trimmed);
+    if (embedded) return embedded;
     if (trimmed.startsWith("[") || trimmed.startsWith("{")) {
       try {
         return extractImageUrl(JSON.parse(trimmed));
@@ -42,11 +53,13 @@ export function extractImageUrl(value: unknown): string | null {
       toString?: () => string;
     };
 
+    const recordWithUrls = value as { urls?: { get?: unknown } };
     const nested = [
       record.composedImageUrl,
       record.output,
       record.image,
       record.href,
+      recordWithUrls.urls?.get,
     ];
     for (const candidate of nested) {
       const found = extractImageUrl(candidate);

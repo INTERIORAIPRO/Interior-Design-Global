@@ -114,13 +114,27 @@ function isLivingLeak(product: PartnerProduct) {
   );
 }
 
+function isBedroomFurniture(product: PartnerProduct) {
+  const name = nameOf(product);
+  if (isLivingLeak(product)) return false;
+  if (name.includes("birou") || name.includes("dining") || name.includes("covor")) {
+    return false;
+  }
+  const isBed =
+    product.category === "beds" ||
+    name.includes("pat tapi") ||
+    name.startsWith("pat ");
+  const isNightstand = name.includes("noptier");
+  const isLighting = product.category === "lighting";
+  const isStool = name.includes("taburet") || name.includes("ottoman");
+  return isBed || isNightstand || isLighting || isStool;
+}
+
 function belongsToRoom(product: PartnerProduct, roomType: RoomKind) {
   if (!product.rooms?.includes(roomType)) return false;
   const name = nameOf(product);
   if (roomType === "bedroom") {
-    if (isLivingLeak(product)) return false;
-    if (name.includes("birou") || name.includes("dining")) return false;
-    return true;
+    return isBedroomFurniture(product);
   }
   if (roomType === "living") {
     if (product.category === "beds") return false;
@@ -177,8 +191,7 @@ const roomSlots: Record<RoomKind, RoomSlot[]> = {
       required: false,
       match: (product) =>
         nameOf(product).includes("taburet") ||
-        nameOf(product).includes("ottoman") ||
-        product.category === "armchair",
+        nameOf(product).includes("ottoman"),
     },
   ],
   living: [
@@ -358,12 +371,15 @@ export function getRecommendedProducts(
       slotProducts.length ? [roomSlots[roomType][index].id] : [],
     ),
   );
-  const extras = roomPool.filter((product) => {
-    const claimed = (roomSlots[roomType] ?? []).some(
-      (slot, index) => usedTypes.has(slot.id) && slot.match(product),
-    );
-    return !claimed;
-  });
+  const extras =
+    roomType === "bedroom"
+      ? []
+      : roomPool.filter((product) => {
+          const claimed = (roomSlots[roomType] ?? []).some(
+            (slot) => usedTypes.has(slot.id) && slot.match(product),
+          );
+          return !claimed;
+        });
   return bestSetForBudget(slots, extras, budget);
 }
 

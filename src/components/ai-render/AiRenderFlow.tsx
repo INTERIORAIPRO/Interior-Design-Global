@@ -336,7 +336,10 @@ export function AiRenderFlow() {
             <button
               key={type}
               type="button"
-              onClick={() => setRoomType(type)}
+              onClick={() => {
+                setRoomType(type);
+                setSelectedSlots(defaultSelectedSlots(type));
+              }}
               className={`rounded-full px-4 py-2 text-xs font-medium transition ${
                 roomType === type
                   ? "bg-brass text-ink"

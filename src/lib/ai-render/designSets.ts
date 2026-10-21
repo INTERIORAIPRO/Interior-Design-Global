@@ -451,8 +451,8 @@ export function getRecommendedProducts(
     pool,
     selectedSlots,
   );
-  if (lockedSet.length >= 3) {
-    return lockedSet.slice(0, 4);
+  if (lockedSet.length > 0) {
+    return lockedSet;
   }
   const vendorPool = dedupeProducts(
     vendorId === "mix"

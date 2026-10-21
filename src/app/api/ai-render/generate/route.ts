@@ -419,20 +419,7 @@ async function runControlNet(
   return url;
 }
 
-const DEFAULT_FALLBACK_SCENE =
-  "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=1400&q=80";
-
-function fallbackResponse(imageUrl: string) {
-  return NextResponse.json({
-    composedImageUrl: imageUrl,
-    output: imageUrl,
-    fallback: true,
-  });
-}
-
 export async function POST(request: Request) {
-  let fallbackImageUrl = DEFAULT_FALLBACK_SCENE;
-
   try {
     const body = await request.json();
     const {
@@ -442,7 +429,6 @@ export async function POST(request: Request) {
       roomType,
       style,
       products,
-      fallbackImageUrl: bodyFallback,
       keepStructure,
       vendorName,
       budget,
@@ -454,7 +440,6 @@ export async function POST(request: Request) {
       roomType?: string;
       style?: string;
       products?: PromptProduct[];
-      fallbackImageUrl?: string;
       keepStructure?: boolean;
       vendorName?: string;
       budget?: string;
@@ -469,10 +454,6 @@ export async function POST(request: Request) {
       (value): value is string => typeof value === "string" && value.length > 0,
     );
 
-    if (typeof bodyFallback === "string" && bodyFallback.length > 0) {
-      fallbackImageUrl = bodyFallback;
-    }
-
     if (!imageUrl) {
       return NextResponse.json(
         { error: "Lipsește imaginea camerei." },
@@ -480,42 +461,41 @@ export async function POST(request: Request) {
       );
     }
 
-    try {
-      const publicImageUrl = await toPublicImageUri(imageUrl);
-      const prompt = buildPrompt(
-        roomType,
-        style,
-        products,
-        brandName,
-        budget,
-        refreshToken,
-      );
-      const negativePrompt = buildNegativePrompt(normalizeRoomType(roomType));
-      const generatedImageUrl = await runControlNet(
-        publicImageUrl,
-        prompt,
-        negativePrompt,
-        Boolean(keepStructure) || imageUrl.startsWith("data:"),
-      );
+    const publicImageUrl = await toPublicImageUri(imageUrl);
+    const prompt = buildPrompt(
+      roomType,
+      style,
+      products,
+      brandName,
+      budget,
+      refreshToken,
+    );
+    const negativePrompt = buildNegativePrompt(normalizeRoomType(roomType));
+    const generatedImageUrl = await runControlNet(
+      publicImageUrl,
+      prompt,
+      negativePrompt,
+      Boolean(keepStructure) || imageUrl.startsWith("data:"),
+    );
 
-      if (!generatedImageUrl) {
-        return fallbackResponse(fallbackImageUrl);
-      }
-
-      return NextResponse.json({
-        composedImageUrl: generatedImageUrl,
-        output: generatedImageUrl,
-      });
-    } catch (error: unknown) {
-      console.warn(
-        "Replicate indisponibil, folosim scena de catalog:",
-        errorText(error),
+    if (!generatedImageUrl) {
+      return NextResponse.json(
+        { error: "Replicate nu a returnat nicio imagine." },
+        { status: 502 },
       );
-      return fallbackResponse(fallbackImageUrl);
     }
+
+    return NextResponse.json({
+      imageUrl: generatedImageUrl,
+      composedImageUrl: generatedImageUrl,
+      output: generatedImageUrl,
+    });
   } catch (error: unknown) {
     console.error("Eroare la generarea cu Replicate:", errorText(error));
-    return fallbackResponse(fallbackImageUrl);
+    return NextResponse.json(
+      { error: errorText(error) || "Randarea Replicate a eșuat." },
+      { status: 502 },
+    );
   }
 }
 

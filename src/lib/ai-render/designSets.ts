@@ -41,55 +41,7 @@ export const budgetRanges: Record<
 
 export type DesignScene = {
   key: string;
-  sceneUrl: string;
   products: PartnerProduct[];
-};
-
-const sceneByRoom: Record<RoomKind, Record<string, string>> = {
-  bedroom: {
-    scandinavian:
-      "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=1400&q=80",
-    modern:
-      "https://images.unsplash.com/photo-1615874958473-d2780e0a9e8d?auto=format&fit=crop&w=1400&q=80",
-    contemporary:
-      "https://images.unsplash.com/photo-1615874958473-d2780e0a9e8d?auto=format&fit=crop&w=1400&q=80",
-    minimalist:
-      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1400&q=80",
-    industrial:
-      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1400&q=80",
-    midcentury:
-      "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=1400&q=80",
-    japandi:
-      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1400&q=80",
-    boho:
-      "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1400&q=80",
-  },
-  living: {
-    scandinavian:
-      "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1400&q=80",
-    modern:
-      "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1400&q=80",
-    contemporary:
-      "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1400&q=80",
-    minimalist:
-      "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1400&q=80",
-    industrial:
-      "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1400&q=80",
-    midcentury:
-      "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=1400&q=80",
-    japandi:
-      "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1400&q=80",
-    boho:
-      "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1400&q=80",
-  },
-  office: {
-    default:
-      "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1400&q=80",
-  },
-  kitchen: {
-    default:
-      "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=1400&q=80",
-  },
 };
 
 function hasStyle(product: PartnerProduct, style: InteriorStyle) {
@@ -414,13 +366,8 @@ export function getDesignScene(
   vendorId = "mix",
   countryId = "RO",
 ): DesignScene {
-  const roomScenes = sceneByRoom[roomType];
-  const sceneUrl =
-    roomScenes[style] ?? roomScenes.default ?? roomScenes.scandinavian;
-
   return {
     key: sceneKey(roomType, style, budget, vendorId, countryId),
-    sceneUrl,
     products: getRecommendedProducts(roomType, style, budget, pool, vendorId),
   };
 }

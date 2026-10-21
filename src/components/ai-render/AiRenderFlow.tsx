@@ -6,7 +6,6 @@ import { interiorStyles, type InteriorStyle } from "@/lib/ai-render/catalogPick"
 import {
   budgetRanges,
   budgetTiers,
-  getDesignScene,
   getRecommendedProducts,
   sceneKey,
   type BudgetTier,
@@ -59,10 +58,6 @@ export function AiRenderFlow() {
   const generationRef = useRef(0);
   const skipFilterRegenRef = useRef(true);
 
-  const design = useMemo(
-    () => getDesignScene(roomType, style, budget, catalog, vendorId, countryId),
-    [roomType, style, budget, catalog, vendorId, countryId],
-  );
   const activeKey = sceneKey(roomType, style, budget, vendorId, countryId);
   const originalImage = uploadedImage ?? previewUrl;
   const recommendedProducts = useMemo(() => {
@@ -91,16 +86,12 @@ export function AiRenderFlow() {
     });
   }, [roomType, style, budget, catalog, vendorId]);
   const selectedStyleLabel = t(`styles.${style}`);
-  const showResult = hasGeneratedOnce;
+  const showResult = Boolean(renderedImageUrl) || busy;
   const heroSrc = (() => {
-    if (showResult && heroView === "original" && originalImage) {
-      return originalImage;
-    }
-    if (showResult && renderedImageUrl && !imageFailed) {
-      return renderedImageUrl;
-    }
-    if (showResult) return design.sceneUrl;
-    return originalImage ?? design.sceneUrl;
+    if (heroView === "original" && originalImage) return originalImage;
+    if (renderedImageUrl && !imageFailed) return renderedImageUrl;
+    if (originalImage && !showResult) return originalImage;
+    return "";
   })();
 
   useEffect(() => {
@@ -127,17 +118,21 @@ export function AiRenderFlow() {
     event?.preventDefault?.();
     if (!isMounted) return;
 
+    const sourcePhoto = uploadedImage ?? previewUrl;
+    if (!sourcePhoto) {
+      setError("Încarcă mai întâi o poză a camerei tale.");
+      return;
+    }
+
     const requestId = ++generationRef.current;
     setError(null);
     setBusy(true);
     setHeroView("ai");
-    setHasGeneratedOnce(true);
+    setImageFailed(false);
 
     try {
       const productsForRender = recommendedProducts;
-      const referenceImage = uploadedImage
-        ? await toSendableImage(uploadedImage)
-        : await toSendableImage(design.sceneUrl);
+      const referenceImage = await toSendableImage(sourcePhoto);
       const response = await fetch("/api/ai-render/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -148,9 +143,10 @@ export function AiRenderFlow() {
           controlnet_image: referenceImage,
           roomType,
           style,
+          selectedStyle: style,
           budget,
-          keepStructure: Boolean(uploadedImage),
-          fallbackImageUrl: design.sceneUrl,
+          selectedBudget: budget,
+          keepStructure: true,
           vendorName: activeVendorName,
           vendorId,
           refreshToken: `${activeKey}:${Date.now()}`,
@@ -159,6 +155,7 @@ export function AiRenderFlow() {
             category: product.category,
             promptHint: product.promptHint,
             vendorId: product.vendorId,
+            image: product.image || product.imageUrl,
           })),
         }),
       });
@@ -173,25 +170,34 @@ export function AiRenderFlow() {
       if (requestId !== generationRef.current) return;
 
       const payload = data as {
+        imageUrl?: unknown;
         composedImageUrl?: unknown;
         output?: unknown;
         image?: unknown;
         url?: unknown;
-        fallback?: boolean;
+        error?: string;
       };
       const imageFromApi =
-        extractImageUrl(data) ??
+        extractImageUrl(payload.imageUrl) ??
         extractImageUrl(
           Array.isArray(payload.output) ? payload.output[0] : payload.output,
         ) ??
         extractImageUrl(payload.composedImageUrl) ??
         extractImageUrl(payload.image) ??
         extractImageUrl(payload.url);
-      setRenderedImageUrl(imageFromApi || design.sceneUrl);
+      if (!response.ok || !imageFromApi) {
+        setError(
+          payload.error ||
+            "Replicate nu a returnat o imagine. Încearcă din nou.",
+        );
+        return;
+      }
+      setRenderedImageUrl(imageFromApi);
+      setHasGeneratedOnce(true);
       setImageFailed(false);
     } catch {
       if (requestId !== generationRef.current) return;
-      setRenderedImageUrl((current) => current || design.sceneUrl);
+      setError("Randarea a eșuat. Verifică conexiunea și încearcă din nou.");
     } finally {
       if (requestId === generationRef.current) setBusy(false);
     }
@@ -426,7 +432,7 @@ export function AiRenderFlow() {
         </button>
         <button
           type="submit"
-          disabled={!isMounted || busy}
+          disabled={!isMounted || busy || !originalImage}
           className="rounded-full bg-brass px-8 py-3 text-sm font-medium text-ink disabled:opacity-40"
         >
           {busy ? "Se generează..." : "Randează camera"}
@@ -462,17 +468,15 @@ export function AiRenderFlow() {
             <img
               key={heroSrc}
               src={heroSrc}
-              alt={
-                showResult && heroView === "ai"
-                  ? `Randare AI ${activeVendorName}`
-                  : fileName ?? "Camera"
-              }
+              alt=""
               onError={() => setImageFailed(true)}
               className="w-full max-h-[600px] rounded-xl object-cover"
             />
           ) : (
-            <div className="flex h-[360px] w-full items-center justify-center text-linen/50">
-              Așteptăm randarea camerei
+            <div className="flex h-[360px] w-full items-center justify-center px-6 text-center text-linen/50">
+              {imageFailed
+                ? "Nu am putut afișa imaginea returnată de Replicate."
+                : "Așteptăm randarea camerei"}
             </div>
           )}
           {busy ? (

@@ -167,8 +167,65 @@ function buildProductBlock(
     `${vendorName} catalog staging, every listed piece MUST appear: ${weighted}.`,
     "Force the diffusion model to render these exact furniture objects as the main staged pieces, occupying the room, sharp and recognizable:",
     ...lines,
-    `Do not invent a generic living-room sofa unless a sofa is listed. Do not hide listed lamps, nightstands, armchairs or the bed. Keep each ${vendorName} piece fully in frame.`,
+    `Do not invent a living-room sofa unless a sofa is listed. Do not hide listed lamps, nightstands or the bed. Keep each ${vendorName} piece fully in frame.`,
   ].join(" ");
+}
+
+const styleKeywords: Record<string, string> = {
+  scandinavian: "Scandinavian",
+  modern: "Modern",
+  contemporary: "Contemporary",
+  classic: "Classic",
+  industrial: "Industrial",
+  minimal: "Minimalist",
+  minimalist: "Minimalist",
+  midcentury: "Mid-Century Modern",
+  japandi: "Japandi",
+  boho: "Bohemian",
+};
+
+const styleOpeners: Record<string, string> = {
+  scandinavian:
+    "with light oak, white walls, airy textiles, simple Nordic forms",
+  modern: "with clean architectural lines, current furnishings, uncluttered surfaces",
+  contemporary:
+    "with current designer furnishings, calm architecture, uncluttered surfaces",
+  classic: "with refined millwork, tailored upholstery, traditional elegance",
+  industrial: "with metal, wood, loft materials, raw but habitable finishes",
+  minimal: "with clean lines, neutral colors, minimalist furniture, no clutter",
+  minimalist:
+    "with clean lines, neutral colors, minimalist furniture, no clutter",
+  midcentury: "with tapered wood legs, organic curves, warm vintage designer pieces",
+  japandi: "with Japanese-Scandinavian calm, low furniture, natural wood",
+  boho: "with layered textiles, organic ceramics, warm collected decor",
+};
+
+const roomWords: Record<RoomKey, string> = {
+  living: "living room",
+  bedroom: "bedroom",
+  office: "home office",
+  kitchen: "kitchen",
+};
+
+function styleOpeningLine(style: StyleKey, room: RoomKey) {
+  const keyword = styleKeywords[style] ?? "Scandinavian";
+  const opener = styleOpeners[style] ?? styleOpeners.scandinavian;
+  return `A strictly ${keyword} ${roomWords[room]} interior design ${opener}. STYLE LOCK: ${keyword}.`;
+}
+
+function sanitizePromptProducts(
+  products: PromptProduct[] | undefined,
+  room: RoomKey,
+) {
+  const list = products ?? [];
+  if (room !== "bedroom") return list;
+  return list.filter((product) => {
+    const name = (product.name ?? "").toLowerCase();
+    const category = product.category ?? "";
+    if (category === "sofas" || name.includes("canapea")) return false;
+    if (name.includes("sufrager") || name.includes("living")) return false;
+    return true;
+  });
 }
 
 function normalizeRoomType(value?: string): RoomKey {
@@ -200,11 +257,20 @@ function buildPrompt(
   const room = normalizeRoomType(roomType);
   const chosenStyle: StyleKey =
     style && style in styleBriefs ? (style as StyleKey) : "scandinavian";
-  const productBlock = buildProductBlock(products, chosenStyle, vendorName);
+  const productBlock = buildProductBlock(
+    sanitizePromptProducts(products, room),
+    chosenStyle,
+    vendorName,
+  );
   const budgetLine = budget
     ? `BUDGET LOCK: ${budget}. Furniture quality, materials and density must match this budget band. Create a completely new staging for this budget.`
     : "";
+  const keyword = styleKeywords[chosenStyle] ?? "Scandinavian";
   return [
+    styleOpeningLine(chosenStyle, room),
+    room === "bedroom"
+      ? `NO living-room sofa, NO green sofa, NO lounge sectional. This is a strictly ${keyword} BEDROOM with a bed, nightstands, bedside lamps and a pouf/stool only.`
+      : "",
     roomLeads[room],
     `FRESH UNIQUE ${vendorName.toUpperCase()} STAGING, variation ${refreshToken || Date.now()}. Do not repeat a previous layout.`,
     "VIRTUAL STAGING / INTERIOR REDESIGN of the USER'S OWN ROOM PHOTOGRAPH, photorealistic, 8k, magazine interior photography, image-to-image restaging",
@@ -225,7 +291,7 @@ function buildNegativePrompt(roomType: string | undefined) {
   const shared =
     "keep original old furniture, leftover previous sofa, unchanged existing clutter, empty unfinished room, generic unbranded lumps, cartoon, illustration, collage, floating furniture, wrong scale, different floor plan, moved walls, baroque gold, crystal chandelier, dark mahogany luxury, neon colors, blurry objects, watermark, text overlay, extra duplicate furniture";
   if (roomType === "bedroom") {
-    return `${shared}, living room, lounge sofa as the hero, sectional couch instead of a bed, dining table as the focus, no bed, missing nightstands, missing bedside lamps`;
+    return `${shared}, living room, lounge sofa, green sofa, velvet sofa, sectional couch instead of a bed, dining table as the focus, no bed, missing nightstands, missing bedside lamps`;
   }
   if (roomType === "office") {
     return `${shared}, bedroom, bed, living room sofa, kitchen`;

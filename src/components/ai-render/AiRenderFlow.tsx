@@ -65,11 +65,31 @@ export function AiRenderFlow() {
   );
   const activeKey = sceneKey(roomType, style, budget, vendorId, countryId);
   const originalImage = uploadedImage ?? previewUrl;
-  const recommendedProducts = useMemo(
-    () =>
-      getRecommendedProducts(roomType, style, budget, catalog, vendorId),
-    [roomType, style, budget, catalog, vendorId],
-  );
+  const recommendedProducts = useMemo(() => {
+    const picked = getRecommendedProducts(
+      roomType,
+      style,
+      budget,
+      catalog,
+      vendorId,
+    );
+    if (roomType !== "bedroom") return picked;
+    return picked.filter((product) => {
+      const name = product.name.toLowerCase();
+      if (product.category === "sofas" || name.includes("canapea")) return false;
+      const isBed = product.category === "beds" || name.startsWith("pat");
+      const isNightstand = name.includes("noptier");
+      const isLamp =
+        product.category === "lighting" ||
+        name.includes("veioz") ||
+        name.includes("lamp");
+      const isStool =
+        name.includes("taburet") ||
+        name.includes("puf") ||
+        name.includes("ottoman");
+      return isBed || isNightstand || isLamp || isStool;
+    });
+  }, [roomType, style, budget, catalog, vendorId]);
   const selectedStyleLabel = t(`styles.${style}`);
   const showResult = hasGeneratedOnce;
   const heroSrc = (() => {

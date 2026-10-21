@@ -126,7 +126,10 @@ function isBedroomFurniture(product: PartnerProduct) {
     name.startsWith("pat ");
   const isNightstand = name.includes("noptier");
   const isLighting = product.category === "lighting";
-  const isStool = name.includes("taburet") || name.includes("ottoman");
+  const isStool =
+    name.includes("taburet") ||
+    name.includes("ottoman") ||
+    name.includes("puf");
   return isBed || isNightstand || isLighting || isStool;
 }
 
@@ -191,7 +194,8 @@ const roomSlots: Record<RoomKind, RoomSlot[]> = {
       required: false,
       match: (product) =>
         nameOf(product).includes("taburet") ||
-        nameOf(product).includes("ottoman"),
+        nameOf(product).includes("ottoman") ||
+        nameOf(product).includes("puf"),
     },
   ],
   living: [
@@ -380,7 +384,16 @@ export function getRecommendedProducts(
           );
           return !claimed;
         });
-  return bestSetForBudget(slots, extras, budget);
+  const picked = bestSetForBudget(slots, extras, budget);
+  if (roomType === "bedroom") {
+    return picked.filter(
+      (product) =>
+        isBedroomFurniture(product) &&
+        product.category !== "sofas" &&
+        !nameOf(product).includes("canapea"),
+    );
+  }
+  return picked;
 }
 
 export function sceneKey(

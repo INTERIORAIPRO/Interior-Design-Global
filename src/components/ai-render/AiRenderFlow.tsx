@@ -10,7 +10,7 @@ import {
   sceneKey,
   type BudgetTier,
 } from "@/lib/ai-render/designSets";
-import type { RoomKind } from "@/lib/partner-store/catalog";
+import type { PartnerProduct, RoomKind } from "@/lib/partner-store/catalog";
 import { useProjectDestination } from "@/lib/partner-store/ProjectDestinationProvider";
 import {
   MIX_VENDOR_ID,
@@ -53,6 +53,9 @@ export function AiRenderFlow() {
   const [error, setError] = useState<string | null>(null);
   const [imageFailed, setImageFailed] = useState(false);
   const [heroView, setHeroView] = useState<"ai" | "original">("ai");
+  const [renderedProducts, setRenderedProducts] = useState<PartnerProduct[] | null>(
+    null,
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
   const previewUrlRef = useRef<string | null>(null);
   const generationRef = useRef(0);
@@ -60,11 +63,12 @@ export function AiRenderFlow() {
 
   const activeKey = sceneKey(roomType, style, budget, vendorId, countryId);
   const originalImage = uploadedImage ?? previewUrl;
-  const recommendedProducts = useMemo(
+  const previewProducts = useMemo(
     () =>
       getRecommendedProducts(roomType, style, budget, catalog, vendorId),
     [roomType, style, budget, catalog, vendorId],
   );
+  const recommendedProducts = renderedProducts ?? previewProducts;
   const selectedStyleLabel = t(`styles.${style}`);
   const showResult = Boolean(renderedImageUrl) || busy;
   const heroSrc = (() => {
@@ -73,6 +77,10 @@ export function AiRenderFlow() {
     if (originalImage && !showResult) return originalImage;
     return "";
   })();
+
+  useEffect(() => {
+    setRenderedProducts(null);
+  }, [roomType, style, budget, vendorId]);
 
   useEffect(() => {
     setIsMounted(true);
@@ -165,14 +173,17 @@ export function AiRenderFlow() {
       if (requestId !== generationRef.current) return;
 
       const payload = data as {
+        renderUrl?: unknown;
         imageUrl?: unknown;
         composedImageUrl?: unknown;
         output?: unknown;
         image?: unknown;
         url?: unknown;
+        products?: PartnerProduct[];
         error?: string;
       };
       const imageFromApi =
+        extractImageUrl(payload.renderUrl) ??
         extractImageUrl(payload.imageUrl) ??
         extractImageUrl(
           Array.isArray(payload.output) ? payload.output[0] : payload.output,
@@ -196,6 +207,9 @@ export function AiRenderFlow() {
         return;
       }
       setRenderedImageUrl(imageFromApi);
+      if (Array.isArray(payload.products) && payload.products.length > 0) {
+        setRenderedProducts(payload.products);
+      }
       setHasGeneratedOnce(true);
       setImageFailed(false);
     } catch {

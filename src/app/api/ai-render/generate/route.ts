@@ -3,6 +3,12 @@ import path from "path";
 import { NextResponse } from "next/server";
 import Replicate from "replicate";
 import { extractImageUrlAsync } from "@/lib/ai-render/extractImageUrl";
+import {
+  buildCatalogSetPrompt,
+  resolveFurnitureSet,
+  toRenderProduct,
+} from "@/lib/ai-render/furnitureSets";
+import { partnerProducts } from "@/lib/partner-store/catalog";
 
 function getReplicateToken() {
   return (
@@ -577,6 +583,7 @@ export async function POST(request: Request) {
       products,
       keepStructure,
       vendorName,
+      vendorId,
       budget,
       refreshToken,
       imageWidth,
@@ -590,6 +597,7 @@ export async function POST(request: Request) {
       products?: PromptProduct[];
       keepStructure?: boolean;
       vendorName?: string;
+      vendorId?: string;
       budget?: string;
       refreshToken?: string;
       imageWidth?: number;
@@ -612,15 +620,46 @@ export async function POST(request: Request) {
     }
 
     const dataUrl = await toDataUrl(imageUrl);
-    const prompt = buildPrompt(
-      roomType,
+    const room = normalizeRoomType(roomType);
+    const selectedSet = resolveFurnitureSet(
+      room,
       style,
-      products,
-      brandName,
-      budget,
-      refreshToken,
+      vendorId,
+      partnerProducts,
     );
-    const negativePrompt = buildNegativePrompt(normalizeRoomType(roomType));
+    const promptProducts: PromptProduct[] = selectedSet.map((product) => ({
+      name: product.name,
+      category: product.category,
+      promptHint: product.promptHint,
+      description: product.description,
+    }));
+    const prompt =
+      selectedSet.length >= 3
+        ? [
+            buildCatalogSetPrompt({
+              roomType: room,
+              style: style || "scandinavian",
+              vendorName: brandName,
+              products: selectedSet,
+            }),
+            budget
+              ? `BUDGET LOCK: ${budget}.`
+              : "",
+            refreshToken
+              ? `FRESH UNIQUE STAGING variation ${refreshToken}.`
+              : "",
+          ]
+            .filter(Boolean)
+            .join(" ")
+        : buildPrompt(
+            roomType,
+            style,
+            promptProducts,
+            brandName,
+            budget,
+            refreshToken,
+          );
+    const negativePrompt = buildNegativePrompt(room);
     const generatedImageUrl = await runControlNet(
       replicate,
       dataUrl,
@@ -640,10 +679,13 @@ export async function POST(request: Request) {
       );
     }
 
+    const productsPayload = selectedSet.map(toRenderProduct);
     return NextResponse.json({
+      renderUrl: generatedImageUrl,
       imageUrl: generatedImageUrl,
       composedImageUrl: generatedImageUrl,
       output: generatedImageUrl,
+      products: productsPayload,
     });
   } catch (error: unknown) {
     console.error("Eroare la generarea cu Replicate:", errorText(error));

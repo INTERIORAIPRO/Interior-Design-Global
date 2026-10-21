@@ -6,6 +6,7 @@ import {
   type RoomKind,
 } from "@/lib/partner-store/catalog";
 import type { InteriorStyle } from "@/lib/ai-render/catalogPick";
+import { resolveFurnitureSet } from "@/lib/ai-render/furnitureSets";
 
 export type BudgetTier = "economic" | "medium" | "premium" | "lux";
 
@@ -441,6 +442,10 @@ export function getRecommendedProducts(
   pool: PartnerProduct[],
   vendorId = "mix",
 ) {
+  const lockedSet = resolveFurnitureSet(roomType, style, vendorId, pool);
+  if (lockedSet.length >= 3) {
+    return lockedSet.slice(0, 4);
+  }
   const vendorPool = dedupeProducts(
     vendorId === "mix"
       ? pool

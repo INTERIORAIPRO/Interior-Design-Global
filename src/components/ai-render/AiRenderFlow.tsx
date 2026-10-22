@@ -6,7 +6,6 @@ import { interiorStyles, type InteriorStyle } from "@/lib/ai-render/catalogPick"
 import {
   budgetRanges,
   budgetTiers,
-  getRecommendedProducts,
   sceneKey,
   type BudgetTier,
 } from "@/lib/ai-render/designSets";
@@ -20,8 +19,8 @@ import {
 import { VendorChipBar } from "@/components/layout/VendorSelect";
 import { extractImageUrl } from "@/lib/ai-render/extractImageUrl";
 import {
+  GLOBAL_CHECKLIST,
   defaultSelectedSlots,
-  pieceOptionsForRoom,
   type PieceSlotId,
 } from "@/lib/ai-render/furniturePieces";
 import { DesignProductsSection } from "./DesignProductsSection";
@@ -39,7 +38,7 @@ export function AiRenderFlow() {
   const t = useTranslations("aiRender");
   const tCommerce = useTranslations("commerce");
   const locale = useLocale();
-  const { catalog, vendorId, countryId } = useProjectDestination();
+  const { vendorId, countryId } = useProjectDestination();
   const activeVendorName =
     vendorId === MIX_VENDOR_ID
       ? tCommerce("mixMatchShort")
@@ -61,15 +60,9 @@ export function AiRenderFlow() {
   const [renderedProducts, setRenderedProducts] = useState<PartnerProduct[] | null>(
     null,
   );
-  const [slotsByRoom, setSlotsByRoom] = useState<Record<RoomType, PieceSlotId[]>>(
-    () => ({
-      living: defaultSelectedSlots("living"),
-      bedroom: defaultSelectedSlots("bedroom"),
-      office: defaultSelectedSlots("office"),
-      kitchen: defaultSelectedSlots("kitchen"),
-    }),
+  const [selectedSlots, setSelectedSlots] = useState<PieceSlotId[]>(() =>
+    defaultSelectedSlots(),
   );
-  const selectedSlots = slotsByRoom[roomType];
   const fileInputRef = useRef<HTMLInputElement>(null);
   const previewUrlRef = useRef<string | null>(null);
   const generationRef = useRef(0);
@@ -77,19 +70,14 @@ export function AiRenderFlow() {
 
   const activeKey = sceneKey(roomType, style, budget, vendorId, countryId);
   const originalImage = uploadedImage ?? previewUrl;
-  const previewProducts = useMemo(
+  const recommendedProducts = renderedProducts ?? [];
+  const selectedPieceLabels = useMemo(
     () =>
-      getRecommendedProducts(
-        roomType,
-        style,
-        budget,
-        catalog,
-        vendorId,
-        selectedSlots,
+      GLOBAL_CHECKLIST.filter((option) => selectedSlots.includes(option.id)).map(
+        (option) => option.label,
       ),
-    [roomType, style, budget, catalog, vendorId, selectedSlots],
+    [selectedSlots],
   );
-  const recommendedProducts = renderedProducts ?? previewProducts;
   const selectedStyleLabel = t(`styles.${style}`);
   const showResult = Boolean(renderedImageUrl) || busy;
   const heroSrc = (() => {
@@ -102,15 +90,6 @@ export function AiRenderFlow() {
   useEffect(() => {
     setRenderedProducts(null);
   }, [roomType, style, budget, vendorId, selectedSlots]);
-
-  useEffect(() => {
-    setSlotsByRoom((current) => {
-      const allowed = pieceOptionsForRoom(roomType).map((option) => option.id);
-      const kept = current[roomType].filter((slot) => allowed.includes(slot));
-      if (kept.length > 0) return current;
-      return { ...current, [roomType]: defaultSelectedSlots(roomType) };
-    });
-  }, [roomType]);
 
   useEffect(() => {
     setIsMounted(true);
@@ -159,7 +138,6 @@ export function AiRenderFlow() {
     setImageFailed(false);
 
     try {
-      const productsForRender = recommendedProducts;
       const referenceImage = await toSendableImage(sourcePhoto);
       const frame = await measureImage(referenceImage);
       const response = await fetch("/api/ai-render/generate", {
@@ -174,24 +152,17 @@ export function AiRenderFlow() {
           selectedRoom: roomType,
           style,
           selectedStyle: style,
+          selectedBrand: vendorId,
           budget,
           selectedBudget: budget,
           keepStructure: true,
           vendorName: activeVendorName,
           vendorId,
           selectedSlots,
+          selectedPieces: selectedPieceLabels,
           refreshToken: `${activeKey}:${Date.now()}`,
           imageWidth: frame?.width,
           imageHeight: frame?.height,
-          products: productsForRender.map((product) => ({
-            name: product.name,
-            title: product.title || product.name,
-            category: product.category,
-            promptHint: product.promptHint,
-            description: product.description || product.promptHint,
-            vendorId: product.vendorId,
-            image: product.image || product.imageUrl,
-          })),
         }),
       });
 
@@ -239,9 +210,9 @@ export function AiRenderFlow() {
         return;
       }
       setRenderedImageUrl(imageFromApi);
-      if (Array.isArray(payload.products) && payload.products.length > 0) {
-        setRenderedProducts(payload.products);
-      }
+      setRenderedProducts(
+        Array.isArray(payload.products) ? payload.products : [],
+      );
       setHasGeneratedOnce(true);
       setImageFailed(false);
     } catch {
@@ -310,6 +281,7 @@ export function AiRenderFlow() {
     generationRef.current += 1;
     clearUploadedPhoto();
     setRenderedImageUrl(null);
+    setRenderedProducts(null);
     setHasGeneratedOnce(false);
     skipFilterRegenRef.current = true;
     setHeroView("ai");
@@ -409,14 +381,18 @@ export function AiRenderFlow() {
 
       <div>
         <p className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-brass">
-          Alege piesele dorite în cameră
+          Alege piesele din design
+        </p>
+        <p className="mb-3 text-sm text-linen/60">
+          Bifează orice combinație. Lista de jos și randarea AI folosesc exact
+          aceste piese din catalogul {activeVendorName}.
         </p>
         <div className="flex flex-wrap gap-2">
-          {pieceOptionsForRoom(roomType).map((option) => {
+          {GLOBAL_CHECKLIST.map((option) => {
             const checked = selectedSlots.includes(option.id);
             return (
               <label
-                key={`${roomType}-${option.id}`}
+                key={option.id}
                 className={`flex cursor-pointer items-center gap-2 rounded-full px-4 py-2 text-sm ${
                   checked
                     ? "bg-brass text-ink"
@@ -428,14 +404,12 @@ export function AiRenderFlow() {
                   checked={checked}
                   className="accent-ink"
                   onChange={() => {
-                    setSlotsByRoom((current) => {
-                      const active = current[roomType];
-                      const next = active.includes(option.id)
-                        ? active.length <= 1
-                          ? active
-                          : active.filter((slot) => slot !== option.id)
-                        : [...active, option.id];
-                      return { ...current, [roomType]: next };
+                    setSelectedSlots((current) => {
+                      if (current.includes(option.id)) {
+                        if (current.length <= 1) return current;
+                        return current.filter((slot) => slot !== option.id);
+                      }
+                      return [...current, option.id];
                     });
                   }}
                 />
@@ -580,13 +554,19 @@ export function AiRenderFlow() {
           ) : null}
         </section>
 
-        <DesignProductsSection
-          key={`${activeKey}:${recommendedProducts.map((product) => product.id).join("|")}`}
-          products={recommendedProducts}
-          locale={locale}
-          vendorName={activeVendorName}
-          selectedBudget={budget}
-        />
+        {recommendedProducts.length > 0 ? (
+          <DesignProductsSection
+            key={`${activeKey}:${recommendedProducts.map((product) => product.id).join("|")}`}
+            products={recommendedProducts}
+            locale={locale}
+            vendorName={activeVendorName}
+            selectedBudget={budget}
+          />
+        ) : (
+          <p className="rounded-2xl border border-white/10 bg-white/5 px-4 py-6 text-sm text-linen/60">
+            Randează camera pentru a vedea produsele exacte din acest design.
+          </p>
+        )}
       </div>
     </div>
   );

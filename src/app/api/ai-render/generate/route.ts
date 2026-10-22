@@ -4,12 +4,12 @@ import { NextResponse } from "next/server";
 import Replicate from "replicate";
 import { extractImageUrlAsync } from "@/lib/ai-render/extractImageUrl";
 import {
-  buildCatalogSetPrompt,
+  buildDynamicRenderPrompt,
   resolveFurnitureSet,
   toRenderProduct,
 } from "@/lib/ai-render/furnitureSets";
 import { slotsForSelectedRoom } from "@/lib/ai-render/furniturePieces";
-import { partnerProducts } from "@/lib/partner-store/catalog";
+import { partnerProducts, type RoomKind } from "@/lib/partner-store/catalog";
 
 function getReplicateToken() {
   return (
@@ -21,244 +21,12 @@ function getReplicateToken() {
 }
 
 const CONTROLNET_MODELS = {
-  depth:
-    "black-forest-labs/flux-depth-dev",
+  depth: "black-forest-labs/flux-depth-dev",
   interior:
     "adirik/interior-design:76604baddc85b1b4616e1c6475eca080da339c8875bd4996705440484a6eac38",
 } as const;
 
-const roomLeads = {
-  living:
-    "A living room interior design, professional virtual staging of a living room / lounge with sofa seating. This is NOT a bedroom.",
-  bedroom:
-    "A bedroom interior design, professional virtual staging of a bedroom with a bed as the hero piece, nightstands and bedside lamps. This is NOT a living room, NOT a lounge, NO sofa as the main furniture.",
-  office:
-    "A home office interior design, professional virtual staging of a workspace with a desk. This is NOT a bedroom or living room.",
-  kitchen:
-    "A kitchen / dining interior design, professional virtual staging of a cooking and dining space. This is NOT a living room or bedroom.",
-} as const;
-
-const roomBriefs = {
-  living:
-    "a living room / lounge with sofa seating and a coffee table, clearly not a bedroom",
-  bedroom:
-    "a bedroom with a bed as the main piece, nightstands and bedside lamps, calm sleeping layout, clearly not a living room or lounge",
-  office:
-    "a home office with a desk and work seating, clearly not a bedroom or living room",
-  kitchen:
-    "a kitchen or dining room with cooking and dining furniture, clearly not a living room",
-} as const;
-
-const styleBriefs = {
-  scandinavian:
-    "Scandinavian interior style: light oak, white walls, airy textiles, simple Nordic forms, no dark luxury glamour",
-  modern:
-    "modern contemporary interior style: clean architectural lines, current furnishings, uncluttered surfaces",
-  contemporary:
-    "contemporary interior style: current designer furnishings, calm architecture, uncluttered surfaces",
-  classic:
-    "classic interior style: refined millwork, tailored upholstery, traditional European elegance",
-  industrial:
-    "industrial interior style: metal, wood, loft materials, raw but habitable",
-  minimal:
-    "minimal interior style: sparse furniture, quiet palette, generous empty space",
-  minimalist:
-    "minimalist interior style: sparse furniture, quiet palette, generous empty space",
-  midcentury:
-    "mid-century modern interior style: tapered wood legs, organic curves, warm vintage designer pieces",
-  japandi:
-    "Japandi interior style: Japanese-Scandinavian calm, low furniture, natural wood, restrained ceramics",
-  boho:
-    "bohemian interior style: layered textiles, organic ceramics, warm collected decor",
-} as const;
-
-type RoomKey = keyof typeof roomBriefs;
-type StyleKey = keyof typeof styleBriefs;
-
-type PromptProduct = {
-  name?: string;
-  category?: string;
-  promptHint?: string;
-  description?: string;
-};
-
-const styleMaterials: Record<string, string> = {
-  scandinavian:
-    "pale white-oak grain, oatmeal and ivory linen, matte off-white ceramics, slender tapered wooden legs, airy daylight, no dark mahogany, no baroque gold",
-  modern:
-    "smooth light oak, graphite and matte-black metal, crisp geometric silhouettes, quiet greige textiles, sharp contemporary lines",
-  contemporary:
-    "smooth light oak, graphite metal, crisp geometric silhouettes, calm greige textiles",
-  classic:
-    "refined oak millwork, tailored oatmeal upholstery, muted brass hardware",
-  industrial:
-    "blackened steel frames, raw oak, charcoal linen, matte iron lamps",
-  minimal:
-    "sparse pale oak, ivory linen, almost no ornament, generous empty floor",
-  minimalist:
-    "sparse pale oak, ivory linen, almost no ornament, generous empty floor",
-  midcentury:
-    "tapered teak-oak legs, warm walnut accents, organic curves, mustard or cream shades",
-  japandi:
-    "low pale oak, oatmeal linen, matte stoneware, quiet negative space",
-  boho:
-    "natural oak, terracotta and sand textiles, organic handmade ceramics",
-};
-
-const namedVisuals: Record<string, string> = {
-  "Canapea 3 locuri Nordic Velvet":
-    "a wide three-seat low Scandinavian sofa upholstered in plush oatmeal-sand velvet, deep seat cushions, slim rectangular back, four short tapered pale-oak legs, no tufting, no Chesterfield buttons",
-  "Lampadar arcuit din alamă":
-    "a tall arched floor lamp with a slender brushed-brass stem that curves over seating, round warm-linen drum shade, circular marble or pale-oak base, lit with warm 2700K glow",
-  "Măsuță de cafea din lemn masiv":
-    "a low rectangular solid pale-oak coffee table with visible straight wood grain, thick tabletops, simple square-block or hairpin-light legs, no glass, no marble luxury slab",
-  "Covor pufos din lână naturală":
-    "a large plush high-pile natural-wool rug in warm beige-sand, soft irregular texture covering the floor under the main furniture, not a small bath mat",
-  "Vază ceramică design organic":
-    "a medium matte stoneware vase with an irregular organic silhouette, sand and off-white glaze, sitting as a visible accent on a table or nightstand",
-  "Pat tapițat Nordic":
-    "a low Scandinavian upholstered bed as the hero piece: wide rectangular headboard in oatmeal linen with slim piping, pale-oak platform base, white linen duvet, two matching pillows, clearly a bed not a sofa",
-  "Noptieră stejar deschis":
-    "a compact square light-oak nightstand with a single drawer, slender tapered legs, pale Nordic grain, placed tight beside the bed",
-  "Birou stejar scandinav":
-    "a long Scandinavian writing desk in pale oak, slim rectangular top, tapered legs, clean uncluttered surface",
-  "Masă dining stejar":
-    "a solid pale-oak dining table with a thick rectangular top and simple Nordic legs, dining scale not a coffee table",
-  "Lampadar minimal negru":
-    "a slim matte-black tripod or stick floor lamp, thin stem, small drum or cone shade, contemporary silhouette",
-  "Noptieră metal industrial":
-    "a compact industrial bedside table with a black metal frame and oak top, open shelf, placed beside the bed",
-  "Pătură textilă boho":
-    "a folded layered throw in sand and terracotta weave draped on the bed or sofa edge",
-  "Fotoliu lounge Nordic":
-    "a sculptural Scandinavian lounge armchair in oatmeal boucle or light linen, rounded back, visible pale-oak legs, one-seat accent chair not a sofa",
-  "Veioze ceramice scandinave":
-    "a matching pair of ceramic bedside table lamps (veioze) with round matte off-white bases and linen drum shades, one on each nightstand, warm practical glow",
-  "Pat Mid-Century din lemn de nuc":
-    "a walnut Mid-Century double bed with a wood headboard, tapered legs, white linen, fully in frame",
-  "Noptieră Mid-Century din lemn de nuc":
-    "a pair of walnut Mid-Century nightstands with tapered legs, one on each side of the bed, fully visible not cropped",
-  "Pendul suspendat negru Mid-Century":
-    "a pair of matte-black suspended pendant lamps left and right of the bed, hanging from the ceiling, not table lamps",
-  "Pouf textil gri Mid-Century":
-    "two round grey textile poufs at the foot of the bed",
-  "Pat Mid-Century Westwing din lemn de nuc":
-    "a walnut Mid-Century Westwing double bed with a wood headboard and tapered legs",
-  "Noptieră Mid-Century Westwing din stejar":
-    "matching oak/walnut Westwing nightstands on both sides of the bed",
-  "Pendul suspendat negru Westwing":
-    "matte-black Westwing pendant lamps suspended left and right of the bed",
-  "Pouf textil gri Westwing":
-    "two round grey Westwing textile poufs in front of the bed",
-};
-
-const categoryFallback: Record<string, string> = {
-  sofas:
-    "low Scandinavian seating with pale-oak legs and oatmeal textile upholstery",
-  beds:
-    "a low upholstered Nordic bed with a wide linen headboard and pale-oak base",
-  lighting:
-    "a slender contemporary lamp with warm shade and metal or ceramic base",
-  tables:
-    "pale-oak furniture with simple Nordic geometry and visible wood grain",
-  rugs: "a large beige wool area rug under the main furniture",
-  decor: "a matte ceramic decorative object in sand and off-white",
-};
-
-function styleLexicon(style: string) {
-  return styleMaterials[style] ?? styleMaterials.scandinavian;
-}
-
-function productVisual(product: PromptProduct, style: string, vendorName: string) {
-  const name = product.name?.trim() || `${vendorName} piece`;
-  const named = namedVisuals[name];
-  const hint = product.promptHint?.trim();
-  const description = product.description?.trim();
-  const fallback =
-    (product.category && categoryFallback[product.category]) ||
-    `catalog-quality furniture from ${vendorName}`;
-  const body = named || hint || description || fallback;
-  return `(${name}:1.35), MUST be clearly visible in the photograph: ${body}. Materials locked to ${vendorName} ${style} look: ${styleLexicon(style)}. Correct real-world scale, grounded on the floor, photoreal product photography.`;
-}
-
-function buildProductBlock(
-  products: PromptProduct[] | undefined,
-  style: string,
-  vendorName: string,
-) {
-  const list = (products ?? []).filter((product) => product.name);
-  if (!list.length) return "";
-  const weighted = list.map((product) => `(${product.name}:1.4)`).join(", ");
-  const lines = list.map(
-    (product, index) =>
-      `MANDATORY ${index + 1}: ${productVisual(product, style, vendorName)} Do not omit this object. Do not replace it with a different typology.`,
-  );
-  return [
-    `${vendorName} catalog staging, every listed piece MUST appear: ${weighted}.`,
-    "Force the diffusion model to render these exact furniture objects as the main staged pieces, occupying the room, sharp and recognizable:",
-    ...lines,
-    `Do not invent a living-room sofa unless a sofa is listed. Do not hide listed lamps, nightstands or the bed. Keep each ${vendorName} piece fully in frame.`,
-  ].join(" ");
-}
-
-const styleKeywords: Record<string, string> = {
-  scandinavian: "Scandinavian",
-  modern: "Modern",
-  contemporary: "Contemporary",
-  classic: "Classic",
-  industrial: "Industrial",
-  minimal: "Minimalist",
-  minimalist: "Minimalist",
-  midcentury: "Mid-Century Modern",
-  japandi: "Japandi",
-  boho: "Bohemian",
-};
-
-const styleOpeners: Record<string, string> = {
-  scandinavian:
-    "with light oak, white walls, airy textiles, simple Nordic forms",
-  modern: "with clean architectural lines, current furnishings, uncluttered surfaces",
-  contemporary:
-    "with current designer furnishings, calm architecture, uncluttered surfaces",
-  classic: "with refined millwork, tailored upholstery, traditional elegance",
-  industrial: "with metal, wood, loft materials, raw but habitable finishes",
-  minimal: "with clean lines, neutral colors, minimalist furniture, no clutter",
-  minimalist:
-    "with clean lines, neutral colors, minimalist furniture, no clutter",
-  midcentury: "with tapered wood legs, organic curves, warm vintage designer pieces",
-  japandi: "with Japanese-Scandinavian calm, low furniture, natural wood",
-  boho: "with layered textiles, organic ceramics, warm collected decor",
-};
-
-const roomWords: Record<RoomKey, string> = {
-  living: "living room",
-  bedroom: "bedroom",
-  office: "home office",
-  kitchen: "kitchen",
-};
-
-function styleOpeningLine(style: StyleKey, room: RoomKey) {
-  const keyword = styleKeywords[style] ?? "Scandinavian";
-  const opener = styleOpeners[style] ?? styleOpeners.scandinavian;
-  return `A strictly ${keyword} ${roomWords[room]} interior design ${opener}. STYLE LOCK: ${keyword}.`;
-}
-
-function sanitizePromptProducts(
-  products: PromptProduct[] | undefined,
-  room: RoomKey,
-) {
-  const list = products ?? [];
-  if (room !== "bedroom") return list;
-  return list.filter((product) => {
-    const name = (product.name ?? "").toLowerCase();
-    const category = product.category ?? "";
-    if (category === "sofas" || name.includes("canapea")) return false;
-    if (name.includes("sufrager") || name.includes("living")) return false;
-    return true;
-  });
-}
-
-function normalizeRoomType(value?: string): RoomKey {
+function normalizeRoomType(value?: string): RoomKind {
   const raw = (value ?? "")
     .toLowerCase()
     .normalize("NFD")
@@ -279,81 +47,20 @@ function normalizeRoomType(value?: string): RoomKey {
     return "living";
   }
   if (raw.includes("bed") || raw.includes("dorm")) return "bedroom";
-  if (raw && raw in roomBriefs) return raw as RoomKey;
   return "living";
 }
 
-function buildPrompt(
-  roomType: string | undefined,
-  style: string | undefined,
-  products?: PromptProduct[],
-  vendorName = "partner catalog",
-  budget?: string,
-  refreshToken?: string,
-) {
-  const room = normalizeRoomType(roomType);
-  const chosenStyle: StyleKey =
-    style && style in styleBriefs ? (style as StyleKey) : "scandinavian";
-  const productBlock = buildProductBlock(
-    sanitizePromptProducts(products, room),
-    chosenStyle,
-    vendorName,
-  );
-  const budgetLine = budget
-    ? `BUDGET LOCK: ${budget}. Furniture quality, materials and density must match this budget band. Create a completely new staging for this budget.`
-    : "";
-  const keyword = styleKeywords[chosenStyle] ?? "Scandinavian";
-  return [
-    styleOpeningLine(chosenStyle, room),
-    room === "bedroom"
-      ? `NO living-room sofa, NO green sofa, NO lounge sectional. This is a strictly ${keyword} BEDROOM with exactly these complementary catalog pieces: bed, nightstand, lighting/pendant, and rug or bench.`
-      : "",
-    room === "living"
-      ? `NO bedroom bed, NO nightstands. This is a strictly ${keyword} LIVING ROOM with complementary catalog pieces: sofa, coffee table, floor lamp and rug.`
-      : "",
-    roomLeads[room],
-    `FRESH UNIQUE ${vendorName.toUpperCase()} STAGING, variation ${refreshToken || Date.now()}. Do not repeat a previous layout.`,
-    "VIRTUAL STAGING / INTERIOR REDESIGN of the USER'S OWN ROOM PHOTOGRAPH, image-to-image restaging",
-    "The uploaded photo is the ControlNet / img2img structural reference: keep the SAME room shape, walls, windows, doors, ceiling, floor plane, architectural lines and camera angle. Do not invent a different floor plan.",
-    "REMOVE the existing old furniture, clutter and previous staging. Replace it with the listed catalog pieces only, correctly scaled and grounded on the original floor.",
-    `ROOM TYPE LOCK: ${room}. This space is ${roomBriefs[room]}.`,
-    `VENDOR LOCK: ${vendorName}. Only furniture that looks like ${vendorName} catalog pieces.`,
-    `${styleBriefs[chosenStyle]}. Palette and materials: ${styleLexicon(chosenStyle)}.`,
-    budgetLine,
-    productBlock,
-    "Natural window light matching the original photo, contact shadows, no collage, no floating objects.",
-    "wide angle interior photo, full view of the room, well framed composition, complete furniture pieces visible without clipping",
-    "Keep the original photograph aspect ratio. Show nightstands, side tables and lamps fully in frame, not cropped at the edges.",
-    "ultra-realistic, 8k resolution, interior design photography, magazine style, architectural digest lighting",
-  ]
-    .filter(Boolean)
-    .join(" ");
-}
-
-function buildNegativePrompt(roomType: string | undefined) {
+function buildNegativePrompt(selectedRoom: RoomKind) {
   const artifacts =
     "visual artifacts, jpeg artifacts, compression artifacts, noise, grain, glitches, banding, chromatic aberration, lens flare, motion blur, pixelation, low resolution, oversharpening, halos, ghosting, melted geometry, warped walls, deformed furniture, distorted perspective, extra limbs, extra fingers, duplicate objects, broken edges, CGI look, 3d render, plastic surfaces, fake lighting, oversaturated HDR, muddy textures, watermark, text overlay, logo";
-  const shared =
-    `keep original old furniture, leftover previous sofa, unchanged existing clutter, empty unfinished room, generic unbranded lumps, cartoon, illustration, collage, floating furniture, wrong scale, different floor plan, moved walls, baroque gold, crystal chandelier, dark mahogany luxury, neon colors, blurry objects, extra duplicate furniture, cropped furniture, cut-off nightstands, clipped bed, truncated sofa, incomplete furniture at frame edges, tight zoom crop, ${artifacts}`;
-  if (roomType === "bedroom") {
-    return `${shared}, living room, lounge sofa, green sofa, velvet sofa, sectional couch instead of a bed, dining table as the focus, no bed, missing nightstands, missing bedside lamps`;
+  if (selectedRoom !== "bedroom") {
+    return `${artifacts}, bed, bedroom, nightstand, duvet, pillows`;
   }
-  if (roomType === "office") {
-    return `${shared}, bedroom, bed, living room sofa, kitchen`;
-  }
-  if (roomType === "kitchen") {
-    return `${shared}, bedroom, bed, living room sofa`;
-  }
-  if (roomType === "living") {
-    return `${shared}, bedroom, bed, mattress, kitchen appliances`;
-  }
-  return shared;
+  return artifacts;
 }
 
 async function outputUrl(output: unknown): Promise<string | null> {
-  return extractImageUrlAsync(
-    Array.isArray(output) ? output[0] : output,
-  );
+  return extractImageUrlAsync(Array.isArray(output) ? output[0] : output);
 }
 
 function readPngSize(bytes: Buffer) {
@@ -589,15 +296,14 @@ export async function POST(request: Request) {
       roomType,
       selectedRoom,
       style,
-      products,
+      selectedStyle,
+      selectedBrand,
       keepStructure,
-      vendorName,
       vendorId,
-      budget,
-      refreshToken,
       imageWidth,
       imageHeight,
       selectedSlots,
+      selectedPieces,
     } = body as {
       imageUrl?: string;
       image?: string;
@@ -605,20 +311,15 @@ export async function POST(request: Request) {
       roomType?: string;
       selectedRoom?: string;
       style?: string;
-      products?: PromptProduct[];
+      selectedStyle?: string;
+      selectedBrand?: string;
       keepStructure?: boolean;
-      vendorName?: string;
       vendorId?: string;
-      budget?: string;
-      refreshToken?: string;
       imageWidth?: number;
       imageHeight?: number;
       selectedSlots?: string[];
+      selectedPieces?: string[];
     };
-    const brandName =
-      typeof vendorName === "string" && vendorName.trim()
-        ? vendorName.trim()
-        : "partner catalog";
 
     const imageUrl = [bodyImageUrl, controlnet_image, image].find(
       (value): value is string => typeof value === "string" && value.length > 0,
@@ -633,26 +334,21 @@ export async function POST(request: Request) {
 
     const dataUrl = await toDataUrl(imageUrl);
     const room = normalizeRoomType(selectedRoom || roomType);
+    const styleKey = selectedStyle || style || "scandinavian";
+    const brandId = vendorId || selectedBrand;
     const roomSlots = slotsForSelectedRoom(room, selectedSlots);
     const selectedSet = resolveFurnitureSet(
       room,
-      style,
-      vendorId,
+      styleKey,
+      brandId,
       partnerProducts,
       roomSlots,
     );
-    const prompt = [
-      buildCatalogSetPrompt({
-        roomType: room,
-        style: style || "scandinavian",
-        vendorName: brandName,
-        products: selectedSet,
-      }),
-      budget ? `BUDGET LOCK: ${budget}.` : "",
-      refreshToken ? `FRESH UNIQUE STAGING variation ${refreshToken}.` : "",
-    ]
-      .filter(Boolean)
-      .join(" ");
+    const selectedPieceNames =
+      selectedSet.map((product) => product.name).filter(Boolean).length > 0
+        ? selectedSet.map((product) => product.name)
+        : (selectedPieces ?? []).filter(Boolean);
+    const prompt = buildDynamicRenderPrompt(room, styleKey, selectedPieceNames);
     const negativePrompt = buildNegativePrompt(room);
     const generatedImageUrl = await runControlNet(
       replicate,
@@ -680,6 +376,7 @@ export async function POST(request: Request) {
       composedImageUrl: generatedImageUrl,
       output: generatedImageUrl,
       products: productsPayload,
+      prompt,
     });
   } catch (error: unknown) {
     console.error("Eroare la generarea cu Replicate:", errorText(error));
@@ -689,4 +386,3 @@ export async function POST(request: Request) {
     );
   }
 }
-

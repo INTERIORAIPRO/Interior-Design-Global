@@ -1,5 +1,6 @@
 import type { InteriorStyle } from "@/lib/ai-render/catalogPick";
 import {
+  pieceOptionById,
   productMatchesSlot,
   slotsForSelectedRoom,
   type PieceSlotId,
@@ -47,61 +48,38 @@ function styleScore(product: PartnerProduct, style: InteriorStyle) {
   return tags.length ? 1 : 0;
 }
 
-function isForbiddenInRoom(product: PartnerProduct, roomType: RoomKind) {
-  const name = product.name.toLowerCase();
-  if (name.includes("vaz") || name.includes("vasă") || name.includes("vase")) {
-    return true;
-  }
-  if (roomType !== "bedroom") {
-    if (product.category === "beds") return true;
-    if (name.startsWith("pat ") || name.includes("noptier")) return true;
-  }
-  if (roomType === "office" && (product.category === "sofas" || name.includes("canapea"))) {
-    return true;
-  }
-  if (roomType === "living" && (name.includes("birou") || product.category === "beds")) {
-    return true;
-  }
-  if (
-    roomType === "kitchen" &&
-    (product.category === "beds" || product.category === "sofas")
-  ) {
-    return true;
-  }
-  return false;
-}
-
 function pickForSlot(
   slot: PieceSlotId,
   style: InteriorStyle,
   vendorId: string | undefined,
-  roomType: RoomKind,
+  _roomType: RoomKind,
   usedIds: Set<string>,
   usedImages: Set<string>,
   pool: PartnerProduct[],
 ) {
+  const option = pieceOptionById(slot);
   const catalogPool = partnerProducts.length ? partnerProducts : pool;
-  const matches = catalogPool.filter(
-    (product) =>
-      productMatchesSlot(product, slot) &&
-      !isForbiddenInRoom(product, roomType) &&
-      !usedIds.has(product.id),
-  );
+  const matches = catalogPool.filter((product) => {
+    if (usedIds.has(product.id)) return false;
+    if (product.slot === slot) return true;
+    if (option && product.category === option.category && productMatchesSlot(product, slot)) {
+      return true;
+    }
+    return productMatchesSlot(product, slot);
+  });
   if (!matches.length) return undefined;
   const selectedBrand = vendorId ? getVendor(vendorId)?.brandName : undefined;
-  const inRoom = matches.filter((product) => product.rooms?.includes(roomType));
-  const roomMatches = inRoom.length ? inRoom : matches;
   const brandPool =
     !vendorId || vendorId === MIX_VENDOR_ID
-      ? roomMatches
-      : roomMatches.filter(
+      ? matches
+      : matches.filter(
           (product) =>
             product.vendorId === vendorId ||
             (selectedBrand && product.brand === selectedBrand),
         );
-  const mixFallback = roomMatches.filter((product) => product.vendorId !== vendorId);
+  const mixFallback = matches.filter((product) => product.vendorId !== vendorId);
   const ranked = (
-    brandPool.length ? brandPool : mixFallback.length ? mixFallback : roomMatches
+    brandPool.length ? brandPool : mixFallback.length ? mixFallback : matches
   ).sort((a, b) => {
     const styleDelta = styleScore(b, style) - styleScore(a, style);
     if (styleDelta) return styleDelta;
@@ -178,47 +156,34 @@ export function toRenderProduct(product: PartnerProduct) {
   };
 }
 
-const ROOM_PROMPT_LEAD: Record<RoomKind, string> = {
-  office:
-    "A modern home office interior with a study desk, ergonomic chair, desk lamp",
-  living:
-    "A modern living room interior with a sofa, coffee table and TV cabinet",
-  bedroom: "A modern bedroom interior with a bed, nightstand and lighting",
-  kitchen:
-    "A modern kitchen dining interior with a dining table, dining chairs and a suspended pendant light",
+const ROOM_PROMPT_NAME: Record<string, string> = {
+  office: "home office",
+  living: "living room",
+  bedroom: "bedroom",
+  kitchen: "kitchen dining room",
 };
 
 export function buildCatalogSetPrompt(input: {
-  roomType: RoomKind;
+  roomType: RoomKind | string;
   style: string;
   vendorName: string;
   products: PartnerProduct[];
 }) {
-  const lead = ROOM_PROMPT_LEAD[input.roomType] ?? ROOM_PROMPT_LEAD.living;
-  const strictList = input.products
-    .map(
-      (product) =>
-        `${product.name} (${product.brand || product.vendorId}): ${product.description || product.promptHint}`,
-    )
-    .join(", ");
-  const roomLock =
-    input.roomType === "office"
-      ? "This is a HOME OFFICE, not a bedroom and not a living room. Do NOT render a bed, mattress, nightstands or a lounge sofa."
-      : input.roomType === "living"
-        ? "This is a LIVING ROOM, not a bedroom. Do NOT render a bed, mattress or nightstands."
-        : input.roomType === "kitchen"
-          ? "This is a KITCHEN / DINING room, not a bedroom. Do NOT render a bed or a living-room sofa as the main piece."
-          : "This is a BEDROOM, not a living room. Do NOT render a lounge sofa as the main piece.";
-  return [
-    `${lead} in ${input.style} style.`,
-    strictList
-      ? `Containing strictly these catalog pieces: ${strictList}.`
-      : "Keep only furniture that belongs to this room type.",
-    "Do not add furniture that is not listed. Keep only these catalog pieces fully in frame.",
-    roomLock,
-    `VENDOR preference: ${input.vendorName}.`,
-    "VIRTUAL STAGING of the USER'S OWN ROOM PHOTOGRAPH: keep the same walls, windows, doors, ceiling, floor and camera angle.",
-    "wide angle interior photo, full view of the room, well framed composition, complete furniture pieces visible without clipping",
-    "ultra-realistic, 8k resolution, interior design photography, magazine style, architectural digest lighting",
-  ].join(" ");
+  return buildDynamicRenderPrompt(
+    input.roomType,
+    input.style,
+    input.products.map((product) => product.name),
+  );
+}
+
+export function buildDynamicRenderPrompt(
+  selectedRoom: string,
+  selectedStyle: string,
+  selectedPieces: string[],
+) {
+  const room =
+    ROOM_PROMPT_NAME[selectedRoom] ?? selectedRoom.replace(/-/g, " ") ?? "interior";
+  const pieces =
+    selectedPieces.filter(Boolean).join(", ") || "the selected catalog furniture";
+  return `A photorealistic interior photo of a ${room} in ${selectedStyle} style, containing strictly these exact items: ${pieces}. Clean studio illumination, high resolution.`;
 }

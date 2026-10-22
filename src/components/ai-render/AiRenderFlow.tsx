@@ -61,9 +61,15 @@ export function AiRenderFlow() {
   const [renderedProducts, setRenderedProducts] = useState<PartnerProduct[] | null>(
     null,
   );
-  const [selectedSlots, setSelectedSlots] = useState<PieceSlotId[]>(() =>
-    defaultSelectedSlots("bedroom"),
+  const [slotsByRoom, setSlotsByRoom] = useState<Record<RoomType, PieceSlotId[]>>(
+    () => ({
+      living: defaultSelectedSlots("living"),
+      bedroom: defaultSelectedSlots("bedroom"),
+      office: defaultSelectedSlots("office"),
+      kitchen: defaultSelectedSlots("kitchen"),
+    }),
   );
+  const selectedSlots = slotsByRoom[roomType];
   const fileInputRef = useRef<HTMLInputElement>(null);
   const previewUrlRef = useRef<string | null>(null);
   const generationRef = useRef(0);
@@ -98,7 +104,12 @@ export function AiRenderFlow() {
   }, [roomType, style, budget, vendorId, selectedSlots]);
 
   useEffect(() => {
-    setSelectedSlots(defaultSelectedSlots(roomType));
+    setSlotsByRoom((current) => {
+      const allowed = pieceOptionsForRoom(roomType).map((option) => option.id);
+      const kept = current[roomType].filter((slot) => allowed.includes(slot));
+      if (kept.length > 0) return current;
+      return { ...current, [roomType]: defaultSelectedSlots(roomType) };
+    });
   }, [roomType]);
 
   useEffect(() => {
@@ -160,6 +171,7 @@ export function AiRenderFlow() {
           image: referenceImage,
           controlnet_image: referenceImage,
           roomType,
+          selectedRoom: roomType,
           style,
           selectedStyle: style,
           budget,
@@ -336,10 +348,7 @@ export function AiRenderFlow() {
             <button
               key={type}
               type="button"
-              onClick={() => {
-                setRoomType(type);
-                setSelectedSlots(defaultSelectedSlots(type));
-              }}
+              onClick={() => setRoomType(type)}
               className={`rounded-full px-4 py-2 text-xs font-medium transition ${
                 roomType === type
                   ? "bg-brass text-ink"
@@ -398,44 +407,44 @@ export function AiRenderFlow() {
         </div>
       </div>
 
-      {pieceOptionsForRoom(roomType).length > 0 ? (
-        <div>
-          <p className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-brass">
-            Alege piesele dorite în cameră
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {pieceOptionsForRoom(roomType).map((option) => {
-              const checked = selectedSlots.includes(option.id);
-              return (
-                <label
-                  key={option.id}
-                  className={`flex cursor-pointer items-center gap-2 rounded-full px-4 py-2 text-sm ${
-                    checked
-                      ? "bg-brass text-ink"
-                      : "border border-white/15 text-linen/75"
-                  }`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={checked}
-                    className="accent-ink"
-                    onChange={() => {
-                      setSelectedSlots((current) => {
-                        if (current.includes(option.id)) {
-                          if (current.length <= 1) return current;
-                          return current.filter((slot) => slot !== option.id);
-                        }
-                        return [...current, option.id];
-                      });
-                    }}
-                  />
-                  {option.label}
-                </label>
-              );
-            })}
-          </div>
+      <div>
+        <p className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-brass">
+          Alege piesele dorite în cameră
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {pieceOptionsForRoom(roomType).map((option) => {
+            const checked = selectedSlots.includes(option.id);
+            return (
+              <label
+                key={`${roomType}-${option.id}`}
+                className={`flex cursor-pointer items-center gap-2 rounded-full px-4 py-2 text-sm ${
+                  checked
+                    ? "bg-brass text-ink"
+                    : "border border-white/15 text-linen/75"
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={checked}
+                  className="accent-ink"
+                  onChange={() => {
+                    setSlotsByRoom((current) => {
+                      const active = current[roomType];
+                      const next = active.includes(option.id)
+                        ? active.length <= 1
+                          ? active
+                          : active.filter((slot) => slot !== option.id)
+                        : [...active, option.id];
+                      return { ...current, [roomType]: next };
+                    });
+                  }}
+                />
+                {option.label}
+              </label>
+            );
+          })}
         </div>
-      ) : null}
+      </div>
 
       {error ? (
         <p className="rounded-2xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-200">

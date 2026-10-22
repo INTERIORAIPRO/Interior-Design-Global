@@ -78,6 +78,14 @@ export function studioCatalogImage(
 ) {
   const name = product.name.toLowerCase();
   if (
+    name.includes("vaz") ||
+    name.includes("vasă") ||
+    name.includes("vase") ||
+    product.category === "decor"
+  ) {
+    return "/products/th-decor-vase-ceramic.jpg";
+  }
+  if (
     name.includes("tv") ||
     name.includes("media") ||
     product.category === "sideboard"
@@ -131,6 +139,12 @@ export function studioCatalogImage(
 export function uniqueProductImage(
   product: Pick<PartnerProduct, "id" | "imageUrl" | "image" | "name" | "category">,
 ) {
+  const name = product.name?.toLowerCase() ?? "";
+  if (name.includes("vaz") || name.includes("vasă") || name.includes("vase")) {
+    const vasePhoto = product.id ? productPhotoById[product.id] : "";
+    if (isRealProductPhoto(vasePhoto) && vasePhoto.includes("vase")) return vasePhoto;
+    return "/products/th-decor-vase-ceramic.jpg";
+  }
   const skuPhoto = product.id ? productPhotoById[product.id] : "";
   if (isRealProductPhoto(skuPhoto) && !skuPhoto.includes("/studio/")) {
     return skuPhoto;
@@ -1518,8 +1532,8 @@ export const partnerProducts: PartnerProduct[] = [
     name: "Organizator perete Kave",
     description: "Organizator de perete din stejar, pentru home office.",
     category: "decor",
-    image2d: "/products/th-decor-vase-ceramic.jpg",
-    image: "/products/th-decor-vase-ceramic.jpg",
+    image2d: "/products/th-shelf.jpg",
+    image: "/products/th-shelf.jpg",
     accentColor: "#d4a373",
     styles: ["scandinavian", "japandi", "minimalist"],
     rooms: ["office"],
@@ -1574,6 +1588,22 @@ export const partnerProducts: PartnerProduct[] = [
     slot: "island",
     promptHint: "a pale-oak kitchen island with bar stools, Kave Home",
     price: 1590,
+    affiliateUrl: "https://kavehome.com",
+  }),
+  product({
+    id: "th-bar-stool",
+    sku: "TH-BAR",
+    name: "Scaune de bar Kave",
+    description: "Scaune de bar din stejar, înălțime bar, Kave Home.",
+    category: "armchair",
+    image2d: "/products/th-stool-oak.jpg",
+    image: "/products/th-stool-oak.jpg",
+    accentColor: "#d4a373",
+    styles: ["scandinavian", "japandi", "modern"],
+    rooms: ["kitchen"],
+    slot: "barStool",
+    promptHint: "oak Kave Home bar stools at a kitchen counter",
+    price: 189,
     affiliateUrl: "https://kavehome.com",
   }),
   product({

@@ -24,7 +24,8 @@ export type PieceSlotId =
   | "diningChair"
   | "diningPendant"
   | "buffet"
-  | "island";
+  | "island"
+  | "barStool";
 
 export type PieceOption = {
   id: PieceSlotId;
@@ -32,54 +33,68 @@ export type PieceOption = {
   defaultOn: boolean;
 };
 
-export const livingPieceOptions: PieceOption[] = [
-  { id: "sofa", label: "Canapea", defaultOn: true },
-  { id: "table", label: "Măsuță de cafea", defaultOn: true },
-  { id: "tv", label: "Comodă TV / Unit", defaultOn: false },
-  { id: "lamp", label: "Lampadar / Veioză", defaultOn: true },
-  { id: "rug", label: "Covor", defaultOn: true },
-  { id: "armchair", label: "Fotoliu", defaultOn: false },
-  { id: "shelf", label: "Etajeră / Bibliotecă", defaultOn: false },
-];
+export const CHECKLIST_BY_ROOM: Record<RoomKind, PieceOption[]> = {
+  office: [
+    { id: "desk", label: "Birou", defaultOn: true },
+    { id: "officeChair", label: "Scaun birou / ergonomic", defaultOn: true },
+    { id: "deskLamp", label: "Lampă de birou / Lampadar", defaultOn: true },
+    { id: "officeShelf", label: "Etajeră / Rafturi", defaultOn: false },
+    { id: "officeRug", label: "Covor", defaultOn: false },
+    { id: "armchair", label: "Fotoliu citit", defaultOn: false },
+  ],
+  kitchen: [
+    { id: "diningTable", label: "Masă Dining", defaultOn: true },
+    { id: "diningChair", label: "Scaune Dining", defaultOn: true },
+    { id: "diningPendant", label: "Corp iluminat suspendat", defaultOn: true },
+    { id: "buffet", label: "Bufet / Comodă", defaultOn: false },
+    { id: "barStool", label: "Scaune de bar", defaultOn: false },
+  ],
+  living: [
+    { id: "sofa", label: "Canapea", defaultOn: true },
+    { id: "table", label: "Măsuță de cafea", defaultOn: true },
+    { id: "tv", label: "Comodă TV", defaultOn: true },
+    { id: "lamp", label: "Lampadar", defaultOn: false },
+    { id: "rug", label: "Covor", defaultOn: false },
+    { id: "armchair", label: "Fotoliu", defaultOn: false },
+  ],
+  bedroom: [
+    { id: "bed", label: "Pat", defaultOn: true },
+    { id: "nightstand", label: "Noptieră", defaultOn: true },
+    { id: "pendant", label: "Corp Iluminat", defaultOn: true },
+    { id: "pouf", label: "Banchetă / Pouf", defaultOn: false },
+    { id: "wardrobe", label: "Dulap", defaultOn: false },
+  ],
+};
 
-export const bedroomPieceOptions: PieceOption[] = [
-  { id: "bed", label: "Pat", defaultOn: true },
-  { id: "nightstand", label: "Noptieră", defaultOn: true },
-  { id: "pendant", label: "Corp Iluminat / Pendul", defaultOn: true },
-  { id: "pouf", label: "Banchetă / Pouf", defaultOn: true },
-  { id: "wardrobe", label: "Dulap / Șifonier", defaultOn: false },
-  { id: "bedding", label: "Cuvertură / Pernițe dekor", defaultOn: false },
-];
+export const livingPieceOptions = CHECKLIST_BY_ROOM.living;
+export const bedroomPieceOptions = CHECKLIST_BY_ROOM.bedroom;
+export const officePieceOptions = CHECKLIST_BY_ROOM.office;
+export const kitchenPieceOptions = CHECKLIST_BY_ROOM.kitchen;
 
-export const officePieceOptions: PieceOption[] = [
-  { id: "desk", label: "Birou", defaultOn: true },
-  { id: "officeChair", label: "Scaun ergonomic / Birou", defaultOn: true },
-  { id: "deskLamp", label: "Lampă de birou", defaultOn: true },
-  { id: "officeShelf", label: "Rafturi / Etajeră", defaultOn: true },
-  { id: "officeRug", label: "Covor birou", defaultOn: false },
-  { id: "wallOrganizer", label: "Organizator perete", defaultOn: false },
-];
-
-export const kitchenPieceOptions: PieceOption[] = [
-  { id: "diningTable", label: "Masă Dining", defaultOn: true },
-  { id: "diningChair", label: "Scaune Dining", defaultOn: true },
-  { id: "diningPendant", label: "Corp iluminat suspendat (Pendul)", defaultOn: true },
-  { id: "buffet", label: "Comodă / Bufet Dining", defaultOn: false },
-  { id: "island", label: "Insulă bucătărie / Scaune bar", defaultOn: false },
-];
-
-export function pieceOptionsForRoom(roomType: RoomKind): PieceOption[] {
-  if (roomType === "living") return livingPieceOptions;
-  if (roomType === "bedroom") return bedroomPieceOptions;
-  if (roomType === "office") return officePieceOptions;
-  if (roomType === "kitchen") return kitchenPieceOptions;
-  return [];
+export function pieceOptionsForRoom(roomType?: string | null): PieceOption[] {
+  if (roomType === "living") return CHECKLIST_BY_ROOM.living;
+  if (roomType === "bedroom") return CHECKLIST_BY_ROOM.bedroom;
+  if (roomType === "office") return CHECKLIST_BY_ROOM.office;
+  if (roomType === "kitchen") return CHECKLIST_BY_ROOM.kitchen;
+  return CHECKLIST_BY_ROOM.living;
 }
 
-export function defaultSelectedSlots(roomType: RoomKind): PieceSlotId[] {
+export function defaultSelectedSlots(roomType?: string | null): PieceSlotId[] {
   return pieceOptionsForRoom(roomType)
     .filter((option) => option.defaultOn)
     .map((option) => option.id);
+}
+
+export function slotsForSelectedRoom(
+  roomType?: string | null,
+  selectedSlots?: string[] | null,
+): PieceSlotId[] {
+  const allowed = pieceOptionsForRoom(roomType).map((option) => option.id);
+  const allowedSet = new Set(allowed);
+  const filtered = (selectedSlots ?? []).filter((slot): slot is PieceSlotId =>
+    allowedSet.has(slot as PieceSlotId),
+  );
+  return filtered.length > 0 ? filtered : defaultSelectedSlots(roomType);
 }
 
 function nameOf(product: Pick<PartnerProduct, "name">) {
@@ -92,6 +107,9 @@ export function productMatchesSlot(
 ) {
   if (product.slot === slot) return true;
   const name = nameOf(product);
+  if (name.includes("vaz") || name.includes("vasă") || name.includes("vase")) {
+    return false;
+  }
   const category = product.category;
   switch (slot) {
     case "sofa":
@@ -120,14 +138,17 @@ export function productMatchesSlot(
           name.includes("veioz") ||
           name.includes("lamp")) &&
         !name.includes("pendul") &&
-        !name.includes("birou")
+        !name.includes("birou") &&
+        !name.includes("desk")
       );
     case "rug":
     case "officeRug":
       return category === "rugs" || name.includes("covor");
     case "armchair":
       return (
-        (category === "armchair" || name.includes("fotoliu")) &&
+        (category === "armchair" ||
+          name.includes("fotoliu") ||
+          name.includes("citit")) &&
         !name.includes("puf") &&
         !name.includes("pouf") &&
         !name.includes("taburet") &&
@@ -157,7 +178,6 @@ export function productMatchesSlot(
         name.includes("pouf") ||
         name.includes("puf") ||
         name.includes("banchet") ||
-        name.includes("taburet") ||
         name.includes("ottoman")
       );
     case "wardrobe":
@@ -191,19 +211,35 @@ export function productMatchesSlot(
       );
     case "deskLamp":
       return (
-        (category === "lighting" || name.includes("lamp")) &&
-        (name.includes("birou") || name.includes("desk"))
+        (category === "lighting" ||
+          name.includes("lamp") ||
+          name.includes("lampadar") ||
+          name.includes("veioz")) &&
+        !name.includes("pendul") &&
+        !name.includes("pendant")
       );
     case "wallOrganizer":
       return name.includes("organizator");
     case "diningTable":
-      return name.includes("dining") && !name.includes("scaun");
+      return (
+        (name.includes("dining") || name.includes("masă dining") || name.includes("masa dining")) &&
+        !name.includes("scaun")
+      );
     case "diningChair":
       return name.includes("scaun") && name.includes("dining");
     case "buffet":
-      return name.includes("bufet") || name.includes("comodă dining") || name.includes("comoda dining");
+      return (
+        name.includes("bufet") ||
+        name.includes("comodă dining") ||
+        name.includes("comoda dining")
+      );
     case "island":
-      return name.includes("insul") || (name.includes("bar") && name.includes("scaun"));
+      return name.includes("insul");
+    case "barStool":
+      return (
+        name.includes("scaun") &&
+        (name.includes("bar") || name.includes("insul"))
+      ) || name.includes("scaun de bar") || name.includes("scaune de bar");
     default:
       return false;
   }

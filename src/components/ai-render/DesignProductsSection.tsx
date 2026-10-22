@@ -116,22 +116,25 @@ export function DesignProductsSection({
       </div>
 
       <ul className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {products.filter((product) => uniqueProductImage(product)).map((product, index) => {
+        {products
+          .filter((product, index, list) => {
+            if (!product.id) return false;
+            if (list.findIndex((item) => item.id === product.id) !== index) return false;
+            const imageUrl = uniqueProductImage(product);
+            if (!imageUrl) return false;
+            const firstWithImage = list.findIndex(
+              (item) => uniqueProductImage(item) === imageUrl,
+            );
+            return firstWithImage === index;
+          })
+          .map((product) => {
           const title = product.title || product.name;
           const buyUrl = officialManufacturerUrl(
             product.vendorId,
             product.buyUrl || product.affiliateUrl,
           );
           const imageUrl = uniqueProductImage(product);
-          const usedRemote = products.slice(0, index).some((other) => {
-            const otherImage = uniqueProductImage(other);
-            return (
-              Boolean(imageUrl) &&
-              otherImage === imageUrl &&
-              /^https?:\/\//i.test(imageUrl)
-            );
-          });
-          const cardImage = usedRemote ? "" : imageUrl;
+          const cardImage = imageUrl;
           const productVendor =
             getVendor(product.vendorId)?.brandName ?? vendorName;
           return (

@@ -8,7 +8,7 @@ import {
   resolveFurnitureSet,
   toRenderProduct,
 } from "@/lib/ai-render/furnitureSets";
-import type { PieceSlotId } from "@/lib/ai-render/furniturePieces";
+import { slotsForSelectedRoom } from "@/lib/ai-render/furniturePieces";
 import { partnerProducts } from "@/lib/partner-store/catalog";
 
 function getReplicateToken() {
@@ -264,14 +264,21 @@ function normalizeRoomType(value?: string): RoomKey {
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .trim();
-  if (raw.includes("bed") || raw.includes("dorm")) return "bedroom";
-  if (raw.includes("office") || raw.includes("birou")) return "office";
+  if (
+    raw.includes("office") ||
+    raw.includes("birou") ||
+    raw.includes("home office") ||
+    raw.includes("study")
+  ) {
+    return "office";
+  }
   if (raw.includes("kitchen") || raw.includes("bucat") || raw.includes("dining")) {
     return "kitchen";
   }
   if (raw.includes("living") || raw.includes("lounge") || raw.includes("sufrager")) {
     return "living";
   }
+  if (raw.includes("bed") || raw.includes("dorm")) return "bedroom";
   if (raw && raw in roomBriefs) return raw as RoomKey;
   return "living";
 }
@@ -580,6 +587,7 @@ export async function POST(request: Request) {
       image,
       controlnet_image,
       roomType,
+      selectedRoom,
       style,
       products,
       keepStructure,
@@ -595,6 +603,7 @@ export async function POST(request: Request) {
       image?: string;
       controlnet_image?: string;
       roomType?: string;
+      selectedRoom?: string;
       style?: string;
       products?: PromptProduct[];
       keepStructure?: boolean;
@@ -623,46 +632,27 @@ export async function POST(request: Request) {
     }
 
     const dataUrl = await toDataUrl(imageUrl);
-    const room = normalizeRoomType(roomType);
+    const room = normalizeRoomType(selectedRoom || roomType);
+    const roomSlots = slotsForSelectedRoom(room, selectedSlots);
     const selectedSet = resolveFurnitureSet(
       room,
       style,
       vendorId,
       partnerProducts,
-      selectedSlots as PieceSlotId[] | undefined,
+      roomSlots,
     );
-    const promptProducts: PromptProduct[] = selectedSet.map((product) => ({
-      name: product.name,
-      category: product.category,
-      promptHint: product.promptHint,
-      description: product.description,
-    }));
-    const prompt =
-      selectedSet.length >= 1
-        ? [
-            buildCatalogSetPrompt({
-              roomType: room,
-              style: style || "scandinavian",
-              vendorName: brandName,
-              products: selectedSet,
-            }),
-            budget
-              ? `BUDGET LOCK: ${budget}.`
-              : "",
-            refreshToken
-              ? `FRESH UNIQUE STAGING variation ${refreshToken}.`
-              : "",
-          ]
-            .filter(Boolean)
-            .join(" ")
-        : buildPrompt(
-            roomType,
-            style,
-            promptProducts,
-            brandName,
-            budget,
-            refreshToken,
-          );
+    const prompt = [
+      buildCatalogSetPrompt({
+        roomType: room,
+        style: style || "scandinavian",
+        vendorName: brandName,
+        products: selectedSet,
+      }),
+      budget ? `BUDGET LOCK: ${budget}.` : "",
+      refreshToken ? `FRESH UNIQUE STAGING variation ${refreshToken}.` : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
     const negativePrompt = buildNegativePrompt(room);
     const generatedImageUrl = await runControlNet(
       replicate,

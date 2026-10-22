@@ -3,12 +3,8 @@ import path from "path";
 import { NextResponse } from "next/server";
 import Replicate from "replicate";
 import { extractImageUrlAsync } from "@/lib/ai-render/extractImageUrl";
-import {
-  buildDynamicRenderPrompt,
-  resolveFurnitureSet,
-  toRenderProduct,
-} from "@/lib/ai-render/furnitureSets";
-import { slotsForSelectedRoom } from "@/lib/ai-render/furniturePieces";
+import { resolveFurnitureSet, toRenderProduct } from "@/lib/ai-render/furnitureSets";
+import { checkedChecklistSlots } from "@/lib/ai-render/furniturePieces";
 import { partnerProducts, type RoomKind } from "@/lib/partner-store/catalog";
 
 function getReplicateToken() {
@@ -50,11 +46,20 @@ function normalizeRoomType(value?: string): RoomKind {
   return "living";
 }
 
-function buildNegativePrompt(selectedRoom: RoomKind) {
+function isDormitorRoom(selectedRoom?: string) {
+  const raw = (selectedRoom ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toLowerCase();
+  return raw === "dormitor";
+}
+
+function buildNegativePrompt(selectedRoom?: string) {
   const artifacts =
     "visual artifacts, jpeg artifacts, compression artifacts, noise, grain, glitches, banding, chromatic aberration, lens flare, motion blur, pixelation, low resolution, oversharpening, halos, ghosting, melted geometry, warped walls, deformed furniture, distorted perspective, extra limbs, extra fingers, duplicate objects, broken edges, CGI look, 3d render, plastic surfaces, fake lighting, oversaturated HDR, muddy textures, watermark, text overlay, logo";
-  if (selectedRoom !== "bedroom") {
-    return `${artifacts}, bed, bedroom, nightstand, duvet, pillows`;
+  if (selectedRoom !== "Dormitor" && !isDormitorRoom(selectedRoom)) {
+    return `${artifacts}, bed, bedroom, nightstand, headboard, pillows, blanket, bedsheets`;
   }
   return artifacts;
 }
@@ -131,6 +136,14 @@ function scaledOutputSize(width: number, height: number) {
 function toDataUrlFromBytes(bytes: Buffer, mime: string) {
   const type = mime || "image/jpeg";
   return `data:${type};base64,${bytes.toString("base64")}`;
+}
+
+async function freshUserImage(imageUrl: string) {
+  const dataUrl = await toDataUrl(imageUrl);
+  const match = dataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/);
+  if (!match) return dataUrl;
+  const bytes = Buffer.from(match[2], "base64");
+  return toDataUrlFromBytes(bytes, match[1]);
 }
 
 async function toDataUrl(imageUrl: string) {
@@ -212,7 +225,7 @@ async function runControlNet(
   prompt: string,
   negativePrompt: string,
   keepStructure: boolean,
-  frame?: { width?: number; height?: number },
+  frame?: { width?: number; height?: number; seed?: number },
 ) {
   const promptStrength = keepStructure ? 0.58 : 0.7;
   const measured = imageSizeFromDataUrl(dataUrl);
@@ -221,9 +234,11 @@ async function runControlNet(
   const aspect =
     width && height ? closestAspectRatio(width, height) : undefined;
   const size = width && height ? scaledOutputSize(width, height) : undefined;
+  const seed = frame?.seed ?? Date.now() % 2147483647;
   const frameInput = {
     ...(aspect ? { aspect_ratio: aspect } : {}),
     ...(size ? { width: size.width, height: size.height } : {}),
+    seed,
   };
   try {
     const output = await replicate.run(CONTROLNET_MODELS.interior, {
@@ -290,9 +305,9 @@ export async function POST(request: Request) {
     });
     const body = await request.json();
     const {
+      userImage,
       imageUrl: bodyImageUrl,
       image,
-      controlnet_image,
       roomType,
       selectedRoom,
       style,
@@ -305,9 +320,9 @@ export async function POST(request: Request) {
       selectedSlots,
       selectedPieces,
     } = body as {
+      userImage?: string;
       imageUrl?: string;
       image?: string;
-      controlnet_image?: string;
       roomType?: string;
       selectedRoom?: string;
       style?: string;
@@ -321,7 +336,7 @@ export async function POST(request: Request) {
       selectedPieces?: string[];
     };
 
-    const imageUrl = [bodyImageUrl, controlnet_image, image].find(
+    const imageUrl = [userImage, bodyImageUrl, image].find(
       (value): value is string => typeof value === "string" && value.length > 0,
     );
 
@@ -332,33 +347,33 @@ export async function POST(request: Request) {
       );
     }
 
-    const dataUrl = await toDataUrl(imageUrl);
+    const dataUrl = await freshUserImage(imageUrl);
+    const roomName = (selectedRoom || "").trim();
+    const styleName = (selectedStyle || style || "").trim();
+    const piecesText = (selectedPieces ?? []).map((piece) => String(piece).trim()).filter(Boolean);
+    const prompt = `A professional photorealistic interior render of a ${roomName} in ${styleName} style, containing strictly these exact furniture pieces: ${piecesText.join(", ")}. Architectural digest style, highly detailed, perfect lighting.`;
+    const negativePrompt = buildNegativePrompt(roomName || selectedRoom);
     const room = normalizeRoomType(selectedRoom || roomType);
-    const styleKey = selectedStyle || style || "scandinavian";
     const brandId = vendorId || selectedBrand;
-    const roomSlots = slotsForSelectedRoom(room, selectedSlots);
+    const checkedSlots = checkedChecklistSlots(selectedSlots, selectedPieces);
     const selectedSet = resolveFurnitureSet(
       room,
-      styleKey,
+      style || styleName,
       brandId,
       partnerProducts,
-      roomSlots,
-    );
-    const selectedPieceNames =
-      selectedSet.map((product) => product.name).filter(Boolean).length > 0
-        ? selectedSet.map((product) => product.name)
-        : (selectedPieces ?? []).filter(Boolean);
-    const prompt = buildDynamicRenderPrompt(room, styleKey, selectedPieceNames);
-    const negativePrompt = buildNegativePrompt(room);
+      checkedSlots,
+      selectedPieces,
+    ).slice(0, checkedSlots.length);
     const generatedImageUrl = await runControlNet(
       replicate,
       dataUrl,
       prompt,
       negativePrompt,
-      Boolean(keepStructure) || imageUrl.startsWith("data:"),
+      Boolean(keepStructure),
       {
         width: Number(imageWidth) || undefined,
         height: Number(imageHeight) || undefined,
+        seed: Date.now() % 2147483647,
       },
     );
 
@@ -369,7 +384,9 @@ export async function POST(request: Request) {
       );
     }
 
-    const productsPayload = selectedSet.map(toRenderProduct);
+    const productsPayload = selectedSet
+      .slice(0, checkedSlots.length)
+      .map(toRenderProduct);
     return NextResponse.json({
       renderUrl: generatedImageUrl,
       imageUrl: generatedImageUrl,
@@ -377,6 +394,7 @@ export async function POST(request: Request) {
       output: generatedImageUrl,
       products: productsPayload,
       prompt,
+      generatedAt: Date.now(),
     });
   } catch (error: unknown) {
     console.error("Eroare la generarea cu Replicate:", errorText(error));

@@ -1,8 +1,8 @@
 import type { InteriorStyle } from "@/lib/ai-render/catalogPick";
 import {
+  checkedChecklistSlots,
   pieceOptionById,
   productMatchesSlot,
-  slotsForSelectedRoom,
   type PieceSlotId,
 } from "@/lib/ai-render/furniturePieces";
 import {
@@ -102,9 +102,10 @@ export function resolveFurnitureSet(
   vendorId?: string,
   pool: PartnerProduct[] = partnerProducts,
   selectedSlots?: PieceSlotId[],
+  selectedPieces?: string[],
 ) {
   const styleKey = normalizeStyle(style);
-  const wanted = slotsForSelectedRoom(roomType, selectedSlots);
+  const wanted = checkedChecklistSlots(selectedSlots, selectedPieces);
   const seen = new Set<string>();
   const usedImages = new Set<string>();
   const picked: PartnerProduct[] = [];
@@ -121,9 +122,9 @@ export function resolveFurnitureSet(
     if (!product || seen.has(product.id)) continue;
     seen.add(product.id);
     usedImages.add(uniqueProductImage(product));
-    picked.push(product);
+    picked.push({ ...product, slot });
   }
-  return picked;
+  return picked.slice(0, wanted.length);
 }
 
 export function toRenderProduct(product: PartnerProduct) {
@@ -156,13 +157,6 @@ export function toRenderProduct(product: PartnerProduct) {
   };
 }
 
-const ROOM_PROMPT_NAME: Record<string, string> = {
-  office: "home office",
-  living: "living room",
-  bedroom: "bedroom",
-  kitchen: "kitchen dining room",
-};
-
 export function buildCatalogSetPrompt(input: {
   roomType: RoomKind | string;
   style: string;
@@ -181,9 +175,7 @@ export function buildDynamicRenderPrompt(
   selectedStyle: string,
   selectedPieces: string[],
 ) {
-  const room =
-    ROOM_PROMPT_NAME[selectedRoom] ?? selectedRoom.replace(/-/g, " ") ?? "interior";
-  const pieces =
-    selectedPieces.filter(Boolean).join(", ") || "the selected catalog furniture";
-  return `A photorealistic interior photo of a ${room} in ${selectedStyle} style, containing strictly these exact items: ${pieces}. Clean studio illumination, high resolution.`;
+  const roomName = selectedRoom;
+  const piecesText = selectedPieces.join(", ");
+  return `A professional photorealistic interior render of a ${roomName} in ${selectedStyle} style, containing strictly these exact furniture pieces: ${piecesText}. Architectural digest style, highly detailed, perfect lighting.`;
 }

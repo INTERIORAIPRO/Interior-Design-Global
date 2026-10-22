@@ -111,8 +111,9 @@ export function AiRenderFlow() {
   }
 
   async function toSendableImage(src: string) {
-    if (!src.startsWith("blob:")) return src;
-    const blob = await fetch(src).then((response) => response.blob());
+    const blob = src.startsWith("data:")
+      ? await fetch(src).then((response) => response.blob())
+      : await fetch(src, { cache: "no-store" }).then((response) => response.blob());
     return new Promise<string>((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => resolve(String(reader.result));
@@ -136,22 +137,27 @@ export function AiRenderFlow() {
     setBusy(true);
     setHeroView("ai");
     setImageFailed(false);
+    setRenderedImageUrl(null);
+    setRenderedProducts(null);
 
     try {
-      const referenceImage = await toSendableImage(sourcePhoto);
-      const frame = await measureImage(referenceImage);
+      const userImage = await toSendableImage(sourcePhoto);
+      const frame = await measureImage(userImage);
       const response = await fetch("/api/ai-render/generate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "no-store",
+        },
         body: JSON.stringify({
           mode: "virtual-staging",
-          imageUrl: referenceImage,
-          image: referenceImage,
-          controlnet_image: referenceImage,
+          userImage,
+          imageUrl: userImage,
+          image: userImage,
           roomType,
-          selectedRoom: roomType,
+          selectedRoom: roomLabels[roomType],
           style,
-          selectedStyle: style,
+          selectedStyle: selectedStyleLabel,
           selectedBrand: vendorId,
           budget,
           selectedBudget: budget,
@@ -184,6 +190,7 @@ export function AiRenderFlow() {
         url?: unknown;
         products?: PartnerProduct[];
         error?: string;
+        generatedAt?: number;
       };
       const imageFromApi =
         extractImageUrl(payload.renderUrl) ??

@@ -65,11 +65,27 @@ export function slotsForSelectedRoom(
   _roomType?: string | null,
   selectedSlots?: string[] | null,
 ): PieceSlotId[] {
+  return checkedChecklistSlots(selectedSlots);
+}
+
+export function checkedChecklistSlots(
+  selectedSlots?: string[] | null,
+  selectedPieces?: string[] | null,
+): PieceSlotId[] {
   const allowed = new Set(GLOBAL_CHECKLIST.map((option) => option.id));
-  const filtered = (selectedSlots ?? []).filter((slot): slot is PieceSlotId =>
+  const fromSlots = (selectedSlots ?? []).filter((slot): slot is PieceSlotId =>
     allowed.has(slot as PieceSlotId),
   );
-  return filtered.length > 0 ? filtered : defaultSelectedSlots();
+  if (fromSlots.length > 0) return [...new Set(fromSlots)];
+  const fromLabels = (selectedPieces ?? [])
+    .map((label) => {
+      const needle = label.trim().toLowerCase();
+      return GLOBAL_CHECKLIST.find(
+        (option) => option.label.toLowerCase() === needle,
+      )?.id;
+    })
+    .filter((slot): slot is PieceSlotId => Boolean(slot));
+  return [...new Set(fromLabels)];
 }
 
 export function pieceOptionById(slot: PieceSlotId) {

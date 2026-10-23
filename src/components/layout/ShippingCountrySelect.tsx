@@ -20,13 +20,13 @@ export function ShippingCountrySelect() {
 
   return (
     <label className="flex items-center gap-2 text-xs uppercase tracking-[0.12em] text-linen/60">
-      <span className="hidden lg:inline">{t("shippingCountry")}</span>
+      <span className="sr-only">{t("shippingCountry")}</span>
       <select
         value={countryId}
         onChange={(event) =>
           setCountryId(event.target.value as typeof countryId)
         }
-        className="max-w-[11rem] rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs tracking-normal text-linen outline-none"
+        className="max-w-[9.5rem] rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1.5 text-[11px] tracking-normal text-linen outline-none"
       >
         {shippingCountries.map((country) => (
           <option key={country.id} value={country.id} className="text-ink">

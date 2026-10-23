@@ -55,6 +55,7 @@ function pickForSlot(
   usedIds: Set<string>,
   pool: PartnerProduct[],
   slotIndex: number,
+  _roomType: RoomKind,
 ) {
   const option = pieceOptionById(slot);
   const catalogPool = partnerProducts.length ? partnerProducts : pool;
@@ -66,6 +67,17 @@ function pickForSlot(
   );
   const matches = catalogPool.filter((product) => {
     if (usedIds.has(product.id)) return false;
+    const name = product.name.toLowerCase();
+    if (
+      _roomType !== "bedroom" &&
+      (product.category === "beds" ||
+        product.slot === "bed" ||
+        product.slot === "nightstand" ||
+        name.includes("noptier") ||
+        name.startsWith("pat "))
+    ) {
+      return false;
+    }
     if (product.slot === slot) return true;
     if (option && product.category === option.category && productMatchesSlot(product, slot)) {
       return true;
@@ -110,7 +122,15 @@ export function resolveFurnitureSet(
   const seen = new Set<string>();
   const picked: PartnerProduct[] = [];
   wanted.forEach((slot, index) => {
-    const product = pickForSlot(slot, styleKey, vendorIds, seen, pool, index);
+    const product = pickForSlot(
+      slot,
+      styleKey,
+      vendorIds,
+      seen,
+      pool,
+      index,
+      roomType,
+    );
     if (!product || seen.has(product.id)) return;
     seen.add(product.id);
     picked.push({ ...product, slot });

@@ -21,13 +21,13 @@ export function LocaleSwitcher() {
 
   return (
     <label className="flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-linen/60">
-      <span className="hidden sm:inline">Lang</span>
+      <span className="sr-only">Lang</span>
       <select
         value={locale}
         onChange={(event) => {
           router.replace(pathname, { locale: event.target.value });
         }}
-        className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs uppercase tracking-widest text-linen outline-none"
+        className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1.5 text-[11px] uppercase tracking-widest text-linen outline-none"
       >
         {routing.locales.map((code) => (
           <option key={code} value={code} className="text-ink">

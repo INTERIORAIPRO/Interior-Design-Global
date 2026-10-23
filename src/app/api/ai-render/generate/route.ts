@@ -17,10 +17,28 @@ function getReplicateToken() {
 }
 
 const CONTROLNET_MODELS = {
+  txt2img: "black-forest-labs/flux-schnell",
   depth: "black-forest-labs/flux-depth-dev",
   interior:
     "adirik/interior-design:76604baddc85b1b4616e1c6475eca080da339c8875bd4996705440484a6eac38",
 } as const;
+
+const LOCAL_DEMO_PATH = /sample-room|demo-scene|seed-room|\/ai-render\//i;
+
+const ROOM_SCENE: Record<RoomKind, string> = {
+  office:
+    "photorealistic luxury home office, modern writing desk, ergonomic office chair, desk lamp, bookshelves, natural daylight, no bed",
+  kitchen:
+    "photorealistic luxury dining room and kitchen, dining table, dining chairs, pendant lighting over the table, architectural digest, no bed",
+  living:
+    "photorealistic luxury living room, designer sofa, coffee table, floor lamp, no bed",
+  bathroom:
+    "photorealistic luxury bathroom, vanity with mirror, walk-in shower, sanitary fittings, no bed",
+  terrace:
+    "photorealistic luxury terrace lounge, outdoor sofa, side table, no bed",
+  bedroom:
+    "photorealistic luxury bedroom, upholstered bed, nightstand, pendant lighting",
+};
 
 function normalizeRoomType(value?: string): RoomKind {
   const raw = (value ?? "")
@@ -85,7 +103,7 @@ function buildNegativePrompt(selectedRoom?: string, roomType?: string) {
   const artifacts =
     "visual artifacts, jpeg artifacts, compression artifacts, noise, grain, glitches, banding, chromatic aberration, lens flare, motion blur, pixelation, low resolution, oversharpening, halos, ghosting, melted geometry, warped walls, deformed furniture, distorted perspective, extra limbs, extra fingers, duplicate objects, broken edges, CGI look, 3d render, plastic surfaces, fake lighting, oversaturated HDR, muddy textures, watermark, text overlay, logo";
   if (!isDormitorRoom(selectedRoom, roomType)) {
-    return `bed, bedroom, nightstand, headboard, duvet, pillows, bedsheets, mattress, ${artifacts}`;
+    return `bed, bedroom, nightstand, duvet, pillows, headboard, ${artifacts}`;
   }
   return artifacts;
 }
@@ -173,6 +191,9 @@ async function freshUserImage(imageUrl: string) {
 }
 
 async function toDataUrl(imageUrl: string) {
+  if (LOCAL_DEMO_PATH.test(imageUrl)) {
+    throw new Error("Imaginea demo locală a fost eliminată. Încarcă o fotografie a camerei.");
+  }
   if (imageUrl.startsWith("data:")) {
     const match = imageUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/);
     if (!match) {
@@ -192,8 +213,15 @@ async function toDataUrl(imageUrl: string) {
     return toDataUrlFromBytes(bytes, mime);
   }
 
+  if (LOCAL_DEMO_PATH.test(imageUrl)) {
+    throw new Error("Imaginea demo locală a fost eliminată. Încarcă o fotografie a camerei.");
+  }
+
   if (imageUrl.startsWith("/") && !imageUrl.startsWith("//")) {
     const relative = imageUrl.replace(/^\/+/, "");
+    if (LOCAL_DEMO_PATH.test(relative)) {
+      throw new Error("Imaginea demo locală a fost eliminată. Încarcă o fotografie a camerei.");
+    }
     const filePath = path.join(process.cwd(), "public", relative);
     const bytes = await readFile(filePath);
     const ext = path.extname(filePath).toLowerCase();
@@ -245,7 +273,7 @@ function friendlyApiError(error: unknown) {
   return "Nu am putut genera randarea acum. Încearcă din nou peste puțin timp.";
 }
 
-async function runControlNet(
+async function runRoomRender(
   replicate: Replicate,
   dataUrl: string,
   prompt: string,
@@ -254,20 +282,44 @@ async function runControlNet(
   isBedroom: boolean,
   frame?: { width?: number; height?: number; seed?: number },
 ) {
-  const imageStrength = isBedroom ? (keepStructure ? 0.58 : 0.7) : 0.35;
-  const controlScale = isBedroom ? imageStrength : 0.3;
   const measured = imageSizeFromDataUrl(dataUrl);
   const width = frame?.width || measured?.width;
   const height = frame?.height || measured?.height;
   const aspect =
-    width && height ? closestAspectRatio(width, height) : undefined;
+    width && height ? closestAspectRatio(width, height) : "16:9";
   const size = width && height ? scaledOutputSize(width, height) : undefined;
   const seed = frame?.seed ?? Date.now() % 2147483647;
   const frameInput = {
-    ...(aspect ? { aspect_ratio: aspect } : {}),
+    aspect_ratio: aspect,
     ...(size ? { width: size.width, height: size.height } : {}),
     seed,
   };
+
+  if (!isBedroom) {
+    try {
+      const txt = await replicate.run(CONTROLNET_MODELS.txt2img, {
+        input: {
+          prompt: `${prompt}. Avoid: ${negativePrompt}.`,
+          ...frameInput,
+          output_format: "jpg",
+          output_quality: 90,
+          go_fast: true,
+          num_outputs: 1,
+        },
+      });
+      const url = await outputUrl(txt);
+      if (url && !LOCAL_DEMO_PATH.test(url)) return url;
+    } catch (error) {
+      if (isAuthError(error) || isCreditOrRateLimit(error)) throw error;
+      console.warn(
+        "Flux txt2img indisponibil, continuăm cu ControlNet slab.",
+        error instanceof Error ? error.message : error,
+      );
+    }
+  }
+
+  const promptStrength = isBedroom ? (keepStructure ? 0.58 : 0.72) : 0.92;
+  const controlScale = isBedroom ? 0.55 : 0.3;
   try {
     const output = await replicate.run(CONTROLNET_MODELS.interior, {
       input: {
@@ -275,21 +327,20 @@ async function runControlNet(
         prompt,
         negative_prompt: negativePrompt,
         guidance_scale: 15,
-        prompt_strength: imageStrength,
-        image_strength: imageStrength,
+        prompt_strength: promptStrength,
+        image_strength: isBedroom ? 0.55 : 0.35,
         controlnet_conditioning_scale: controlScale,
         num_inference_steps: 40,
         ...frameInput,
       },
     });
     const url = await outputUrl(output);
-    if (!url) throw new Error("ControlNet interior nu a returnat nicio imagine.");
-    return url;
+    if (url && !LOCAL_DEMO_PATH.test(url)) return url;
   } catch (error) {
     if (isAuthError(error) || isCreditOrRateLimit(error)) throw error;
     if (!isUnavailable(error)) throw error;
     console.warn(
-      "Pipeline-ul interior ControlNet indisponibil, folosim Flux Depth pe fotografia utilizatorului.",
+      "Pipeline-ul interior ControlNet indisponibil, folosim Flux Depth.",
       error instanceof Error ? error.message : error,
     );
   }
@@ -299,7 +350,7 @@ async function runControlNet(
       prompt: `${prompt} Avoid: ${negativePrompt}.`,
       image: dataUrl,
       control_image: dataUrl,
-      image_strength: imageStrength,
+      image_strength: isBedroom ? 0.55 : 0.35,
       controlnet_conditioning_scale: controlScale,
       guidance: 8,
       num_inference_steps: 32,
@@ -309,7 +360,9 @@ async function runControlNet(
     },
   });
   const url = await outputUrl(output);
-  if (!url) throw new Error("Flux Depth nu a returnat nicio imagine.");
+  if (!url || LOCAL_DEMO_PATH.test(url)) {
+    throw new Error("Flux Depth nu a returnat nicio imagine.");
+  }
   return url;
 }
 
@@ -387,11 +440,12 @@ export async function POST(request: Request) {
     const selectedPiecesList = (selectedPieces ?? [])
       .map((piece) => String(piece).trim())
       .filter(Boolean);
-    const isBedroom = isDormitorRoom(roomName || selectedRoom, roomType);
-    const prompt = isBedroom
-      ? `A photorealistic render of a ${roomName} in ${styleName} style, containing strictly: ${selectedPiecesList.join(", ")}.`
-      : `A photorealistic render of a ${roomName} in ${styleName} style, containing strictly: ${selectedPiecesList.join(", ")}. Completely remove any beds or bedroom furniture.`;
     const room = normalizeRoomType(selectedRoom || roomType);
+    const isBedroom = isDormitorRoom(roomName || selectedRoom, roomType || room);
+    const scene = ROOM_SCENE[room];
+    const prompt = isBedroom
+      ? `A photorealistic render of a ${roomName} in ${styleName} style, ${scene}, containing strictly: ${selectedPiecesList.join(", ")}.`
+      : `A photorealistic render of a ${roomName} in ${styleName} style, ${scene}, containing strictly: ${selectedPiecesList.join(", ")}. Completely remove any beds or bedroom furniture.`;
     const negativePrompt = buildNegativePrompt(roomName || selectedRoom, roomType || room);
     const brandIds = [
       ...(Array.isArray(selectedBrands) ? selectedBrands : []),
@@ -402,7 +456,10 @@ export async function POST(request: Request) {
       selectedSlots,
       selectedPieces,
       room,
-    );
+    ).filter((slot) => {
+      if (isBedroom) return true;
+      return slot !== "bed" && slot !== "nightstand" && slot !== "bedding";
+    });
     const selectedSet = resolveFurnitureSet(
       room,
       style || styleName,
@@ -410,8 +467,20 @@ export async function POST(request: Request) {
       partnerProducts,
       checkedSlots,
       selectedPieces,
-    ).slice(0, checkedSlots.length);
-    const generatedImageUrl = await runControlNet(
+    )
+      .filter((product) => {
+        if (isBedroom) return true;
+        const name = product.name.toLowerCase();
+        return (
+          product.category !== "beds" &&
+          product.slot !== "bed" &&
+          product.slot !== "nightstand" &&
+          !name.includes("noptier") &&
+          !name.startsWith("pat ")
+        );
+      })
+      .slice(0, checkedSlots.length);
+    const generatedImageUrl = await runRoomRender(
       replicate,
       dataUrl,
       prompt,

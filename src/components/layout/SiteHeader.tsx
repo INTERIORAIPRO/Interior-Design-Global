@@ -20,12 +20,15 @@ export function SiteHeader() {
   const pathname = usePathname();
 
   return (
-    <header className="fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-ink/70 backdrop-blur-xl">
-      <div className="mx-auto flex min-h-[4rem] max-w-6xl flex-wrap items-center justify-between gap-3 px-6 py-2">
-        <Link href="/" className="font-serif text-xl tracking-tight text-linen">
+    <header className="fixed inset-x-0 top-0 z-40 border-b border-white/8 bg-ink/85 backdrop-blur-2xl">
+      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-5">
+        <Link
+          href="/"
+          className="shrink-0 font-serif text-lg tracking-[0.04em] text-linen"
+        >
           {appConfig.name}
         </Link>
-        <nav className="flex items-center gap-4 overflow-x-auto text-xs text-linen/75 sm:gap-7 sm:text-sm">
+        <nav className="flex max-w-[46%] items-center gap-4 overflow-x-auto text-[11px] uppercase tracking-[0.16em] text-linen/60 sm:gap-6">
           {links.map((link) => {
             const active = pathname === link.href;
             return (
@@ -44,7 +47,7 @@ export function SiteHeader() {
           })}
           <CartNavLink />
         </nav>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <ShippingCountrySelect />
           <HeaderVendorSelect />
           <LocaleSwitcher />
@@ -53,4 +56,3 @@ export function SiteHeader() {
     </header>
   );
 }
-

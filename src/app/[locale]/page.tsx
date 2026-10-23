@@ -1,6 +1,6 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { RoomPreview } from "@/components/engine3d/RoomPreview";
+import { HeroLuxuryBanner } from "@/components/home/HeroLuxuryBanner";
 
 type WelcomePageProps = {
   params: Promise<{ locale: string }>;
@@ -56,7 +56,7 @@ export default async function WelcomePage({ params }: WelcomePageProps) {
             </Link>
           </div>
         </div>
-        <RoomPreview />
+        <HeroLuxuryBanner />
       </section>
 
       <section className="mx-auto grid max-w-6xl gap-4 px-6 pb-24 sm:grid-cols-2">

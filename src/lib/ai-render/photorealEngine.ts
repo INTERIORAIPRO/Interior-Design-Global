@@ -10,7 +10,7 @@ export type PlacedProduct = {
   spriteUrl: string;
 };
 
-export const DEMO_SCENE = "/ai-render/sample-room.jpg";
+export const DEMO_SCENE = "";
 
 /**
  * One photograph is the entire render. No sprites, overlays, or extra layers.

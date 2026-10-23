@@ -172,7 +172,7 @@ export function AiRenderFlow() {
           selectedBrands,
           budget,
           selectedBudget: budget,
-          keepStructure: true,
+          keepStructure: roomType === "bedroom",
           vendorName: activeVendorName,
           vendorId,
           selectedSlots,

@@ -56,13 +56,13 @@ function VendorMultiSelect({ compact = false }: { compact?: boolean }) {
   }
 
   return (
-    <div ref={rootRef} className={`relative ${compact ? "min-w-[12rem]" : "w-full"}`}>
+    <div ref={rootRef} className={`relative ${compact ? "w-[10.5rem]" : "w-full"}`}>
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
-        className={`flex w-full items-center justify-between gap-3 rounded-full border px-3 py-2 text-left text-xs tracking-normal outline-none ${
+        className={`flex w-full items-center justify-between gap-2 rounded-full border px-3 py-1.5 text-left text-[11px] tracking-normal outline-none ${
           compact
-            ? "border-white/15 bg-white/5 text-linen"
+            ? "border-white/10 bg-white/[0.04] text-linen"
             : "border-white/15 bg-ink/40 text-linen"
         }`}
       >
@@ -130,7 +130,6 @@ function VendorMultiSelect({ compact = false }: { compact?: boolean }) {
 }
 
 export function HeaderVendorSelect() {
-  const t = useTranslations("commerce");
   const isMounted = useIsMounted();
 
   if (!isMounted) {
@@ -142,10 +141,9 @@ export function HeaderVendorSelect() {
   }
 
   return (
-    <label className="flex items-center gap-2 text-xs uppercase tracking-[0.12em] text-linen/60">
-      <span className="hidden xl:inline">{t("vendor")}</span>
+    <div className="flex items-center">
       <VendorMultiSelect compact />
-    </label>
+    </div>
   );
 }
 

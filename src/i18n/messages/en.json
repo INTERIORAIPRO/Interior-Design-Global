@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "Interior Design Global",
-    "description": "An international interior marketplace with a real-time 3D studio and partner commerce."
+    "title": "DESIGN STUDIO GLOBAL",
+    "description": "The global platform to design any space, pick real items from official brands, and ship directly to your door."
   },
   "nav": {
     "marketplace": "Marketplace",
@@ -20,13 +20,43 @@
     "vendorHint": "Select one or more brands. Products and the AI render use only that stock."
   },
   "welcome": {
-    "kicker": "Worldwide interiors, one studio",
+    "kicker": "Worldwide Interiors & Exteriors, One Studio",
     "title": "Design rooms. Source pieces. Ship globally.",
-    "subtitle": "A multilingual marketplace for furniture, materials, and lighting â€” with a built-in 3D engine and a partner dashboard for vendors.",
+    "subtitle": "The global platform to design any space, pick real items from official brands, and ship directly to your door.",
     "ctaPrimary": "Start AI render",
     "ctaStudio": "3D studio",
     "ctaSecondary": "Browse collections",
-    "ctaVendor": "Open partner portal"
+    "ctaVendor": "Open partner portal",
+    "slides": {
+      "living": {
+        "title": "Living",
+        "caption": "Sofas, coffee table, TV unit, armchair, rug, ambient lighting."
+      },
+      "kitchen": {
+        "title": "Dining & Kitchen",
+        "caption": "Dining table, chairs, pendants, island and kitchen furniture."
+      },
+      "office": {
+        "title": "Office",
+        "caption": "Modern desk, ergonomic chairs, task lamps and shelves."
+      },
+      "bathroom": {
+        "title": "Bath & Finishes",
+        "caption": "Tiles, ceramics, microcement, designer sanitaryware, mirrors and taps."
+      },
+      "bedroom": {
+        "title": "Bedroom",
+        "caption": "Bed, nightstands, wardrobe, bench, lighting and bed textiles."
+      },
+      "terrace": {
+        "title": "Terrace & Outdoor",
+        "caption": "Outdoor dining, loungers, lounge, umbrella and outdoor lighting."
+      },
+      "horeca": {
+        "title": "HoReCa & Commercial",
+        "caption": "Restaurant tables, high-traffic chairs, lounge, bar and pendant lighting."
+      }
+    }
   },
   "features": {
     "ai": {

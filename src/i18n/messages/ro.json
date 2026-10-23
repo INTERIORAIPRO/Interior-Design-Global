@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "Interior Design Global",
-    "description": "Marketplace internațional de design interior, cu studio 3D în timp real și comerț pentru parteneri."
+    "title": "DESIGN STUDIO GLOBAL",
+    "description": "Platforma globală unde proiectezi orice spațiu, alegi produse reale de la branduri oficiale și le livrezi direct la adresa ta."
   },
   "nav": {
     "marketplace": "Marketplace",
@@ -20,13 +20,43 @@
     "vendorHint": "Bifează unul sau mai multe branduri. Produsele și randarea folosesc strict stocul selectat."
   },
   "welcome": {
-    "kicker": "Interioare globale, un singur studio",
+    "kicker": "Interioare și exterioare globale, un singur studio",
     "title": "Proiectează camere. Alege piese. Livrează oriunde.",
-    "subtitle": "Un marketplace multilingv pentru mobilier, materiale și iluminat — cu motor 3D integrat și panou de control pentru vendori.",
+    "subtitle": "Platforma globală unde proiectezi orice spațiu, alegi produse reale de la branduri oficiale și le livrezi direct la adresa ta.",
     "ctaPrimary": "Pornește randarea AI",
     "ctaStudio": "Studio 3D",
     "ctaSecondary": "Explorează colecțiile",
-    "ctaVendor": "Deschide portalul de parteneri"
+    "ctaVendor": "Deschide portalul de parteneri",
+    "slides": {
+      "living": {
+        "title": "Living",
+        "caption": "Canapele, măsuță de cafea, comodă TV, fotoliu, covor, iluminat ambiental."
+      },
+      "kitchen": {
+        "title": "Dining & Bucătărie",
+        "caption": "Masă dining, scaune, pendule, insulă și mobilier de bucătărie."
+      },
+      "office": {
+        "title": "Birou",
+        "caption": "Birou modern, scaune ergonomice, lămpi de lucru și etajere."
+      },
+      "bathroom": {
+        "title": "Baie & Finisaje",
+        "caption": "Gresie, faianță, microciment, sanitare de designer, oglinzi și baterii."
+      },
+      "bedroom": {
+        "title": "Dormitor",
+        "caption": "Pat, noptiere, șifonier, banchetă, iluminat și textile de pat."
+      },
+      "terrace": {
+        "title": "Terasă & Outdoor",
+        "caption": "Dining exterior, șezlonguri, lounge, umbrelă și iluminat outdoor."
+      },
+      "horeca": {
+        "title": "HoReCa & Comercial",
+        "caption": "Mese restaurant, scaune trafic intens, lounge, bar și iluminat suspendat."
+      }
+    }
   },
   "features": {
     "ai": {

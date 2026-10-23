@@ -2,8 +2,8 @@ export const locales = ["en", "ro", "fr", "de", "es", "it"] as const;
 export type AppLocale = (typeof locales)[number];
 
 export const appConfig = {
-  name: "Interior Design Global",
-  tagline: "International interior design marketplace",
+  name: "DESIGN STUDIO GLOBAL",
+  tagline: "Worldwide interiors and exteriors, one studio",
   defaultLocale: "en" as AppLocale,
   locales,
   commerce: {

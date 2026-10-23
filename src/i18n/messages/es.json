@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "Interior Design Global",
-    "description": "Un marketplace internacional de interiorismo con estudio 3D en tiempo real."
+    "title": "DESIGN STUDIO GLOBAL",
+    "description": "La plataforma global para diseñar cualquier espacio, elegir productos reales de marcas oficiales y recibirlos en tu puerta."
   },
   "nav": {
     "marketplace": "Marketplace",
@@ -20,26 +20,56 @@
     "vendorHint": "Elige Mix & Match o una sola marca que envíe al destino del proyecto."
   },
   "welcome": {
-    "kicker": "Interiores globales, un solo estudio",
-    "title": "DiseÃ±a estancias. Elige piezas. EnvÃ­a al mundo.",
-    "subtitle": "Un marketplace multilingÃ¼e para mobiliario, materiales e iluminaciÃ³n â€” con motor 3D y panel de partners.",
+    "kicker": "Interiores y exteriores globales, un solo estudio",
+    "title": "Diseña estancias. Elige piezas. Envíalas a cualquier lugar.",
+    "subtitle": "La plataforma global para diseñar cualquier espacio, elegir productos reales de marcas oficiales y recibirlos en tu puerta.",
     "ctaPrimary": "Iniciar render IA",
     "ctaStudio": "Estudio 3D",
     "ctaSecondary": "Ver colecciones",
-    "ctaVendor": "Abrir portal de partners"
+    "ctaVendor": "Abrir portal de partners",
+    "slides": {
+      "living": {
+        "title": "Salón",
+        "caption": "Sofás, mesa de centro, mueble TV, butaca, alfombra, iluminación ambiental."
+      },
+      "kitchen": {
+        "title": "Comedor y cocina",
+        "caption": "Mesa de comedor, sillas, lámparas colgantes, isla y mobiliario de cocina."
+      },
+      "office": {
+        "title": "Oficina",
+        "caption": "Escritorio moderno, sillas ergonómicas, lámparas de trabajo y estanterías."
+      },
+      "bathroom": {
+        "title": "Baño y acabados",
+        "caption": "Gres, azulejos, microcemento, sanitarios de diseño, espejos y grifería."
+      },
+      "bedroom": {
+        "title": "Dormitorio",
+        "caption": "Cama, mesitas, armario, banqueta, iluminación y textiles de cama."
+      },
+      "terrace": {
+        "title": "Terraza y outdoor",
+        "caption": "Comedor exterior, tumbonas, lounge, sombrilla e iluminación outdoor."
+      },
+      "horeca": {
+        "title": "HoReCa y comercial",
+        "caption": "Mesas de restaurante, sillas de alto tráfico, lounge, barra e iluminación colgante."
+      }
+    }
   },
   "features": {
     "ai": {
       "title": "Render IA de la estancia",
-      "body": "Sube una foto, conserva lo que quieres y completa con Kave Home segÃºn presupuesto."
+      "body": "Sube una foto, conserva lo que quieres y completa con marcas oficiales según presupuesto."
     },
     "i18n": {
-      "title": "MultilingÃ¼e de origen",
-      "body": "Compra y crea en inglÃ©s, rumano, francÃ©s, alemÃ¡n, espaÃ±ol e italiano."
+      "title": "Multilingüe de origen",
+      "body": "Compra y crea en inglés, rumano, francés, alemán, español e italiano."
     },
     "engine": {
-      "title": "Motor 3D en vivo",
-      "body": "Previsualiza estancias, materiales y luz antes de comprar o publicar."
+      "title": "Estudio 3D en vivo",
+      "body": "Previsualiza estancias, materiales y luz antes de comprar."
     },
     "vendors": {
       "title": "Panel de partners",

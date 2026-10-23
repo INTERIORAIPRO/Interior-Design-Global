@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale } from "next-intl";
-import { usePathname, useRouter } from "@/i18n/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
 import { useIsMounted } from "@/lib/useIsMounted";
 import { useProjectDestination } from "@/lib/partner-store/ProjectDestinationProvider";
 import {
@@ -9,9 +9,12 @@ import {
   HEADER_LOCALES,
 } from "@/lib/i18n/displayCurrency";
 
-export function LocaleCurrencySwitcher() {
+export function LocaleCurrencySwitcher({
+  languagesOnly = false,
+}: {
+  languagesOnly?: boolean;
+}) {
   const locale = useLocale();
-  const router = useRouter();
   const pathname = usePathname();
   const isMounted = useIsMounted();
   const { currency, setCurrency } = useProjectDestination();
@@ -19,7 +22,8 @@ export function LocaleCurrencySwitcher() {
   if (!isMounted) {
     return (
       <span className="rounded-full border border-white/10 px-2 py-1 text-[10px] uppercase tracking-widest text-linen/60">
-        {locale.toUpperCase()} / {currency}
+        {locale.toUpperCase()}
+        {languagesOnly ? "" : ` / ${currency}`}
       </span>
     );
   }
@@ -28,32 +32,34 @@ export function LocaleCurrencySwitcher() {
     <div className="flex items-center gap-1">
       <div className="flex overflow-hidden rounded-full border border-white/10">
         {HEADER_LOCALES.map((code) => (
-          <button
+          <Link
             key={code}
-            type="button"
-            onClick={() => router.replace(pathname, { locale: code })}
+            href={pathname}
+            locale={code}
             className={`px-1.5 py-1 text-[10px] uppercase tracking-wider ${
               locale === code ? "bg-brass text-ink" : "text-linen/65 hover:text-linen"
             }`}
           >
             {code}
-          </button>
+          </Link>
         ))}
       </div>
-      <div className="flex overflow-hidden rounded-full border border-white/10">
-        {DISPLAY_CURRENCIES.map((code) => (
-          <button
-            key={code}
-            type="button"
-            onClick={() => setCurrency(code, true)}
-            className={`px-1.5 py-1 text-[10px] uppercase tracking-wider ${
-              currency === code ? "bg-brass text-ink" : "text-linen/65 hover:text-linen"
-            }`}
-          >
-            {code}
-          </button>
-        ))}
-      </div>
+      {languagesOnly ? null : (
+        <div className="flex overflow-hidden rounded-full border border-white/10">
+          {DISPLAY_CURRENCIES.map((code) => (
+            <button
+              key={code}
+              type="button"
+              onClick={() => setCurrency(code, true)}
+              className={`px-1.5 py-1 text-[10px] uppercase tracking-wider ${
+                currency === code ? "bg-brass text-ink" : "text-linen/65 hover:text-linen"
+              }`}
+            >
+              {code}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

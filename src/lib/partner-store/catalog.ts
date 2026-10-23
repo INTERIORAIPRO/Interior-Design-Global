@@ -2774,6 +2774,27 @@ function officialBrandSeeds() {
         }),
       ];
     }
+    if (vendor.group === "textiles") {
+      return [
+        product({
+          id: `${vendor.id}-bedding`,
+          sku: `${vendor.badge}-BEDD`,
+          name: `Cuvertură / pernițe ${vendor.brandName}`,
+          description: `Textile de pat ${vendor.brandName}, fundal alb de studio.`,
+          category: "decor",
+          image2d: "/products/studio/pouf.jpg",
+          image: "/products/studio/pouf.jpg",
+          accentColor: vendor.accent,
+          styles: ["contemporary", "modern", "classic"],
+          rooms: ["bedroom"],
+          slot: "bedding",
+          promptHint: `a ${vendor.brandName} bedding set on a white studio background`,
+          price: 240,
+          vendorId: vendor.id,
+          affiliateUrl: vendor.storeUrl,
+        }),
+      ];
+    }
     if (vendor.group === "tiles") {
       return [
         product({

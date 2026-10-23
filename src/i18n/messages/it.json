@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "Interior Design Global",
-    "description": "Un marketplace internazionale di interior design con studio 3D in tempo reale."
+    "title": "DESIGN STUDIO GLOBAL",
+    "description": "La piattaforma globale per progettare qualsiasi spazio, scegliere prodotti reali di brand ufficiali e riceverli a casa."
   },
   "nav": {
     "marketplace": "Marketplace",
@@ -20,13 +20,43 @@
     "vendorHint": "Scegli Mix & Match o un singolo brand che consegna a destinazione."
   },
   "welcome": {
-    "kicker": "Interni globali, un solo studio",
+    "kicker": "Interni ed esterni globali, un solo studio",
     "title": "Progetta stanze. Scegli pezzi. Spedisci ovunque.",
-    "subtitle": "Un marketplace multilingue per arredi, materiali e luce â€” con motore 3D e pannello partner.",
+    "subtitle": "La piattaforma globale per progettare qualsiasi spazio, scegliere prodotti reali di brand ufficiali e riceverli a casa.",
     "ctaPrimary": "Avvia render AI",
     "ctaStudio": "Studio 3D",
     "ctaSecondary": "Sfoglia le collezioni",
-    "ctaVendor": "Apri il portale partner"
+    "ctaVendor": "Apri il portale partner",
+    "slides": {
+      "living": {
+        "title": "Living",
+        "caption": "Divani, tavolino, mobile TV, poltrona, tappeto, illuminazione ambientale."
+      },
+      "kitchen": {
+        "title": "Dining e cucina",
+        "caption": "Tavolo da pranzo, sedie, sospensioni, isola e mobili cucina."
+      },
+      "office": {
+        "title": "Ufficio",
+        "caption": "Scrivania moderna, sedie ergonomiche, lampade da lavoro e mensole."
+      },
+      "bathroom": {
+        "title": "Bagno e finiture",
+        "caption": "Gres, ceramica, microcemento, sanitari di design, specchi e rubinetteria."
+      },
+      "bedroom": {
+        "title": "Camera",
+        "caption": "Letto, comodini, armadio, panca, illuminazione e tessili per il letto."
+      },
+      "terrace": {
+        "title": "Terrazza e outdoor",
+        "caption": "Dining outdoor, lettini, lounge, ombrellone e illuminazione esterna."
+      },
+      "horeca": {
+        "title": "HoReCa e commerciale",
+        "caption": "Tavoli ristorante, sedie ad alto traffico, lounge, bar e sospensioni."
+      }
+    }
   },
   "features": {
     "ai": {

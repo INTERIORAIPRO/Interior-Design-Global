@@ -9,7 +9,8 @@ export type VendorGroup =
   | "bath"
   | "finishes"
   | "materials"
-  | "tiles";
+  | "tiles"
+  | "textiles";
 
 type VendorSeed = {
   id: string;
@@ -105,6 +106,11 @@ const VENDOR_SEEDS: VendorSeed[] = [
   { id: "porcelanosa-ceramica", brandName: "Porcelanosa Ceramica", storeUrl: "https://www.porcelanosa.com", group: "tiles" },
   { id: "panaria", brandName: "Panaria", storeUrl: "https://www.panaria.it", group: "tiles" },
   { id: "caesar-ceramiche", brandName: "Caesar Ceramiche", storeUrl: "https://www.caesar.it", group: "tiles" },
+  { id: "frette", brandName: "Frette", storeUrl: "https://www.frette.com", group: "textiles" },
+  { id: "brooklinen", brandName: "Brooklinen", storeUrl: "https://www.brooklinen.com", group: "textiles" },
+  { id: "society-limonta", brandName: "Society Limonta", storeUrl: "https://www.societylimonta.com", group: "textiles" },
+  { id: "bedthreads", brandName: "Bedthreads", storeUrl: "https://www.bedthreads.com", group: "textiles" },
+  { id: "zara-home", brandName: "Zara Home", storeUrl: "https://www.zarahome.com", group: "textiles" },
 ];
 
 const GROUP_ACCENT: Record<VendorGroup, string> = {
@@ -117,6 +123,7 @@ const GROUP_ACCENT: Record<VendorGroup, string> = {
   finishes: "#c45c26",
   materials: "#4b5563",
   tiles: "#9a8573",
+  textiles: "#c9b7a6",
 };
 
 export type DedicatedVendorId = (typeof VENDOR_SEEDS)[number]["id"];
@@ -202,6 +209,7 @@ export const VENDOR_GROUP_LABELS: Record<VendorGroup, string> = {
   finishes: "Vopsele Decorative & Finisaje",
   materials: "Plăci PAL/MDF & Materiale",
   tiles: "Gresie & Faianță",
+  textiles: "Textile Dormitor",
 };
 
 export const VENDOR_GROUP_ORDER: VendorGroup[] = [
@@ -214,6 +222,7 @@ export const VENDOR_GROUP_ORDER: VendorGroup[] = [
   "finishes",
   "materials",
   "tiles",
+  "textiles",
 ];
 
 export const DEFAULT_SHIPPING_COUNTRY: ShippingCountryId = "RO";

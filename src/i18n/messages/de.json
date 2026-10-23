@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "Interior Design Global",
-    "description": "Ein internationaler Interior-Marktplatz mit Echtzeit-3D-Studio und Partnerhandel."
+    "title": "DESIGN STUDIO GLOBAL",
+    "description": "Die globale Plattform, um jeden Raum zu gestalten, echte Produkte offizieller Marken zu wählen und direkt nach Hause liefern zu lassen."
   },
   "nav": {
     "marketplace": "Marktplatz",
@@ -20,26 +20,56 @@
     "vendorHint": "Wählen Sie Mix & Match oder eine Marke, die ins Projektland liefert."
   },
   "welcome": {
-    "kicker": "Weltweite Interieurs, ein Studio",
-    "title": "RÃ¤ume gestalten. StÃ¼cke finden. Global liefern.",
-    "subtitle": "Ein mehrsprachiger Marktplatz fÃ¼r MÃ¶bel, Materialien und Licht â€” mit 3D-Engine und Partnerportal.",
+    "kicker": "Weltweite Innen- und Aussenräume, ein Studio",
+    "title": "Räume gestalten. Stücke finden. Global liefern.",
+    "subtitle": "Die globale Plattform, um jeden Raum zu gestalten, echte Produkte offizieller Marken zu wählen und direkt nach Hause liefern zu lassen.",
     "ctaPrimary": "KI-Render starten",
     "ctaStudio": "3D-Studio",
     "ctaSecondary": "Kollektionen entdecken",
-    "ctaVendor": "Partnerportal Ã¶ffnen"
+    "ctaVendor": "Partnerportal öffnen",
+    "slides": {
+      "living": {
+        "title": "Wohnzimmer",
+        "caption": "Sofas, Couchtisch, TV-Möbel, Sessel, Teppich, Ambientebeleuchtung."
+      },
+      "kitchen": {
+        "title": "Essen & Küche",
+        "caption": "Esstisch, Stühle, Pendelleuchten, Insel und Küchenmöbel."
+      },
+      "office": {
+        "title": "Büro",
+        "caption": "Moderner Schreibtisch, ergonomische Stühle, Arbeitsleuchten und Regale."
+      },
+      "bathroom": {
+        "title": "Bad & Oberflächen",
+        "caption": "Fliesen, Keramik, Mikrozement, Design-Sanitär, Spiegel und Armaturen."
+      },
+      "bedroom": {
+        "title": "Schlafzimmer",
+        "caption": "Bett, Nachttische, Schrank, Bank, Beleuchtung und Betttextilien."
+      },
+      "terrace": {
+        "title": "Terrasse & Outdoor",
+        "caption": "Outdoor-Dining, Liegen, Lounge, Sonnenschirm und Aussenbeleuchtung."
+      },
+      "horeca": {
+        "title": "HoReCa & Gewerbe",
+        "caption": "Restauranttische, stark frequentierte Stühle, Lounge, Bar und Pendelleuchten."
+      }
+    }
   },
   "features": {
     "ai": {
       "title": "KI-Raumrender",
-      "body": "Foto laden, Bestehendes behalten, Rest mit Kave Home im Budget fÃ¼llen."
+      "body": "Foto laden, Bestehendes behalten, Rest mit offiziellen Marken im Budget füllen."
     },
     "i18n": {
       "title": "Mehrsprachig gedacht",
-      "body": "Shoppen und gestalten auf Englisch, RumÃ¤nisch, FranzÃ¶sisch, Deutsch, Spanisch und Italienisch."
+      "body": "Shoppen und gestalten auf Englisch, Rumänisch, Französisch, Deutsch, Spanisch und Italienisch."
     },
     "engine": {
-      "title": "Live-3D-Engine",
-      "body": "RÃ¤ume, Materialien und Licht vor dem Kauf oder Listing vorschauen."
+      "title": "Live-3D-Studio",
+      "body": "Räume, Materialien und Licht vor dem Kauf vorschauen."
     },
     "vendors": {
       "title": "Partner-Cockpit",

@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "Interior Design Global",
-    "description": "Une marketplace internationale de design dâ€™intÃ©rieur avec un studio 3D en temps rÃ©el."
+    "title": "DESIGN STUDIO GLOBAL",
+    "description": "La plateforme mondiale pour concevoir n'importe quel espace, choisir de vrais produits de marques officielles et les faire livrer chez vous."
   },
   "nav": {
     "marketplace": "Marketplace",
@@ -20,26 +20,56 @@
     "vendorHint": "Choisissez Mix & Match ou une marque unique qui livre vers la destination du projet."
   },
   "welcome": {
-    "kicker": "Des intÃ©rieurs mondiaux, un seul studio",
-    "title": "Concevez des piÃ¨ces. SourÃ§ez. ExpÃ©diez partout.",
-    "subtitle": "Une marketplace multilingue pour le mobilier, les matÃ©riaux et lâ€™Ã©clairage â€” avec un moteur 3D et un espace partenaires.",
+    "kicker": "Intérieurs et extérieurs mondiaux, un seul studio",
+    "title": "Concevez des pièces. Choisissez. Livrez partout.",
+    "subtitle": "La plateforme mondiale pour concevoir n'importe quel espace, choisir de vrais produits de marques officielles et les faire livrer chez vous.",
     "ctaPrimary": "Lancer le rendu IA",
     "ctaStudio": "Studio 3D",
     "ctaSecondary": "Parcourir les collections",
-    "ctaVendor": "Ouvrir lâ€™espace partenaire"
+    "ctaVendor": "Ouvrir l'espace partenaire",
+    "slides": {
+      "living": {
+        "title": "Salon",
+        "caption": "Canapés, table basse, meuble TV, fauteuil, tapis, éclairage d'ambiance."
+      },
+      "kitchen": {
+        "title": "Salle à manger & Cuisine",
+        "caption": "Table à manger, chaises, suspensions, îlot et mobilier de cuisine."
+      },
+      "office": {
+        "title": "Bureau",
+        "caption": "Bureau moderne, chaises ergonomiques, lampes de travail et étagères."
+      },
+      "bathroom": {
+        "title": "Salle de bain & Finitions",
+        "caption": "Carrelage, faïence, microciment, sanitaires design, miroirs et robinetterie."
+      },
+      "bedroom": {
+        "title": "Chambre",
+        "caption": "Lit, tables de nuit, armoire, banc, éclairage et textiles de lit."
+      },
+      "terrace": {
+        "title": "Terrasse & Outdoor",
+        "caption": "Dining extérieur, transats, lounge, parasol et éclairage outdoor."
+      },
+      "horeca": {
+        "title": "HoReCa & Commercial",
+        "caption": "Tables restaurant, chaises à fort trafic, lounge, bar et suspensions."
+      }
+    }
   },
   "features": {
     "ai": {
-      "title": "Rendu IA de la piÃ¨ce",
-      "body": "Importez une photo, conservez ce que vous aimez, puis complÃ©tez avec Kave Home selon le budget."
+      "title": "Rendu IA de la pièce",
+      "body": "Importez une photo, conservez ce que vous aimez, puis complétez avec des pièces de marques officielles selon le budget."
     },
     "i18n": {
-      "title": "Multilingue dÃ¨s le dÃ©part",
-      "body": "Achetez et crÃ©ez en anglais, roumain, franÃ§ais, allemand, espagnol et italien."
+      "title": "Multilingue dès le départ",
+      "body": "Achetez et créez en anglais, roumain, français, allemand, espagnol et italien."
     },
     "engine": {
-      "title": "Moteur 3D live",
-      "body": "PrÃ©visualisez piÃ¨ces, matÃ©riaux et lumiÃ¨re avant dâ€™acheter ou de publier un produit."
+      "title": "Studio 3D live",
+      "body": "Prévisualisez pièces, matériaux et lumière avant d'acheter."
     },
     "vendors": {
       "title": "Panneau partenaires",

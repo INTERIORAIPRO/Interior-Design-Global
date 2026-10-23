@@ -12,7 +12,6 @@ const links = [
   { href: "/marketplace", key: "marketplace" as const },
   { href: "/ai-studio", key: "aiStudio" as const },
   { href: "/studio", key: "studio" as const },
-  { href: "/vendor", key: "vendors" as const },
   { href: "/returns", key: "returns" as const },
 ];
 

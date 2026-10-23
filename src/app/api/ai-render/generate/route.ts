@@ -52,20 +52,40 @@ function normalizeRoomType(value?: string): RoomKind {
   return "living";
 }
 
-function isDormitorRoom(selectedRoom?: string) {
-  const raw = (selectedRoom ?? "")
+function isDormitorRoom(selectedRoom?: string, roomType?: string) {
+  const raw = `${selectedRoom ?? ""} ${roomType ?? ""}`
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .trim()
     .toLowerCase();
-  return raw === "dormitor";
+  if (
+    raw.includes("birou") ||
+    raw.includes("living") ||
+    raw.includes("sufrager") ||
+    raw.includes("bucat") ||
+    raw.includes("dining") ||
+    raw.includes("baie") ||
+    raw.includes("bath") ||
+    raw.includes("teras") ||
+    raw.includes("office") ||
+    raw.includes("kitchen") ||
+    raw.includes("terrace")
+  ) {
+    return false;
+  }
+  return (
+    selectedRoom === "Dormitor" ||
+    roomType === "bedroom" ||
+    raw === "dormitor" ||
+    raw.includes("dormitor")
+  );
 }
 
-function buildNegativePrompt(selectedRoom?: string) {
+function buildNegativePrompt(selectedRoom?: string, roomType?: string) {
   const artifacts =
     "visual artifacts, jpeg artifacts, compression artifacts, noise, grain, glitches, banding, chromatic aberration, lens flare, motion blur, pixelation, low resolution, oversharpening, halos, ghosting, melted geometry, warped walls, deformed furniture, distorted perspective, extra limbs, extra fingers, duplicate objects, broken edges, CGI look, 3d render, plastic surfaces, fake lighting, oversaturated HDR, muddy textures, watermark, text overlay, logo";
-  if (selectedRoom !== "Dormitor" && !isDormitorRoom(selectedRoom)) {
-    return `${artifacts}, bed, bedroom, nightstand, headboard, duvet, pillows, blanket, bedsheets`;
+  if (!isDormitorRoom(selectedRoom, roomType)) {
+    return `bed, bedroom, nightstand, headboard, duvet, pillows, bedsheets, mattress, ${artifacts}`;
   }
   return artifacts;
 }
@@ -234,7 +254,7 @@ async function runControlNet(
   isBedroom: boolean,
   frame?: { width?: number; height?: number; seed?: number },
 ) {
-  const structureScale = isBedroom ? (keepStructure ? 0.58 : 0.7) : 0.4;
+  const structureScale = isBedroom ? (keepStructure ? 0.58 : 0.7) : 0.35;
   const measured = imageSizeFromDataUrl(dataUrl);
   const width = frame?.width || measured?.width;
   const height = frame?.height || measured?.height;
@@ -364,9 +384,9 @@ export async function POST(request: Request) {
     const selectedPiecesList = (selectedPieces ?? [])
       .map((piece) => String(piece).trim())
       .filter(Boolean);
-    const prompt = `A photorealistic interior photo of a ${roomName} in ${styleName} style, featuring strictly these exact items: ${selectedPiecesList.join(", ")}. Architectural digest quality, clean studio illumination.`;
-    const negativePrompt = buildNegativePrompt(roomName || selectedRoom);
+    const prompt = `A photorealistic interior photo of a ${roomName} in ${styleName} style, containing strictly these exact items: ${selectedPiecesList.join(", ")}.`;
     const room = normalizeRoomType(selectedRoom || roomType);
+    const negativePrompt = buildNegativePrompt(roomName || selectedRoom, roomType || room);
     const brandId = vendorId || selectedBrand;
     const checkedSlots = checkedChecklistSlots(
       selectedSlots,
@@ -387,7 +407,7 @@ export async function POST(request: Request) {
       prompt,
       negativePrompt,
       Boolean(keepStructure),
-      room === "bedroom" || roomName === "Dormitor",
+      isDormitorRoom(roomName || selectedRoom, roomType || room),
       {
         width: Number(imageWidth) || undefined,
         height: Number(imageHeight) || undefined,

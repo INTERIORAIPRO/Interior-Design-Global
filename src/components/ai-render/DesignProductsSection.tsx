@@ -119,13 +119,7 @@ export function DesignProductsSection({
         {products
           .filter((product, index, list) => {
             if (!product.id) return false;
-            if (list.findIndex((item) => item.id === product.id) !== index) return false;
-            const imageUrl = uniqueProductImage(product);
-            if (!imageUrl) return false;
-            const firstWithImage = list.findIndex(
-              (item) => uniqueProductImage(item) === imageUrl,
-            );
-            return firstWithImage === index;
+            return list.findIndex((item) => item.id === product.id) === index;
           })
           .map((product) => {
           const title = product.title || product.name;
@@ -136,19 +130,19 @@ export function DesignProductsSection({
           const imageUrl = uniqueProductImage(product);
           const cardImage = imageUrl;
           const productVendor =
-            getVendor(product.vendorId)?.brandName ?? vendorName;
+            getVendor(product.vendorId)?.brandName ?? product.brand ?? vendorName;
           return (
           <li
             key={product.id}
             className="flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-ink/50"
           >
-            <div className="aspect-[4/3] overflow-hidden bg-white/[0.06]">
+            <div className="aspect-[4/3] overflow-hidden bg-white">
               <CatalogPhoto
                 key={`${product.id}-${cardImage || "placeholder"}`}
                 src={cardImage}
                 alt={title}
-                fallbackColor={product.accentColor}
-                className="h-full w-full bg-white object-contain p-3"
+                fallbackColor="#f5f5f5"
+                className="h-full w-full bg-white object-contain p-4"
               />
             </div>
             <div className="flex flex-1 flex-col p-4">
@@ -169,9 +163,7 @@ export function DesignProductsSection({
                 rel="sponsored noopener noreferrer"
                 className="mt-4 inline-flex justify-center rounded-full border border-brass/50 px-4 py-2.5 text-sm font-medium text-brass hover:bg-brass hover:text-ink"
               >
-                {locale.startsWith("ro")
-                  ? `Vezi pe ${productVendor}`
-                  : t("viewOnVendor", { vendor: productVendor })}
+                {t("viewOnVendor", { vendor: productVendor })}
               </a>
             </div>
           </li>

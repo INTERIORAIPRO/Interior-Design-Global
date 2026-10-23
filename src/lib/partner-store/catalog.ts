@@ -6,13 +6,13 @@
 } from "./types";
 import {
   MIX_VENDOR_ID,
+  furnitureVendors,
   getShippingCountry,
   getVendor,
   vendorShipsTo,
   type ShippingCountryId,
   type VendorId,
 } from "./vendors";
-import { productPhotoById } from "./productPhotos";
 
 export type RoomKind =
   | "living"
@@ -79,108 +79,75 @@ export function isDisplayableProductImage(url?: string | null) {
   return isRealProductPhoto(url);
 }
 
+const SLOT_STUDIO_SHOT: Record<string, string> = {
+  sofa: "/products/studio/sofa.jpg",
+  terraceLounge: "/products/studio/sofa.jpg",
+  table: "/products/studio/table.jpg",
+  diningTable: "/products/studio/table.jpg",
+  terraceTable: "/products/studio/table.jpg",
+  island: "/products/studio/table.jpg",
+  countertop: "/products/studio/table.jpg",
+  desk: "/products/studio/table.jpg",
+  bed: "/products/studio/bed.jpg",
+  nightstand: "/products/studio/nightstand.jpg",
+  pendant: "/products/studio/pendant.jpg",
+  diningPendant: "/products/studio/pendant.jpg",
+  terraceLight: "/products/studio/pendant.jpg",
+  lamp: "/products/studio/lamp.jpg",
+  deskLamp: "/products/studio/lamp.jpg",
+  faucet: "/products/studio/lamp.jpg",
+  rug: "/products/studio/rug.jpg",
+  officeRug: "/products/studio/rug.jpg",
+  tile: "/products/studio/rug.jpg",
+  wallpaper: "/products/studio/rug.jpg",
+  pouf: "/products/studio/pouf.jpg",
+  toilet: "/products/studio/pouf.jpg",
+  tv: "/products/studio/tv.jpg",
+  vanity: "/products/studio/tv.jpg",
+  panels: "/products/studio/tv.jpg",
+  shower: "/products/studio/table.jpg",
+  paint: "/products/studio/rug.jpg",
+  wetPaint: "/products/studio/rug.jpg",
+  officeChair: "/products/studio/pouf.jpg",
+  diningChair: "/products/studio/pouf.jpg",
+  armchair: "/products/studio/pouf.jpg",
+  shelf: "/products/studio/tv.jpg",
+  officeShelf: "/products/studio/tv.jpg",
+  wardrobe: "/products/studio/tv.jpg",
+};
+
 export function studioCatalogImage(
-  product: Pick<PartnerProduct, "name" | "category">,
+  product: Pick<PartnerProduct, "name" | "category" | "slot">,
 ) {
+  if (product.slot && SLOT_STUDIO_SHOT[product.slot]) {
+    return SLOT_STUDIO_SHOT[product.slot];
+  }
   const name = product.name.toLowerCase();
-  if (
-    name.includes("vaz") ||
-    name.includes("vasă") ||
-    name.includes("vase") ||
-    product.category === "decor"
-  ) {
-    return "/products/th-decor-vase-ceramic.jpg";
-  }
-  if (
-    name.includes("tv") ||
-    name.includes("media") ||
-    product.category === "sideboard"
-  ) {
-    return "/products/studio/tv.jpg";
-  }
   if (product.category === "beds" || name.startsWith("pat ") || name.includes("pat ")) {
     return "/products/studio/bed.jpg";
   }
   if (name.includes("noptier")) return "/products/studio/nightstand.jpg";
-  if (
-    name.includes("pendul") ||
-    name.includes("pendant") ||
-    name.includes("suspend")
-  ) {
+  if (name.includes("pendul") || name.includes("suspend")) {
     return "/products/studio/pendant.jpg";
   }
-  if (
-    name.includes("pouf") ||
-    name.includes("puf") ||
-    name.includes("taburet") ||
-    name.includes("banchet") ||
-    name.includes("ottoman")
-  ) {
-    return "/products/studio/pouf.jpg";
-  }
-  if (product.category === "sofas" || name.includes("canapea")) {
+  if (product.category === "sofas" || name.includes("canapea") || name.includes("lounge")) {
     return "/products/studio/sofa.jpg";
   }
-  if (
-    name.includes("cafea") ||
-    name.includes("masut") ||
-    product.category === "tables" ||
-    product.category === "coffee-table"
-  ) {
-    return "/products/studio/table.jpg";
-  }
-  if (product.category === "rugs" || name.includes("covor")) {
+  if (product.category === "rugs" || name.includes("covor") || name.includes("tapet")) {
     return "/products/studio/rug.jpg";
   }
-  if (
-    product.category === "lighting" ||
-    name.includes("lamp") ||
-    name.includes("veioz")
-  ) {
+  if (product.category === "lighting" || name.includes("lamp")) {
     return "/products/studio/lamp.jpg";
   }
-  if (
-    product.category === "bath" ||
-    name.includes("chiuvet") ||
-    name.includes("oglind")
-  ) {
+  if (product.category === "bath" || name.includes("chiuvet") || name.includes("tv")) {
     return "/products/studio/tv.jpg";
-  }
-  if (name.includes("duș") || name.includes("dus") || name.includes("cadă")) {
-    return "/products/studio/table.jpg";
-  }
-  if (product.category === "sanitary" || name.includes("baterie") || name.includes("wc")) {
-    return "/products/studio/lamp.jpg";
-  }
-  if (
-    product.category === "finishes" ||
-    product.category === "materials" ||
-    name.includes("vopsea") ||
-    name.includes("tapet") ||
-    name.includes("panou")
-  ) {
-    return "/products/th-decor-vase-ceramic.jpg";
   }
   return "/products/studio/table.jpg";
 }
 
 export function uniqueProductImage(
-  product: Pick<PartnerProduct, "id" | "imageUrl" | "image" | "name" | "category">,
+  product: Pick<PartnerProduct, "id" | "imageUrl" | "image" | "name" | "category" | "slot">,
 ) {
-  const name = product.name?.toLowerCase() ?? "";
-  if (name.includes("vaz") || name.includes("vasă") || name.includes("vase")) {
-    const vasePhoto = product.id ? productPhotoById[product.id] : "";
-    if (isRealProductPhoto(vasePhoto) && vasePhoto.includes("vase")) return vasePhoto;
-    return "/products/th-decor-vase-ceramic.jpg";
-  }
-  const skuPhoto = product.id ? productPhotoById[product.id] : "";
-  if (isRealProductPhoto(skuPhoto) && !skuPhoto.includes("/studio/")) {
-    return skuPhoto;
-  }
-  const own = [product.imageUrl, product.image].find(
-    (value) => isRealProductPhoto(value) && value && !value.includes("/studio/"),
-  );
-  if (own) return own;
   return studioCatalogImage(product);
 }
 
@@ -211,6 +178,7 @@ function product(input: {
     imageUrl: input.image ?? input.image2d,
     name: input.name,
     category: input.category,
+    slot: input.slot,
   });
   return {
     ...input,
@@ -2382,7 +2350,220 @@ export const partnerProducts: PartnerProduct[] = [
     vendorId: "cleaf",
     affiliateUrl: "https://www.cleaf.it",
   }),
+  ...officialBrandSeeds(),
 ];
+
+function officialBrandSeeds() {
+  const existing = new Set(
+    [
+      "kave-home",
+      "micadoni",
+      "sklum",
+      "westwing",
+      "maisons-du-monde",
+      "ikea",
+      "wayfair",
+      "cb2",
+      "crate-and-barrel",
+      "castlery",
+      "beliani",
+      "boconcept",
+      "porcelanosa",
+      "villeroy-boch",
+      "duravit",
+      "kohler",
+      "grohe",
+      "novacolor",
+      "san-marco",
+      "farrow-ball",
+      "rebel-walls",
+      "benjamin-moore",
+      "egger",
+      "kronospan",
+      "cleaf",
+      "fenix",
+      "cosentino",
+      "flos",
+      "artemide",
+      "lampenwelt",
+      "tom-dixon",
+    ],
+  );
+  return furnitureVendors.flatMap((vendor) => {
+    if (existing.has(vendor.id)) return [];
+    if (vendor.group === "furnitureLuxury" || vendor.group === "furnitureAccessible") {
+      return [
+        product({
+          id: `${vendor.id}-sofa`,
+          sku: `${vendor.badge}-SOFA`,
+          name: `Canapea ${vendor.brandName}`,
+          description: `Canapea ${vendor.brandName}, fotografiată pe fundal alb de studio.`,
+          category: "sofas",
+          image2d: "/products/studio/sofa.jpg",
+          image: "/products/studio/sofa.jpg",
+          accentColor: vendor.accent,
+          styles: ["modern", "contemporary", "minimalist"],
+          rooms: ["living"],
+          slot: "sofa",
+          promptHint: `a ${vendor.brandName} sofa on a white studio background`,
+          price: vendor.group === "furnitureLuxury" ? 2890 : 790,
+          vendorId: vendor.id,
+          affiliateUrl: vendor.storeUrl,
+        }),
+        product({
+          id: `${vendor.id}-table`,
+          sku: `${vendor.badge}-TABLE`,
+          name: `Măsuță ${vendor.brandName}`,
+          description: `Măsuță de cafea ${vendor.brandName}, fundal alb de studio.`,
+          category: "tables",
+          image2d: "/products/studio/table.jpg",
+          image: "/products/studio/table.jpg",
+          accentColor: vendor.accent,
+          styles: ["modern", "contemporary", "scandinavian"],
+          rooms: ["living", "office", "terrace"],
+          slot: "table",
+          promptHint: `a ${vendor.brandName} coffee table, isolated white studio shot`,
+          price: vendor.group === "furnitureLuxury" ? 890 : 249,
+          vendorId: vendor.id,
+          affiliateUrl: vendor.storeUrl,
+        }),
+        product({
+          id: `${vendor.id}-desk`,
+          sku: `${vendor.badge}-DESK`,
+          name: `Birou ${vendor.brandName}`,
+          description: `Birou ${vendor.brandName}, fundal alb de studio.`,
+          category: "tables",
+          image2d: "/products/studio/table.jpg",
+          image: "/products/studio/table.jpg",
+          accentColor: vendor.accent,
+          styles: ["modern", "minimalist", "scandinavian"],
+          rooms: ["office"],
+          slot: "desk",
+          promptHint: `a ${vendor.brandName} home-office desk, white studio product shot`,
+          price: vendor.group === "furnitureLuxury" ? 1290 : 320,
+          vendorId: vendor.id,
+          affiliateUrl: vendor.storeUrl,
+        }),
+      ];
+    }
+    if (vendor.group === "lighting") {
+      return [
+        product({
+          id: `${vendor.id}-pendant`,
+          sku: `${vendor.badge}-PEND`,
+          name: `Pendul ${vendor.brandName}`,
+          description: `Corp iluminat suspendat ${vendor.brandName}, fundal alb de studio.`,
+          category: "lighting",
+          image2d: "/products/studio/pendant.jpg",
+          image: "/products/studio/pendant.jpg",
+          accentColor: vendor.accent,
+          styles: ["modern", "contemporary", "minimalist"],
+          rooms: ["kitchen", "living", "bedroom", "office"],
+          slot: "diningPendant",
+          promptHint: `a ${vendor.brandName} pendant lamp, isolated white studio shot`,
+          price: 540,
+          vendorId: vendor.id,
+          affiliateUrl: vendor.storeUrl,
+        }),
+        product({
+          id: `${vendor.id}-lamp`,
+          sku: `${vendor.badge}-LAMP`,
+          name: `Lampadar ${vendor.brandName}`,
+          description: `Lampadar ${vendor.brandName}, fundal alb de studio.`,
+          category: "lighting",
+          image2d: "/products/studio/lamp.jpg",
+          image: "/products/studio/lamp.jpg",
+          accentColor: vendor.accent,
+          styles: ["modern", "contemporary", "industrial"],
+          rooms: ["living", "office", "bedroom"],
+          slot: "lamp",
+          promptHint: `a ${vendor.brandName} floor lamp, white studio product shot`,
+          price: 420,
+          vendorId: vendor.id,
+          affiliateUrl: vendor.storeUrl,
+        }),
+      ];
+    }
+    if (vendor.group === "bath") {
+      return [
+        product({
+          id: `${vendor.id}-vanity`,
+          sku: `${vendor.badge}-VANITY`,
+          name: `Măschiță chiuvetă ${vendor.brandName}`,
+          description: `Masca chiuvetă ${vendor.brandName}, fundal alb de studio.`,
+          category: "bath",
+          image2d: "/products/studio/tv.jpg",
+          image: "/products/studio/tv.jpg",
+          accentColor: vendor.accent,
+          styles: ["modern", "contemporary", "minimalist"],
+          rooms: ["bathroom"],
+          slot: "vanity",
+          promptHint: `a ${vendor.brandName} bathroom vanity, white studio product shot`,
+          price: 1190,
+          vendorId: vendor.id,
+          affiliateUrl: vendor.storeUrl,
+        }),
+        product({
+          id: `${vendor.id}-faucet`,
+          sku: `${vendor.badge}-TAP`,
+          name: `Baterie sanitară ${vendor.brandName}`,
+          description: `Baterie ${vendor.brandName}, fundal alb de studio.`,
+          category: "sanitary",
+          image2d: "/products/studio/lamp.jpg",
+          image: "/products/studio/lamp.jpg",
+          accentColor: vendor.accent,
+          styles: ["modern", "minimalist", "contemporary"],
+          rooms: ["bathroom", "kitchen"],
+          slot: "faucet",
+          promptHint: `a ${vendor.brandName} chrome faucet, isolated white studio shot`,
+          price: 280,
+          vendorId: vendor.id,
+          affiliateUrl: vendor.storeUrl,
+        }),
+      ];
+    }
+    if (vendor.group === "finishes") {
+      return [
+        product({
+          id: `${vendor.id}-paint`,
+          sku: `${vendor.badge}-PAINT`,
+          name: `Vopsea / tapet ${vendor.brandName}`,
+          description: `Finisaj de perete ${vendor.brandName}, fundal alb de studio.`,
+          category: "finishes",
+          image2d: "/products/studio/rug.jpg",
+          image: "/products/studio/rug.jpg",
+          accentColor: vendor.accent,
+          styles: ["contemporary", "modern", "scandinavian"],
+          rooms: ["living", "bedroom", "office", "kitchen", "bathroom", "terrace"],
+          slot: vendor.brandName.toLowerCase().includes("wall") ? "wallpaper" : "paint",
+          promptHint: `a ${vendor.brandName} wall finish sample, white studio product shot`,
+          price: 68,
+          vendorId: vendor.id,
+          affiliateUrl: vendor.storeUrl,
+        }),
+      ];
+    }
+    return [
+      product({
+        id: `${vendor.id}-panels`,
+        sku: `${vendor.badge}-PANEL`,
+        name: `Panouri / blat ${vendor.brandName}`,
+        description: `Material ${vendor.brandName}, fundal alb de studio.`,
+        category: "materials",
+        image2d: "/products/studio/tv.jpg",
+        image: "/products/studio/tv.jpg",
+        accentColor: vendor.accent,
+        styles: ["modern", "minimalist", "industrial"],
+        rooms: ["living", "kitchen", "bathroom", "office"],
+        slot: vendor.id === "fenix" || vendor.id === "cosentino" ? "countertop" : "panels",
+        promptHint: `a ${vendor.brandName} surface sample, white studio product shot`,
+        price: 96,
+        vendorId: vendor.id,
+        affiliateUrl: vendor.storeUrl,
+      }),
+    ];
+  });
+}
 
 export function productsForDestination(
   countryId: ShippingCountryId,

@@ -16,7 +16,6 @@ export default async function WelcomePage({ params }: WelcomePageProps) {
     { key: "ai", href: "/ai-studio" },
     { key: "i18n", href: "/marketplace" },
     { key: "engine", href: "/studio" },
-    { key: "vendors", href: "/vendor" },
     { key: "returns", href: "/returns" },
   ] as const;
 
@@ -54,12 +53,6 @@ export default async function WelcomePage({ params }: WelcomePageProps) {
               className="rounded-full border border-white/15 px-6 py-3 text-sm text-linen transition hover:border-brass/60 hover:text-brass"
             >
               {t("ctaSecondary")}
-            </Link>
-            <Link
-              href="/vendor"
-              className="rounded-full px-6 py-3 text-sm text-linen/70 underline-offset-4 hover:text-linen hover:underline"
-            >
-              {t("ctaVendor")}
             </Link>
           </div>
         </div>

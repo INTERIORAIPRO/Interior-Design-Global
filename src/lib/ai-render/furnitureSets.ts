@@ -177,5 +177,5 @@ export function buildDynamicRenderPrompt(
 ) {
   const roomName = selectedRoom;
   const piecesText = selectedPieces.join(", ");
-  return `A photorealistic interior photo of a ${roomName} in ${selectedStyle} style, featuring strictly these exact items: ${piecesText}. Architectural digest quality, clean studio illumination.`;
+  return `A photorealistic interior photo of a ${roomName} in ${selectedStyle} style, containing strictly these exact items: ${piecesText}.`;
 }

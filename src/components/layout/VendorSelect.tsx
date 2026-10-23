@@ -1,18 +1,142 @@
 "use client";
 
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useIsMounted } from "@/lib/useIsMounted";
 import { useProjectDestination } from "@/lib/partner-store/ProjectDestinationProvider";
 import {
   MIX_VENDOR_ID,
   VENDOR_GROUP_LABELS,
+  VENDOR_GROUP_ORDER,
+  getVendor,
   type VendorGroup,
+  type VendorId,
 } from "@/lib/partner-store/vendors";
+
+function VendorSearchDropdown({
+  compact = false,
+}: {
+  compact?: boolean;
+}) {
+  const t = useTranslations("commerce");
+  const { vendorId, setVendorId, availableVendors } = useProjectDestination();
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const rootRef = useRef<HTMLDivElement>(null);
+  const selected =
+    vendorId === MIX_VENDOR_ID
+      ? t("mixMatch")
+      : getVendor(vendorId)?.brandName ?? t("mixMatchShort");
+
+  const groups = useMemo(() => {
+    const needle = query.trim().toLowerCase();
+    return VENDOR_GROUP_ORDER.map((group) => {
+      const vendors = availableVendors.filter((vendor) => {
+        if (vendor.group !== group) return false;
+        if (!needle) return true;
+        return (
+          vendor.brandName.toLowerCase().includes(needle) ||
+          vendor.shortName.toLowerCase().includes(needle) ||
+          VENDOR_GROUP_LABELS[group].toLowerCase().includes(needle)
+        );
+      });
+      return { group, vendors };
+    }).filter((entry) => entry.vendors.length > 0);
+  }, [availableVendors, query]);
+
+  useEffect(() => {
+    function onPointer(event: MouseEvent) {
+      if (!rootRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", onPointer);
+    return () => document.removeEventListener("mousedown", onPointer);
+  }, []);
+
+  function choose(id: VendorId) {
+    setVendorId(id);
+    setOpen(false);
+    setQuery("");
+  }
+
+  return (
+    <div ref={rootRef} className={`relative ${compact ? "min-w-[12rem]" : "w-full"}`}>
+      <button
+        type="button"
+        onClick={() => setOpen((value) => !value)}
+        className={`flex w-full items-center justify-between gap-3 rounded-full border px-3 py-2 text-left text-xs tracking-normal outline-none ${
+          compact
+            ? "border-white/15 bg-white/5 text-linen"
+            : "border-white/15 bg-ink/40 text-linen"
+        }`}
+      >
+        <span className="truncate">{selected}</span>
+        <span className="text-linen/45">{open ? "▴" : "▾"}</span>
+      </button>
+      {open ? (
+        <div className="absolute z-50 mt-2 max-h-[22rem] w-[min(100vw-2rem,22rem)] overflow-hidden rounded-2xl border border-white/10 bg-ink shadow-2xl">
+          <div className="border-b border-white/10 p-2">
+            <input
+              autoFocus
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Caută brand (Minotti, Maytoni, Novacolor…)"
+              className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-linen outline-none placeholder:text-linen/35"
+            />
+          </div>
+          <div className="max-h-[18rem] overflow-y-auto p-2">
+            <button
+              type="button"
+              onClick={() => choose(MIX_VENDOR_ID)}
+              className={`mb-2 w-full rounded-xl px-3 py-2 text-left text-sm ${
+                vendorId === MIX_VENDOR_ID
+                  ? "bg-brass text-ink"
+                  : "text-linen/80 hover:bg-white/5"
+              }`}
+            >
+              {t("mixMatch")}
+            </button>
+            {groups.map(({ group, vendors }) => (
+              <div key={group} className="mb-3">
+                <p className="px-2 pb-1 text-[10px] uppercase tracking-[0.16em] text-linen/40">
+                  {VENDOR_GROUP_LABELS[group as VendorGroup]}
+                </p>
+                {vendors.map((vendor) => {
+                  const active = vendorId === vendor.id;
+                  return (
+                    <button
+                      key={vendor.id}
+                      type="button"
+                      onClick={() => choose(vendor.id)}
+                      className={`flex w-full items-center justify-between rounded-xl px-3 py-1.5 text-left text-sm ${
+                        active
+                          ? "bg-brass text-ink"
+                          : "text-linen/80 hover:bg-white/5"
+                      }`}
+                    >
+                      <span>{vendor.brandName}</span>
+                      <span className={active ? "text-ink/60" : "text-linen/35"}>
+                        {vendor.badge}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            ))}
+            {!groups.length ? (
+              <p className="px-3 py-4 text-sm text-linen/50">Niciun brand găsit.</p>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
 
 export function HeaderVendorSelect() {
   const t = useTranslations("commerce");
   const isMounted = useIsMounted();
-  const { vendorId, setVendorId, availableVendors } = useProjectDestination();
 
   if (!isMounted) {
     return (
@@ -25,38 +149,14 @@ export function HeaderVendorSelect() {
   return (
     <label className="flex items-center gap-2 text-xs uppercase tracking-[0.12em] text-linen/60">
       <span className="hidden xl:inline">{t("vendor")}</span>
-      <select
-        value={vendorId}
-        onChange={(event) =>
-          setVendorId(event.target.value as typeof vendorId)
-        }
-        className="max-w-[12rem] rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs tracking-normal text-linen outline-none"
-      >
-        <option value={MIX_VENDOR_ID} className="text-ink">
-          {t("mixMatch")}
-        </option>
-        {(Object.keys(VENDOR_GROUP_LABELS) as VendorGroup[]).map((group) => {
-          const vendors = availableVendors.filter((vendor) => vendor.group === group);
-          if (!vendors.length) return null;
-          return (
-            <optgroup key={group} label={VENDOR_GROUP_LABELS[group]} className="text-ink">
-              {vendors.map((vendor) => (
-                <option key={vendor.id} value={vendor.id} className="text-ink">
-                  {vendor.brandName}
-                </option>
-              ))}
-            </optgroup>
-          );
-        })}
-      </select>
+      <VendorSearchDropdown compact />
     </label>
   );
 }
 
 export function VendorChipBar() {
   const t = useTranslations("commerce");
-  const { vendorId, setVendorId, availableVendors, country } =
-    useProjectDestination();
+  const { country } = useProjectDestination();
 
   return (
     <section className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4">
@@ -71,60 +171,7 @@ export function VendorChipBar() {
           {country.flag} {country.name}
         </p>
       </div>
-      <div className="space-y-4">
-        <div className="flex flex-wrap gap-2">
-        <button
-          type="button"
-          onClick={() => setVendorId(MIX_VENDOR_ID)}
-          className={`inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs font-medium transition ${
-            vendorId === MIX_VENDOR_ID
-              ? "bg-brass text-ink"
-              : "border border-white/15 text-linen/80 hover:border-brass/50"
-          }`}
-        >
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-ink/20 text-[10px]">
-            ALL
-          </span>
-          {t("mixMatch")}
-        </button>
-        </div>
-        {(Object.keys(VENDOR_GROUP_LABELS) as VendorGroup[]).map((group) => {
-          const vendors = availableVendors.filter((vendor) => vendor.group === group);
-          if (!vendors.length) return null;
-          return (
-            <div key={group} className="space-y-2">
-              <p className="text-[10px] uppercase tracking-[0.18em] text-linen/45">
-                {VENDOR_GROUP_LABELS[group]}
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {vendors.map((vendor) => {
-                  const active = vendorId === vendor.id;
-                  return (
-                    <button
-                      key={vendor.id}
-                      type="button"
-                      onClick={() => setVendorId(vendor.id)}
-                      className={`inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs font-medium transition ${
-                        active
-                          ? "bg-brass text-ink"
-                          : "border border-white/15 text-linen/80 hover:border-brass/50"
-                      }`}
-                    >
-                      <span
-                        className="flex h-6 w-6 items-center justify-center rounded-full text-[9px] font-semibold text-ink"
-                        style={{ backgroundColor: vendor.accent }}
-                      >
-                        {vendor.badge}
-                      </span>
-                      {active ? t("exclusive", { brand: vendor.shortName }) : vendor.shortName}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      <VendorSearchDropdown />
     </section>
   );
 }

@@ -28,7 +28,7 @@ export function CatalogPhoto({
       <div
         className={`h-full w-full border border-white/10 ${className ?? ""}`}
         style={{
-          background: `linear-gradient(160deg, ${fallbackColor}55, #1a1612 78%)`,
+          background: fallbackColor || "#f5f5f5",
         }}
         role="img"
         aria-label={alt}

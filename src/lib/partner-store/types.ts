@@ -11,7 +11,11 @@ export type ProductCategory =
   | "rugs"
   | "sideboard"
   | "beds"
-  | "decor";
+  | "decor"
+  | "bath"
+  | "sanitary"
+  | "finishes"
+  | "materials";
 
 export type InteriorStyle =
   | "scandinavian"

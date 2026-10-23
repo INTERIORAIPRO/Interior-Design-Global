@@ -3,7 +3,11 @@
 import { useTranslations } from "next-intl";
 import { useIsMounted } from "@/lib/useIsMounted";
 import { useProjectDestination } from "@/lib/partner-store/ProjectDestinationProvider";
-import { MIX_VENDOR_ID } from "@/lib/partner-store/vendors";
+import {
+  MIX_VENDOR_ID,
+  VENDOR_GROUP_LABELS,
+  type VendorGroup,
+} from "@/lib/partner-store/vendors";
 
 export function HeaderVendorSelect() {
   const t = useTranslations("commerce");
@@ -31,11 +35,19 @@ export function HeaderVendorSelect() {
         <option value={MIX_VENDOR_ID} className="text-ink">
           {t("mixMatch")}
         </option>
-        {availableVendors.map((vendor) => (
-          <option key={vendor.id} value={vendor.id} className="text-ink">
-            {vendor.brandName}
-          </option>
-        ))}
+        {(Object.keys(VENDOR_GROUP_LABELS) as VendorGroup[]).map((group) => {
+          const vendors = availableVendors.filter((vendor) => vendor.group === group);
+          if (!vendors.length) return null;
+          return (
+            <optgroup key={group} label={VENDOR_GROUP_LABELS[group]} className="text-ink">
+              {vendors.map((vendor) => (
+                <option key={vendor.id} value={vendor.id} className="text-ink">
+                  {vendor.brandName}
+                </option>
+              ))}
+            </optgroup>
+          );
+        })}
       </select>
     </label>
   );
@@ -59,7 +71,8 @@ export function VendorChipBar() {
           {country.flag} {country.name}
         </p>
       </div>
-      <div className="flex flex-wrap gap-2">
+      <div className="space-y-4">
+        <div className="flex flex-wrap gap-2">
         <button
           type="button"
           onClick={() => setVendorId(MIX_VENDOR_ID)}
@@ -74,27 +87,41 @@ export function VendorChipBar() {
           </span>
           {t("mixMatch")}
         </button>
-        {availableVendors.map((vendor) => {
-          const active = vendorId === vendor.id;
+        </div>
+        {(Object.keys(VENDOR_GROUP_LABELS) as VendorGroup[]).map((group) => {
+          const vendors = availableVendors.filter((vendor) => vendor.group === group);
+          if (!vendors.length) return null;
           return (
-            <button
-              key={vendor.id}
-              type="button"
-              onClick={() => setVendorId(vendor.id)}
-              className={`inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs font-medium transition ${
-                active
-                  ? "bg-brass text-ink"
-                  : "border border-white/15 text-linen/80 hover:border-brass/50"
-              }`}
-            >
-              <span
-                className="flex h-6 w-6 items-center justify-center rounded-full text-[9px] font-semibold text-ink"
-                style={{ backgroundColor: vendor.accent }}
-              >
-                {vendor.badge}
-              </span>
-              {active ? t("exclusive", { brand: vendor.shortName }) : vendor.shortName}
-            </button>
+            <div key={group} className="space-y-2">
+              <p className="text-[10px] uppercase tracking-[0.18em] text-linen/45">
+                {VENDOR_GROUP_LABELS[group]}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {vendors.map((vendor) => {
+                  const active = vendorId === vendor.id;
+                  return (
+                    <button
+                      key={vendor.id}
+                      type="button"
+                      onClick={() => setVendorId(vendor.id)}
+                      className={`inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs font-medium transition ${
+                        active
+                          ? "bg-brass text-ink"
+                          : "border border-white/15 text-linen/80 hover:border-brass/50"
+                      }`}
+                    >
+                      <span
+                        className="flex h-6 w-6 items-center justify-center rounded-full text-[9px] font-semibold text-ink"
+                        style={{ backgroundColor: vendor.accent }}
+                      >
+                        {vendor.badge}
+                      </span>
+                      {active ? t("exclusive", { brand: vendor.shortName }) : vendor.shortName}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           );
         })}
       </div>

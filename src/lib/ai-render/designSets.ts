@@ -227,6 +227,17 @@ function belongsToRoom(product: PartnerProduct, roomType: RoomKind) {
       !name.includes("noptier")
     );
   }
+  if (roomType === "bathroom") {
+    return (
+      product.category === "bath" ||
+      product.category === "sanitary" ||
+      product.category === "materials" ||
+      product.category === "finishes"
+    );
+  }
+  if (roomType === "terrace") {
+    return product.category !== "beds";
+  }
   return true;
 }
 
@@ -317,6 +328,38 @@ const roomSlots: Record<RoomKind, RoomSlot[]> = {
       id: "lighting",
       required: false,
       match: (product) => product.category === "lighting",
+    },
+  ],
+  bathroom: [
+    {
+      id: "vanity",
+      required: true,
+      match: (product) =>
+        nameOf(product).includes("chiuvet") || product.category === "bath",
+    },
+    {
+      id: "shower",
+      required: true,
+      match: (product) =>
+        nameOf(product).includes("duș") || nameOf(product).includes("dus"),
+    },
+    {
+      id: "faucet",
+      required: true,
+      match: (product) => product.category === "sanitary",
+    },
+  ],
+  terrace: [
+    {
+      id: "lounge",
+      required: true,
+      match: (product) =>
+        product.category === "sofas" || nameOf(product).includes("lounge"),
+    },
+    {
+      id: "table",
+      required: true,
+      match: (product) => product.category === "tables",
     },
   ],
 };

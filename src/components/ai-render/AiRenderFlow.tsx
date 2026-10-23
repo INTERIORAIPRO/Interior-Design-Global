@@ -19,8 +19,9 @@ import {
 import { VendorChipBar } from "@/components/layout/VendorSelect";
 import { extractImageUrl } from "@/lib/ai-render/extractImageUrl";
 import {
-  GLOBAL_CHECKLIST,
+  GLOBAL_FINISHES,
   defaultSelectedSlots,
+  visibleChecklist,
   type PieceSlotId,
 } from "@/lib/ai-render/furniturePieces";
 import { DesignProductsSection } from "./DesignProductsSection";
@@ -32,7 +33,11 @@ const roomLabels: Record<RoomType, string> = {
   bedroom: "Dormitor",
   office: "Birou Acasă",
   kitchen: "Bucătărie / Dining",
+  bathroom: "Baie",
+  terrace: "Terasă",
 };
+
+const finishSlotIds = new Set(GLOBAL_FINISHES.map((option) => option.id));
 
 export function AiRenderFlow() {
   const t = useTranslations("aiRender");
@@ -61,7 +66,7 @@ export function AiRenderFlow() {
     null,
   );
   const [selectedSlots, setSelectedSlots] = useState<PieceSlotId[]>(() =>
-    defaultSelectedSlots(),
+    defaultSelectedSlots("bedroom"),
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
   const previewUrlRef = useRef<string | null>(null);
@@ -71,12 +76,16 @@ export function AiRenderFlow() {
   const activeKey = sceneKey(roomType, style, budget, vendorId, countryId);
   const originalImage = uploadedImage ?? previewUrl;
   const recommendedProducts = renderedProducts ?? [];
+  const checklistOptions = useMemo(
+    () => visibleChecklist(roomType),
+    [roomType],
+  );
   const selectedPieceLabels = useMemo(
     () =>
-      GLOBAL_CHECKLIST.filter((option) => selectedSlots.includes(option.id)).map(
-        (option) => option.label,
-      ),
-    [selectedSlots],
+      checklistOptions
+        .filter((option) => selectedSlots.includes(option.id))
+        .map((option) => option.label),
+    [checklistOptions, selectedSlots],
   );
   const selectedStyleLabel = t(`styles.${style}`);
   const showResult = Boolean(renderedImageUrl) || busy;
@@ -327,7 +336,13 @@ export function AiRenderFlow() {
             <button
               key={type}
               type="button"
-              onClick={() => setRoomType(type)}
+              onClick={() => {
+                setRoomType(type);
+                setSelectedSlots((current) => {
+                  const finishes = current.filter((slot) => finishSlotIds.has(slot));
+                  return [...defaultSelectedSlots(type), ...finishes];
+                });
+              }}
               className={`rounded-full px-4 py-2 text-xs font-medium transition ${
                 roomType === type
                   ? "bg-brass text-ink"
@@ -391,11 +406,11 @@ export function AiRenderFlow() {
           Alege piesele din design
         </p>
         <p className="mb-3 text-sm text-linen/60">
-          Bifează orice combinație. Lista de jos și randarea AI folosesc exact
-          aceste piese din catalogul {activeVendorName}.
+          Bifează piesele camerei plus finisajele globale. Lista de jos și
+          randarea AI folosesc exact aceste piese din catalogul {activeVendorName}.
         </p>
         <div className="flex flex-wrap gap-2">
-          {GLOBAL_CHECKLIST.map((option) => {
+          {checklistOptions.map((option) => {
             const checked = selectedSlots.includes(option.id);
             return (
               <label

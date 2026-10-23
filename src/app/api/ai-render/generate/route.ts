@@ -39,6 +39,12 @@ function normalizeRoomType(value?: string): RoomKind {
   if (raw.includes("kitchen") || raw.includes("bucat") || raw.includes("dining")) {
     return "kitchen";
   }
+  if (raw.includes("baie") || raw.includes("bath")) {
+    return "bathroom";
+  }
+  if (raw.includes("teras") || raw.includes("terrace") || raw.includes("outdoor")) {
+    return "terrace";
+  }
   if (raw.includes("living") || raw.includes("lounge") || raw.includes("sufrager")) {
     return "living";
   }
@@ -59,7 +65,7 @@ function buildNegativePrompt(selectedRoom?: string) {
   const artifacts =
     "visual artifacts, jpeg artifacts, compression artifacts, noise, grain, glitches, banding, chromatic aberration, lens flare, motion blur, pixelation, low resolution, oversharpening, halos, ghosting, melted geometry, warped walls, deformed furniture, distorted perspective, extra limbs, extra fingers, duplicate objects, broken edges, CGI look, 3d render, plastic surfaces, fake lighting, oversaturated HDR, muddy textures, watermark, text overlay, logo";
   if (selectedRoom !== "Dormitor" && !isDormitorRoom(selectedRoom)) {
-    return `${artifacts}, bed, bedroom, nightstand, headboard, pillows, blanket, bedsheets`;
+    return `${artifacts}, bed, bedroom, nightstand, headboard, duvet, pillows, blanket, bedsheets`;
   }
   return artifacts;
 }
@@ -225,9 +231,10 @@ async function runControlNet(
   prompt: string,
   negativePrompt: string,
   keepStructure: boolean,
+  isBedroom: boolean,
   frame?: { width?: number; height?: number; seed?: number },
 ) {
-  const promptStrength = keepStructure ? 0.58 : 0.7;
+  const structureScale = isBedroom ? (keepStructure ? 0.58 : 0.7) : 0.4;
   const measured = imageSizeFromDataUrl(dataUrl);
   const width = frame?.width || measured?.width;
   const height = frame?.height || measured?.height;
@@ -247,7 +254,9 @@ async function runControlNet(
         prompt,
         negative_prompt: negativePrompt,
         guidance_scale: 15,
-        prompt_strength: promptStrength,
+        prompt_strength: structureScale,
+        image_strength: structureScale,
+        controlnet_conditioning_scale: structureScale,
         num_inference_steps: 40,
         ...frameInput,
       },
@@ -269,6 +278,8 @@ async function runControlNet(
       prompt: `${prompt} Avoid: ${negativePrompt}.`,
       image: dataUrl,
       control_image: dataUrl,
+      image_strength: structureScale,
+      controlnet_conditioning_scale: structureScale,
       guidance: 8,
       num_inference_steps: 32,
       output_format: "jpg",
@@ -350,12 +361,18 @@ export async function POST(request: Request) {
     const dataUrl = await freshUserImage(imageUrl);
     const roomName = (selectedRoom || "").trim();
     const styleName = (selectedStyle || style || "").trim();
-    const piecesText = (selectedPieces ?? []).map((piece) => String(piece).trim()).filter(Boolean);
-    const prompt = `A professional photorealistic interior render of a ${roomName} in ${styleName} style, containing strictly these exact furniture pieces: ${piecesText.join(", ")}. Architectural digest style, highly detailed, perfect lighting.`;
+    const selectedPiecesList = (selectedPieces ?? [])
+      .map((piece) => String(piece).trim())
+      .filter(Boolean);
+    const prompt = `A photorealistic interior photo of a ${roomName} in ${styleName} style, featuring strictly these exact items: ${selectedPiecesList.join(", ")}. Architectural digest quality, clean studio illumination.`;
     const negativePrompt = buildNegativePrompt(roomName || selectedRoom);
     const room = normalizeRoomType(selectedRoom || roomType);
     const brandId = vendorId || selectedBrand;
-    const checkedSlots = checkedChecklistSlots(selectedSlots, selectedPieces);
+    const checkedSlots = checkedChecklistSlots(
+      selectedSlots,
+      selectedPieces,
+      room,
+    );
     const selectedSet = resolveFurnitureSet(
       room,
       style || styleName,
@@ -370,6 +387,7 @@ export async function POST(request: Request) {
       prompt,
       negativePrompt,
       Boolean(keepStructure),
+      room === "bedroom" || roomName === "Dormitor",
       {
         width: Number(imageWidth) || undefined,
         height: Number(imageHeight) || undefined,

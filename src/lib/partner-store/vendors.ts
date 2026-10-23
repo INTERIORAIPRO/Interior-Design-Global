@@ -1,5 +1,12 @@
 export const MIX_VENDOR_ID = "mix" as const;
 
+export type VendorGroup =
+  | "furniture"
+  | "bath"
+  | "finishes"
+  | "materials"
+  | "lighting";
+
 export type DedicatedVendorId =
   | "kave-home"
   | "micadoni"
@@ -9,7 +16,29 @@ export type DedicatedVendorId =
   | "ikea"
   | "wayfair"
   | "cb2"
-  | "castlery";
+  | "crate-and-barrel"
+  | "castlery"
+  | "beliani"
+  | "boconcept"
+  | "porcelanosa"
+  | "villeroy-boch"
+  | "duravit"
+  | "kohler"
+  | "grohe"
+  | "novacolor"
+  | "san-marco"
+  | "farrow-ball"
+  | "rebel-walls"
+  | "benjamin-moore"
+  | "egger"
+  | "kronospan"
+  | "cleaf"
+  | "fenix"
+  | "cosentino"
+  | "flos"
+  | "artemide"
+  | "lampenwelt"
+  | "tom-dixon";
 
 export type VendorId = typeof MIX_VENDOR_ID | DedicatedVendorId;
 
@@ -39,6 +68,7 @@ export type FurnitureVendor = {
   shippingLabel: string;
   zones: ShippingZone[];
   storeUrl: string;
+  group: VendorGroup;
 };
 
 export type ShippingCountry = {
@@ -74,6 +104,7 @@ export const furnitureVendors: FurnitureVendor[] = [
     shippingLabel: "Global / EU",
     zones: ["GLOBAL", "EU"],
     storeUrl: "https://kavehome.com",
+    group: "furniture",
   },
   {
     id: "micadoni",
@@ -85,6 +116,7 @@ export const furnitureVendors: FurnitureVendor[] = [
     shippingLabel: "EU",
     zones: ["EU"],
     storeUrl: "https://micadoni.com",
+    group: "furniture",
   },
   {
     id: "sklum",
@@ -96,6 +128,7 @@ export const furnitureVendors: FurnitureVendor[] = [
     shippingLabel: "EU",
     zones: ["EU"],
     storeUrl: "https://www.sklum.com",
+    group: "furniture",
   },
   {
     id: "westwing",
@@ -107,6 +140,7 @@ export const furnitureVendors: FurnitureVendor[] = [
     shippingLabel: "EU",
     zones: ["EU"],
     storeUrl: "https://www.westwing.com",
+    group: "furniture",
   },
   {
     id: "maisons-du-monde",
@@ -118,6 +152,7 @@ export const furnitureVendors: FurnitureVendor[] = [
     shippingLabel: "EU",
     zones: ["EU"],
     storeUrl: "https://www.maisonsdumonde.com",
+    group: "furniture",
   },
   {
     id: "ikea",
@@ -129,6 +164,7 @@ export const furnitureVendors: FurnitureVendor[] = [
     shippingLabel: "Global",
     zones: ["GLOBAL"],
     storeUrl: "https://www.ikea.com",
+    group: "furniture",
   },
   {
     id: "wayfair",
@@ -140,6 +176,7 @@ export const furnitureVendors: FurnitureVendor[] = [
     shippingLabel: "US / UK / DE",
     zones: ["US", "UK"],
     storeUrl: "https://www.wayfair.com",
+    group: "furniture",
   },
   {
     id: "cb2",
@@ -151,6 +188,7 @@ export const furnitureVendors: FurnitureVendor[] = [
     shippingLabel: "US / CA",
     zones: ["US", "CA"],
     storeUrl: "https://www.cb2.com",
+    group: "furniture",
   },
   {
     id: "castlery",
@@ -162,8 +200,281 @@ export const furnitureVendors: FurnitureVendor[] = [
     shippingLabel: "US / AU / SG",
     zones: ["US", "AU", "SG"],
     storeUrl: "https://www.castlery.com",
+    group: "furniture",
+  },
+  {
+    id: "crate-and-barrel",
+    brandName: "Crate & Barrel",
+    shortName: "Crate",
+    badge: "C&B",
+    accent: "#2c2c2c",
+    status: "active",
+    shippingLabel: "US / CA",
+    zones: ["US", "CA"],
+    storeUrl: "https://www.crateandbarrel.com",
+    group: "furniture",
+  },
+  {
+    id: "beliani",
+    brandName: "Beliani",
+    shortName: "Beliani",
+    badge: "BE",
+    accent: "#b08d57",
+    status: "active",
+    shippingLabel: "EU",
+    zones: ["EU"],
+    storeUrl: "https://www.beliani.com",
+    group: "furniture",
+  },
+  {
+    id: "boconcept",
+    brandName: "BoConcept",
+    shortName: "BoConcept",
+    badge: "BC",
+    accent: "#4a4a4a",
+    status: "active",
+    shippingLabel: "Global",
+    zones: ["GLOBAL"],
+    storeUrl: "https://www.boconcept.com",
+    group: "furniture",
+  },
+  {
+    id: "porcelanosa",
+    brandName: "Porcelanosa",
+    shortName: "Porcelanosa",
+    badge: "PO",
+    accent: "#8c7b6b",
+    status: "active",
+    shippingLabel: "Global",
+    zones: ["GLOBAL"],
+    storeUrl: "https://www.porcelanosa.com",
+    group: "bath",
+  },
+  {
+    id: "villeroy-boch",
+    brandName: "Villeroy & Boch",
+    shortName: "Villeroy",
+    badge: "VB",
+    accent: "#1f4e79",
+    status: "active",
+    shippingLabel: "Global",
+    zones: ["GLOBAL"],
+    storeUrl: "https://www.villeroy-boch.com",
+    group: "bath",
+  },
+  {
+    id: "duravit",
+    brandName: "Duravit",
+    shortName: "Duravit",
+    badge: "DU",
+    accent: "#2e2e2e",
+    status: "active",
+    shippingLabel: "Global",
+    zones: ["GLOBAL"],
+    storeUrl: "https://www.duravit.com",
+    group: "bath",
+  },
+  {
+    id: "kohler",
+    brandName: "Kohler",
+    shortName: "Kohler",
+    badge: "KO",
+    accent: "#7a1f1f",
+    status: "active",
+    shippingLabel: "Global",
+    zones: ["GLOBAL"],
+    storeUrl: "https://www.kohler.com",
+    group: "bath",
+  },
+  {
+    id: "grohe",
+    brandName: "Grohe",
+    shortName: "Grohe",
+    badge: "GR",
+    accent: "#c41230",
+    status: "active",
+    shippingLabel: "Global",
+    zones: ["GLOBAL"],
+    storeUrl: "https://www.grohe.com",
+    group: "bath",
+  },
+  {
+    id: "novacolor",
+    brandName: "Novacolor",
+    shortName: "Novacolor",
+    badge: "NC",
+    accent: "#c45c26",
+    status: "active",
+    shippingLabel: "EU",
+    zones: ["EU", "GLOBAL"],
+    storeUrl: "https://www.novacolor.it",
+    group: "finishes",
+  },
+  {
+    id: "san-marco",
+    brandName: "San Marco",
+    shortName: "San Marco",
+    badge: "SM",
+    accent: "#d4a017",
+    status: "active",
+    shippingLabel: "EU",
+    zones: ["EU"],
+    storeUrl: "https://www.san-marco.com",
+    group: "finishes",
+  },
+  {
+    id: "farrow-ball",
+    brandName: "Farrow & Ball",
+    shortName: "Farrow",
+    badge: "FB",
+    accent: "#5b4636",
+    status: "active",
+    shippingLabel: "Global",
+    zones: ["GLOBAL"],
+    storeUrl: "https://www.farrow-ball.com",
+    group: "finishes",
+  },
+  {
+    id: "rebel-walls",
+    brandName: "Rebel Walls",
+    shortName: "Rebel",
+    badge: "RW",
+    accent: "#6b3fa0",
+    status: "active",
+    shippingLabel: "Global",
+    zones: ["GLOBAL"],
+    storeUrl: "https://www.rebelwalls.com",
+    group: "finishes",
+  },
+  {
+    id: "benjamin-moore",
+    brandName: "Benjamin Moore",
+    shortName: "Benjamin",
+    badge: "BM",
+    accent: "#0033a0",
+    status: "active",
+    shippingLabel: "US / CA",
+    zones: ["US", "CA", "GLOBAL"],
+    storeUrl: "https://www.benjaminmoore.com",
+    group: "finishes",
+  },
+  {
+    id: "egger",
+    brandName: "Egger",
+    shortName: "Egger",
+    badge: "EG",
+    accent: "#e87722",
+    status: "active",
+    shippingLabel: "Global",
+    zones: ["GLOBAL"],
+    storeUrl: "https://www.egger.com",
+    group: "materials",
+  },
+  {
+    id: "kronospan",
+    brandName: "Kronospan",
+    shortName: "Kronospan",
+    badge: "KR",
+    accent: "#0b6e4f",
+    status: "active",
+    shippingLabel: "Global",
+    zones: ["GLOBAL"],
+    storeUrl: "https://www.kronospan.com",
+    group: "materials",
+  },
+  {
+    id: "cleaf",
+    brandName: "Cleaf",
+    shortName: "Cleaf",
+    badge: "CL",
+    accent: "#8d6e4c",
+    status: "active",
+    shippingLabel: "EU",
+    zones: ["EU"],
+    storeUrl: "https://www.cleaf.it",
+    group: "materials",
+  },
+  {
+    id: "fenix",
+    brandName: "Fenix",
+    shortName: "Fenix",
+    badge: "FX",
+    accent: "#111111",
+    status: "active",
+    shippingLabel: "Global",
+    zones: ["GLOBAL"],
+    storeUrl: "https://www.fenixforinteriors.com",
+    group: "materials",
+  },
+  {
+    id: "cosentino",
+    brandName: "Cosentino",
+    shortName: "Cosentino",
+    badge: "CO",
+    accent: "#4b5563",
+    status: "active",
+    shippingLabel: "Global",
+    zones: ["GLOBAL"],
+    storeUrl: "https://www.cosentino.com",
+    group: "materials",
+  },
+  {
+    id: "flos",
+    brandName: "Flos",
+    shortName: "Flos",
+    badge: "FL",
+    accent: "#f2f2f2",
+    status: "active",
+    shippingLabel: "Global",
+    zones: ["GLOBAL"],
+    storeUrl: "https://flos.com",
+    group: "lighting",
+  },
+  {
+    id: "artemide",
+    brandName: "Artemide",
+    shortName: "Artemide",
+    badge: "AR",
+    accent: "#c8102e",
+    status: "active",
+    shippingLabel: "Global",
+    zones: ["GLOBAL"],
+    storeUrl: "https://www.artemide.com",
+    group: "lighting",
+  },
+  {
+    id: "lampenwelt",
+    brandName: "Lampenwelt",
+    shortName: "Lampenwelt",
+    badge: "LW",
+    accent: "#ffcd00",
+    status: "active",
+    shippingLabel: "EU",
+    zones: ["EU"],
+    storeUrl: "https://www.lampenwelt.com",
+    group: "lighting",
+  },
+  {
+    id: "tom-dixon",
+    brandName: "Tom Dixon",
+    shortName: "Tom Dixon",
+    badge: "TD",
+    accent: "#c5a572",
+    status: "active",
+    shippingLabel: "Global",
+    zones: ["GLOBAL"],
+    storeUrl: "https://www.tomdixon.net",
+    group: "lighting",
   },
 ];
+
+export const VENDOR_GROUP_LABELS: Record<VendorGroup, string> = {
+  furniture: "Mobilă",
+  bath: "Baie & Sanitare",
+  finishes: "Finisaje & Vopsele",
+  materials: "Plăci & Materiale",
+  lighting: "Iluminat",
+};
 
 export const DEFAULT_SHIPPING_COUNTRY: ShippingCountryId = "RO";
 export const DEFAULT_VENDOR_ID: VendorId = MIX_VENDOR_ID;

@@ -105,7 +105,7 @@ export function resolveFurnitureSet(
   selectedPieces?: string[],
 ) {
   const styleKey = normalizeStyle(style);
-  const wanted = checkedChecklistSlots(selectedSlots, selectedPieces);
+  const wanted = checkedChecklistSlots(selectedSlots, selectedPieces, roomType);
   const seen = new Set<string>();
   const usedImages = new Set<string>();
   const picked: PartnerProduct[] = [];
@@ -177,5 +177,5 @@ export function buildDynamicRenderPrompt(
 ) {
   const roomName = selectedRoom;
   const piecesText = selectedPieces.join(", ");
-  return `A professional photorealistic interior render of a ${roomName} in ${selectedStyle} style, containing strictly these exact furniture pieces: ${piecesText}. Architectural digest style, highly detailed, perfect lighting.`;
+  return `A photorealistic interior photo of a ${roomName} in ${selectedStyle} style, featuring strictly these exact items: ${piecesText}. Architectural digest quality, clean studio illumination.`;
 }

@@ -14,6 +14,7 @@ import {
   type PartnerProduct,
 } from "@/lib/partner-store/catalog";
 import { getVendor } from "@/lib/partner-store/vendors";
+import { useProjectDestination } from "@/lib/partner-store/ProjectDestinationProvider";
 import { budgetRanges, type BudgetTier } from "@/lib/ai-render/designSets";
 
 type DesignProductsSectionProps = {
@@ -31,12 +32,14 @@ export function DesignProductsSection({
 }: DesignProductsSectionProps) {
   const t = useTranslations("aiRender");
   const isMounted = useIsMounted();
+  const { currency } = useProjectDestination();
   const [added, setAdded] = useState(false);
   const total = products.reduce((sum, product) => sum + product.price, 0);
   const totalCurrency = products[0]?.currency ?? "EUR";
   const formattedTotal = formatProductPrice(
     { price: total, currency: totalCurrency },
     locale,
+    currency,
   );
 
   function addSet() {
@@ -154,7 +157,7 @@ export function DesignProductsSection({
               </h3>
               <p className="mt-2 text-sm font-semibold text-brass">
                 {isMounted
-                  ? formatProductPrice(product, locale)
+                  ? formatProductPrice(product, locale, currency)
                   : `${product.price} ${product.currency}`}
               </p>
               <a

@@ -59,6 +59,7 @@ const styleAliases: Record<string, string[]> = {
   midcentury: ["midcentury"],
   japandi: ["japandi", "scandinavian", "minimalist", "minimal"],
   boho: ["boho"],
+  exterior: ["exterior", "contemporary", "modern"],
 };
 
 function productStyleTags(product: PartnerProduct) {

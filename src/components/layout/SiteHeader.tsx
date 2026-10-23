@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
-import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
+import { LocaleCurrencySwitcher } from "@/components/layout/LocaleCurrencySwitcher";
 import { CartNavLink } from "@/components/layout/CartNavLink";
 import { ShippingCountrySelect } from "@/components/layout/ShippingCountrySelect";
 import { HeaderVendorSelect } from "@/components/layout/VendorSelect";
@@ -50,7 +50,7 @@ export function SiteHeader() {
         <div className="flex items-center gap-1.5">
           <ShippingCountrySelect />
           <HeaderVendorSelect />
-          <LocaleSwitcher />
+          <LocaleCurrencySwitcher />
         </div>
       </div>
     </header>

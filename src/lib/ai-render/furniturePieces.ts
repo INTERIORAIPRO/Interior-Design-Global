@@ -44,7 +44,11 @@ export type PieceSlotId =
   | "horecaChair"
   | "horecaTable"
   | "horecaBar"
-  | "horecaLight";
+  | "horecaLight"
+  | "kitchenCabinets"
+  | "terraceDining"
+  | "terraceLounger"
+  | "horecaSofa";
 
 export type PieceOption = {
   id: PieceSlotId;
@@ -60,52 +64,58 @@ export const GLOBAL_FINISHES: PieceOption[] = [
 ];
 
 export const CHECKLIST_BY_ROOM: Record<RoomKind, PieceOption[]> = {
-  bathroom: [
-    { id: "vanity", label: "Măschiță chiuvetă / Oglindă", category: "bath", defaultOn: true },
-    { id: "shower", label: "Duș walk-in / Cadă", category: "bath", defaultOn: true },
-    { id: "faucet", label: "Baterie sanitară", category: "sanitary", defaultOn: true },
-    { id: "toilet", label: "Vas WC / Bidet", category: "sanitary", defaultOn: true },
-    { id: "tile", label: "Placare ceramică / Marmură", category: "materials", defaultOn: false },
-    { id: "wetPaint", label: "Vopsea rezistentă la apă / Microciment", category: "finishes", defaultOn: false },
-  ],
-  office: [
-    { id: "desk", label: "Birou", category: "tables", defaultOn: true },
-    { id: "officeChair", label: "Scaun ergonomic", category: "armchair", defaultOn: true },
-    { id: "deskLamp", label: "Lampă de birou / Lampadar", category: "lighting", defaultOn: true },
-    { id: "officeShelf", label: "Etajeră / Rafturi", category: "decor", defaultOn: false },
-    { id: "rug", label: "Covor", category: "rugs", defaultOn: false },
-  ],
-  kitchen: [
-    { id: "diningTable", label: "Masă Dining", category: "tables", defaultOn: true },
-    { id: "diningChair", label: "Scaune Dining", category: "armchair", defaultOn: true },
-    { id: "diningPendant", label: "Corp iluminat suspendat", category: "lighting", defaultOn: true },
-    { id: "island", label: "Insulă / Scaune de bar", category: "tables", defaultOn: false },
-    { id: "countertop", label: "Blat bucătărie", category: "materials", defaultOn: false },
-  ],
   living: [
     { id: "sofa", label: "Canapea", category: "sofas", defaultOn: true },
     { id: "table", label: "Măsuță de cafea", category: "tables", defaultOn: true },
     { id: "tv", label: "Comodă TV", category: "sideboard", defaultOn: true },
+    { id: "armchair", label: "Fotoliu", category: "armchair", defaultOn: false },
     { id: "lamp", label: "Lampadar", category: "lighting", defaultOn: false },
     { id: "rug", label: "Covor", category: "rugs", defaultOn: false },
+    { id: "shelf", label: "Etajeră / Bibliotecă", category: "decor", defaultOn: false },
   ],
   bedroom: [
     { id: "bed", label: "Pat", category: "beds", defaultOn: true },
     { id: "nightstand", label: "Noptieră", category: "tables", defaultOn: true },
-    { id: "pendant", label: "Corp Iluminat", category: "lighting", defaultOn: true },
+    { id: "wardrobe", label: "Dulap / Șifonier", category: "sideboard", defaultOn: true },
     { id: "pouf", label: "Banchetă / Pouf", category: "decor", defaultOn: false },
+    { id: "pendant", label: "Corp iluminat", category: "lighting", defaultOn: true },
+    { id: "bedding", label: "Cuvertură / Pernițe", category: "decor", defaultOn: false },
+  ],
+  office: [
+    { id: "desk", label: "Birou", category: "tables", defaultOn: true },
+    { id: "officeChair", label: "Scaun ergonomic", category: "armchair", defaultOn: true },
+    { id: "deskLamp", label: "Lampă de birou", category: "lighting", defaultOn: true },
+    { id: "officeShelf", label: "Rafturi / Organizator", category: "decor", defaultOn: false },
+    { id: "rug", label: "Covor", category: "rugs", defaultOn: false },
+    { id: "armchair", label: "Fotoliu", category: "armchair", defaultOn: false },
+  ],
+  kitchen: [
+    { id: "kitchenCabinets", label: "Mobilier bucătărie", category: "sideboard", defaultOn: true },
+    { id: "diningTable", label: "Masă Dining", category: "tables", defaultOn: true },
+    { id: "diningChair", label: "Scaune Dining", category: "armchair", defaultOn: true },
+    { id: "island", label: "Insulă", category: "tables", defaultOn: false },
+    { id: "diningPendant", label: "Corp iluminat suspendat", category: "lighting", defaultOn: true },
+  ],
+  bathroom: [
+    { id: "vanity", label: "Mască chiuvetă / Oglindă", category: "bath", defaultOn: true },
+    { id: "shower", label: "Duș walk-in / Cadă", category: "bath", defaultOn: true },
+    { id: "tile", label: "Gresie / Faianță", category: "materials", defaultOn: true },
+    { id: "faucet", label: "Baterie sanitară", category: "sanitary", defaultOn: true },
+    { id: "toilet", label: "WC / Bidet", category: "sanitary", defaultOn: true },
   ],
   terrace: [
-    { id: "terraceLounge", label: "Lounge exterior", category: "sofas", defaultOn: true },
-    { id: "terraceTable", label: "Măsuță terasă", category: "tables", defaultOn: true },
-    { id: "terraceUmbrella", label: "Umbrela / Pergolă", category: "decor", defaultOn: false },
-    { id: "terraceLight", label: "Iluminat exterior", category: "lighting", defaultOn: false },
+    { id: "terraceDining", label: "Set Dining Exterior", category: "tables", defaultOn: true },
+    { id: "terraceLounger", label: "Șezlonguri", category: "armchair", defaultOn: false },
+    { id: "terraceLounge", label: "Set Lounge / Tec", category: "sofas", defaultOn: true },
+    { id: "terraceUmbrella", label: "Umbrelă / Pergolă", category: "decor", defaultOn: false },
+    { id: "terraceLight", label: "Iluminat outdoor", category: "lighting", defaultOn: false },
   ],
   horeca: [
-    { id: "horecaTable", label: "Mese restaurant", category: "tables", defaultOn: true },
-    { id: "horecaChair", label: "Scaune restaurant", category: "armchair", defaultOn: true },
-    { id: "horecaBar", label: "Bar / tejghea", category: "tables", defaultOn: true },
-    { id: "horecaLight", label: "Iluminat comercial", category: "lighting", defaultOn: false },
+    { id: "horecaTable", label: "Mese Restaurant", category: "tables", defaultOn: true },
+    { id: "horecaChair", label: "Scaune trafic intens", category: "armchair", defaultOn: true },
+    { id: "horecaSofa", label: "Canapele Lounge", category: "sofas", defaultOn: false },
+    { id: "horecaBar", label: "Bar / Scaune bar", category: "tables", defaultOn: true },
+    { id: "horecaLight", label: "Iluminat suspendat", category: "lighting", defaultOn: false },
   ],
 };
 
@@ -230,13 +240,9 @@ export function productMatchesSlot(
     case "nightstand":
       return name.includes("noptier");
     case "pouf":
+      return name.includes("pouf") || name.includes("puf") || name.includes("banchet");
     case "bedding":
-      return (
-        name.includes("pouf") ||
-        name.includes("puf") ||
-        name.includes("banchet") ||
-        name.includes("cuvertur")
-      );
+      return name.includes("cuvertur") || name.includes("perni") || name.includes("bedding");
     case "wardrobe":
       return name.includes("dulap") || name.includes("șifonier") || name.includes("sifonier");
     case "desk":
@@ -247,9 +253,12 @@ export function productMatchesSlot(
       return name.includes("dining") && !name.includes("scaun");
     case "diningChair":
       return name.includes("scaun") && name.includes("dining");
+    case "kitchenCabinets":
+      return name.includes("bucatar") || name.includes("bucătăr") || name.includes("kitchen");
     case "island":
+      return name.includes("insul");
     case "barStool":
-      return name.includes("insul") || (name.includes("bar") && name.includes("scaun"));
+      return name.includes("bar") && name.includes("scaun");
     case "countertop":
       return name.includes("blat") || name.includes("counter") || name.includes("fenix") || name.includes("silestone");
     case "vanity":
@@ -269,11 +278,16 @@ export function productMatchesSlot(
       return name.includes("tapet") || name.includes("fototapet") || name.includes("rebel");
     case "panels":
       return name.includes("panou") || name.includes("pal") || name.includes("mdf") || name.includes("egger");
+    case "terraceDining":
+      return name.includes("dining") && (name.includes("exterior") || name.includes("outdoor") || name.includes("teras"));
+    case "terraceLounger":
+      return name.includes("șezlong") || name.includes("sezlong") || name.includes("lounger");
     case "terraceUmbrella":
       return name.includes("umbrel") || name.includes("pergol");
-    case "terraceLight":
+    case "horecaSofa":
+      return category === "sofas" || name.includes("lounge");
     case "horecaLight":
-      return category === "lighting" || name.includes("iluminat") || name.includes("pendant");
+      return category === "lighting" || name.includes("iluminat") || name.includes("pendant") || name.includes("suspend");
     case "horecaChair":
       return (
         name.includes("restaurant") ||

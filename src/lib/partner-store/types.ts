@@ -27,7 +27,8 @@ export type InteriorStyle =
   | "minimalist"
   | "midcentury"
   | "japandi"
-  | "boho";
+  | "boho"
+  | "exterior";
 
 export type ProductDimensions = {
   widthCm: number;

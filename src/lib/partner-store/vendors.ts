@@ -8,7 +8,8 @@ export type VendorGroup =
   | "lighting"
   | "bath"
   | "finishes"
-  | "materials";
+  | "materials"
+  | "tiles";
 
 type VendorSeed = {
   id: string;
@@ -98,6 +99,12 @@ const VENDOR_SEEDS: VendorSeed[] = [
   { id: "cleaf", brandName: "Cleaf", storeUrl: "https://www.cleaf.it", group: "materials" },
   { id: "fenix", brandName: "Fenix NTM", storeUrl: "https://www.fenixforinteriors.com", group: "materials" },
   { id: "cosentino", brandName: "Cosentino", storeUrl: "https://www.cosentino.com", group: "materials" },
+  { id: "marazzi", brandName: "Marazzi", storeUrl: "https://www.marazzi.it", group: "tiles" },
+  { id: "florim", brandName: "Florim", storeUrl: "https://www.florim.com", group: "tiles" },
+  { id: "iris-ceramica", brandName: "Iris Ceramica", storeUrl: "https://www.irisceramica.com", group: "tiles" },
+  { id: "porcelanosa-ceramica", brandName: "Porcelanosa Ceramica", storeUrl: "https://www.porcelanosa.com", group: "tiles" },
+  { id: "panaria", brandName: "Panaria", storeUrl: "https://www.panaria.it", group: "tiles" },
+  { id: "caesar-ceramiche", brandName: "Caesar Ceramiche", storeUrl: "https://www.caesar.it", group: "tiles" },
 ];
 
 const GROUP_ACCENT: Record<VendorGroup, string> = {
@@ -109,6 +116,7 @@ const GROUP_ACCENT: Record<VendorGroup, string> = {
   bath: "#8c7b6b",
   finishes: "#c45c26",
   materials: "#4b5563",
+  tiles: "#9a8573",
 };
 
 export type DedicatedVendorId = (typeof VENDOR_SEEDS)[number]["id"];
@@ -193,6 +201,7 @@ export const VENDOR_GROUP_LABELS: Record<VendorGroup, string> = {
   bath: "Baie & Sanitare",
   finishes: "Vopsele Decorative & Finisaje",
   materials: "Plăci PAL/MDF & Materiale",
+  tiles: "Gresie & Faianță",
 };
 
 export const VENDOR_GROUP_ORDER: VendorGroup[] = [
@@ -204,6 +213,7 @@ export const VENDOR_GROUP_ORDER: VendorGroup[] = [
   "bath",
   "finishes",
   "materials",
+  "tiles",
 ];
 
 export const DEFAULT_SHIPPING_COUNTRY: ShippingCountryId = "RO";

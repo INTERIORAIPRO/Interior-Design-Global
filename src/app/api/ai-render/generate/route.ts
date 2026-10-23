@@ -118,7 +118,7 @@ function buildNegativePrompt(selectedRoom?: string, roomType?: string) {
   const artifacts =
     "visual artifacts, jpeg artifacts, compression artifacts, noise, grain, glitches, banding, chromatic aberration, lens flare, motion blur, pixelation, low resolution, oversharpening, halos, ghosting, melted geometry, warped walls, deformed furniture, distorted perspective, extra limbs, extra fingers, duplicate objects, broken edges, CGI look, 3d render, plastic surfaces, fake lighting, oversaturated HDR, muddy textures, watermark, text overlay, logo";
   if (!isDormitorRoom(selectedRoom, roomType)) {
-    return `bed, bedroom, nightstand, headboard, duvet, pillows, bedsheets, mattress, ${artifacts}`;
+    return `bed, bedroom, nightstand, headboard, duvet, pillows, ${artifacts}`;
   }
   return artifacts;
 }

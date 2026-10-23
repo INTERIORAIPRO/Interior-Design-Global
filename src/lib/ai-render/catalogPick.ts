@@ -8,7 +8,8 @@ export type InteriorStyle =
   | "industrial"
   | "midcentury"
   | "japandi"
-  | "boho";
+  | "boho"
+  | "exterior";
 
 export const interiorStyles: InteriorStyle[] = [
   "scandinavian",
@@ -19,6 +20,7 @@ export const interiorStyles: InteriorStyle[] = [
   "midcentury",
   "japandi",
   "boho",
+  "exterior",
 ];
 
 const styleAliases: Record<string, string[]> = {
@@ -30,6 +32,7 @@ const styleAliases: Record<string, string[]> = {
   midcentury: ["midcentury"],
   japandi: ["japandi", "scandinavian", "minimalist"],
   boho: ["boho"],
+  exterior: ["exterior", "contemporary", "modern"],
 };
 
 function matchesStyle(product: PartnerProduct, style: string) {

@@ -13,10 +13,12 @@ import {
   type DesignCart,
 } from "@/lib/cart/designCart";
 import { formatProductPrice } from "@/lib/partner-store/catalog";
+import { useProjectDestination } from "@/lib/partner-store/ProjectDestinationProvider";
 
 export function DesignCartView() {
   const t = useTranslations("cart");
   const locale = useLocale();
+  const { currency } = useProjectDestination();
   const [cart, setCart] = useState<DesignCart>(emptyCart());
 
   useEffect(() => {
@@ -61,7 +63,7 @@ export function DesignCartView() {
                     {t("qty", { count: line.quantity })}
                   </p>
                   <p className="mt-1 text-brass">
-                    {formatProductPrice(line, locale)}
+                    {formatProductPrice(line, locale, currency)}
                   </p>
                 </div>
                 <a
@@ -79,7 +81,7 @@ export function DesignCartView() {
             <p className="text-lg">
               <span className="text-linen/60">{t("total")} </span>
               <span className="font-semibold text-brass">
-                {total.toLocaleString(locale)} RON
+                {formatProductPrice({ price: total, currency: cart.lines[0]?.currency ?? "EUR" }, locale, currency)}
               </span>
             </p>
             <button

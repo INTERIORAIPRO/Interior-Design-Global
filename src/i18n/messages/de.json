@@ -87,7 +87,7 @@
     "brushErase": "Radierer",
     "brushSize": "GrÃ¶ÃŸe",
     "continueStyle": "Stil und Budget",
-    "styleTitle": "Stil",
+    "styleTitle": "Innen- / Aussenstil",
     "budgetTitle": "Budget",
     "budgets": {
       "economic": "Economy",
@@ -99,9 +99,13 @@
     "styles": {
       "scandinavian": "Skandinavisch",
       "modern": "Modern",
-      "classic": "Klassisch",
+      "contemporary": "Zeitgenössisch",
+      "minimalist": "Minimalistisch",
       "industrial": "Industrial",
-      "minimal": "Minimal"
+      "midcentury": "Mid-Century",
+      "japandi": "Japandi",
+      "boho": "Boho",
+      "exterior": "Aussen / Landschaft"
     },
     "catalogHint": "{store}: {count} Teile im Budget Â· {spent} RON",
     "generate": "Raum mit KI rendern",

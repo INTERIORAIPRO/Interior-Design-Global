@@ -34,7 +34,7 @@ export function RoomStudio({
 }: RoomStudioProps) {
   const locale = useLocale();
   const t = useTranslations("product");
-  const { catalog } = useProjectDestination();
+  const { catalog, currency } = useProjectDestination();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const selected = selectedId
     ? catalog.find((product) => product.id === selectedId)
@@ -84,7 +84,7 @@ export function RoomStudio({
                 >
                   <span className="block font-medium">{product.name}</span>
                   <span className="mt-1 block text-brass">
-                    {formatProductPrice(product, locale)}
+                    {formatProductPrice(product, locale, currency)}
                   </span>
                 </button>
               </li>

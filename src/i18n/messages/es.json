@@ -87,7 +87,7 @@
     "brushErase": "Borrar",
     "brushSize": "TamaÃ±o",
     "continueStyle": "Estilo y presupuesto",
-    "styleTitle": "Estilo",
+    "styleTitle": "Estilo interior / exterior",
     "budgetTitle": "Presupuesto",
     "budgets": {
       "economic": "EconÃ³mico",
@@ -99,9 +99,13 @@
     "styles": {
       "scandinavian": "Escandinavo",
       "modern": "Moderno",
-      "classic": "ClÃ¡sico",
+      "contemporary": "Contemporáneo",
+      "minimalist": "Minimalista",
       "industrial": "Industrial",
-      "minimal": "Minimal"
+      "midcentury": "Mid-Century",
+      "japandi": "Japandi",
+      "boho": "Boho",
+      "exterior": "Exterior / Paisajismo"
     },
     "catalogHint": "{store}: {count} piezas en presupuesto Â· {spent} RON",
     "generate": "Renderizar la estancia con IA",

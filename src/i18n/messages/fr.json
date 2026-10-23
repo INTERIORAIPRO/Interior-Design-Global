@@ -87,7 +87,7 @@
     "brushErase": "Gomme",
     "brushSize": "Taille",
     "continueStyle": "Style et budget",
-    "styleTitle": "Style",
+    "styleTitle": "Style intérieur / extérieur",
     "budgetTitle": "Budget",
     "budgets": {
       "economic": "Ã‰conomique",
@@ -99,9 +99,13 @@
     "styles": {
       "scandinavian": "Scandinave",
       "modern": "Moderne",
-      "classic": "Classique",
+      "contemporary": "Contemporain",
+      "minimalist": "Minimaliste",
       "industrial": "Industriel",
-      "minimal": "Minimal"
+      "midcentury": "Mid-Century",
+      "japandi": "Japandi",
+      "boho": "Boho",
+      "exterior": "Extérieur / Paysage"
     },
     "catalogHint": "{store} : {count} piÃ¨ces dans le budget Â· {spent} RON",
     "generate": "Rendu de la pièce avec l'IA",

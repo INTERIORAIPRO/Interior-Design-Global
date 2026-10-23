@@ -27,11 +27,11 @@ type RoomType = RoomKind;
 const roomLabels: Record<RoomType, string> = {
   living: "Sufragerie / Living",
   bedroom: "Dormitor",
-  office: "Birou Acasă",
-  kitchen: "Bucătărie / Dining",
+  office: "Birou",
+  kitchen: "Bucătărie & Dining",
   bathroom: "Baie",
-  terrace: "Terasă / Outdoor Space",
-  horeca: "HoReCa / Comercial",
+  terrace: "Terasă & Outdoor",
+  horeca: "HoReCa",
 };
 
 const finishSlotIds = new Set(GLOBAL_FINISHES.map((option) => option.id));

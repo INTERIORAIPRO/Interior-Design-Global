@@ -87,7 +87,7 @@
     "brushErase": "Gumă",
     "brushSize": "Grosime",
     "continueStyle": "Alege stilul și bugetul",
-    "styleTitle": "Stil interior",
+    "styleTitle": "Stil interior / exterior",
     "budgetTitle": "Buget",
     "budgets": {
       "economic": "Economic",
@@ -104,7 +104,8 @@
       "industrial": "Industrial",
       "midcentury": "Mid-Century",
       "japandi": "Japandi",
-      "boho": "Boho"
+      "boho": "Boho",
+      "exterior": "Exterior / Peisagistică"
     },
     "catalogHint": "{store}: {count} piese în buget · {spent} RON",
     "generate": "Randează camera",

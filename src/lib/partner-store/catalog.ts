@@ -13,6 +13,10 @@ import {
   type ShippingCountryId,
   type VendorId,
 } from "./vendors";
+import {
+  convertPrice,
+  isDisplayCurrency,
+} from "@/lib/i18n/displayCurrency";
 
 export type RoomKind =
   | "living"
@@ -118,6 +122,11 @@ const SLOT_STUDIO_SHOT: Record<string, string> = {
   shower: "/products/studio/table.jpg",
   paint: "/products/studio/rug.jpg",
   wetPaint: "/products/studio/rug.jpg",
+  kitchenCabinets: "/products/studio/tv.jpg",
+  terraceDining: "/products/studio/table.jpg",
+  terraceLounger: "/products/studio/pouf.jpg",
+  horecaSofa: "/products/studio/sofa.jpg",
+  bedding: "/products/studio/pouf.jpg",
   officeChair: "/products/studio/pouf.jpg",
   diningChair: "/products/studio/pouf.jpg",
   horecaChair: "/products/studio/pouf.jpg",
@@ -2475,6 +2484,74 @@ function officialBrandSeeds() {
           vendorId: vendor.id,
           affiliateUrl: vendor.storeUrl,
         }),
+        product({
+          id: `${vendor.id}-armchair`,
+          sku: `${vendor.badge}-ARM`,
+          name: `Fotoliu ${vendor.brandName}`,
+          description: `Fotoliu ${vendor.brandName}, fundal alb de studio.`,
+          category: "armchair",
+          image2d: "/products/studio/pouf.jpg",
+          image: "/products/studio/pouf.jpg",
+          accentColor: vendor.accent,
+          styles: ["modern", "contemporary", "scandinavian"],
+          rooms: ["living", "office", "bedroom"],
+          slot: "armchair",
+          promptHint: `a ${vendor.brandName} armchair, white studio product shot`,
+          price: vendor.group === "furnitureLuxury" ? 1290 : 320,
+          vendorId: vendor.id,
+          affiliateUrl: vendor.storeUrl,
+        }),
+        product({
+          id: `${vendor.id}-shelf`,
+          sku: `${vendor.badge}-SHELF`,
+          name: `Etajeră ${vendor.brandName}`,
+          description: `Bibliotecă / etajeră ${vendor.brandName}, fundal alb de studio.`,
+          category: "decor",
+          image2d: "/products/studio/tv.jpg",
+          image: "/products/studio/tv.jpg",
+          accentColor: vendor.accent,
+          styles: ["modern", "scandinavian", "minimalist"],
+          rooms: ["living", "office", "bedroom"],
+          slot: "shelf",
+          promptHint: `a ${vendor.brandName} bookshelf, white studio product shot`,
+          price: vendor.group === "furnitureLuxury" ? 980 : 240,
+          vendorId: vendor.id,
+          affiliateUrl: vendor.storeUrl,
+        }),
+        product({
+          id: `${vendor.id}-wardrobe`,
+          sku: `${vendor.badge}-WARD`,
+          name: `Dulap / Șifonier ${vendor.brandName}`,
+          description: `Șifonier ${vendor.brandName}, fundal alb de studio.`,
+          category: "sideboard",
+          image2d: "/products/studio/tv.jpg",
+          image: "/products/studio/tv.jpg",
+          accentColor: vendor.accent,
+          styles: ["modern", "contemporary", "minimalist"],
+          rooms: ["bedroom"],
+          slot: "wardrobe",
+          promptHint: `a ${vendor.brandName} wardrobe, white studio product shot`,
+          price: vendor.group === "furnitureLuxury" ? 2190 : 590,
+          vendorId: vendor.id,
+          affiliateUrl: vendor.storeUrl,
+        }),
+        product({
+          id: `${vendor.id}-kitchen`,
+          sku: `${vendor.badge}-KIT`,
+          name: `Mobilier bucătărie ${vendor.brandName}`,
+          description: `Mobilier de bucătărie ${vendor.brandName}, fundal alb de studio.`,
+          category: "sideboard",
+          image2d: "/products/studio/tv.jpg",
+          image: "/products/studio/tv.jpg",
+          accentColor: vendor.accent,
+          styles: ["modern", "minimalist", "contemporary"],
+          rooms: ["kitchen"],
+          slot: "kitchenCabinets",
+          promptHint: `a ${vendor.brandName} kitchen cabinet run, white studio product shot`,
+          price: vendor.group === "furnitureLuxury" ? 3490 : 890,
+          vendorId: vendor.id,
+          affiliateUrl: vendor.storeUrl,
+        }),
       ];
     }
     if (vendor.group === "outdoor") {
@@ -2510,6 +2587,40 @@ function officialBrandSeeds() {
           slot: "terraceTable",
           promptHint: `a ${vendor.brandName} outdoor side table, white studio product shot`,
           price: 420,
+          vendorId: vendor.id,
+          affiliateUrl: vendor.storeUrl,
+        }),
+        product({
+          id: `${vendor.id}-outdoor-dining`,
+          sku: `${vendor.badge}-ODINE`,
+          name: `Set dining exterior ${vendor.brandName}`,
+          description: `Masă și scaune outdoor ${vendor.brandName}, fundal alb de studio.`,
+          category: "tables",
+          image2d: "/products/studio/table.jpg",
+          image: "/products/studio/table.jpg",
+          accentColor: vendor.accent,
+          styles: ["contemporary", "modern", "exterior"],
+          rooms: ["terrace"],
+          slot: "terraceDining",
+          promptHint: `a ${vendor.brandName} outdoor dining set, white studio product shot`,
+          price: 1640,
+          vendorId: vendor.id,
+          affiliateUrl: vendor.storeUrl,
+        }),
+        product({
+          id: `${vendor.id}-lounger`,
+          sku: `${vendor.badge}-LOUNG`,
+          name: `Șezlong ${vendor.brandName}`,
+          description: `Șezlong outdoor ${vendor.brandName}, fundal alb de studio.`,
+          category: "armchair",
+          image2d: "/products/studio/pouf.jpg",
+          image: "/products/studio/pouf.jpg",
+          accentColor: vendor.accent,
+          styles: ["contemporary", "modern", "exterior"],
+          rooms: ["terrace"],
+          slot: "terraceLounger",
+          promptHint: `a ${vendor.brandName} sun lounger, white studio product shot`,
+          price: 780,
           vendorId: vendor.id,
           affiliateUrl: vendor.storeUrl,
         }),
@@ -2565,6 +2676,23 @@ function officialBrandSeeds() {
           slot: "horecaBar",
           promptHint: `a ${vendor.brandName} hospitality bar counter, white studio product shot`,
           price: 980,
+          vendorId: vendor.id,
+          affiliateUrl: vendor.storeUrl,
+        }),
+        product({
+          id: `${vendor.id}-horeca-sofa`,
+          sku: `${vendor.badge}-HSOFA`,
+          name: `Canapea lounge ${vendor.brandName}`,
+          description: `Canapea lounge HoReCa ${vendor.brandName}, fundal alb de studio.`,
+          category: "sofas",
+          image2d: "/products/studio/sofa.jpg",
+          image: "/products/studio/sofa.jpg",
+          accentColor: vendor.accent,
+          styles: ["contemporary", "modern", "industrial"],
+          rooms: ["horeca"],
+          slot: "horecaSofa",
+          promptHint: `a ${vendor.brandName} hospitality lounge sofa, white studio product shot`,
+          price: 1490,
           vendorId: vendor.id,
           affiliateUrl: vendor.storeUrl,
         }),
@@ -2641,6 +2769,27 @@ function officialBrandSeeds() {
           slot: "faucet",
           promptHint: `a ${vendor.brandName} chrome faucet, isolated white studio shot`,
           price: 280,
+          vendorId: vendor.id,
+          affiliateUrl: vendor.storeUrl,
+        }),
+      ];
+    }
+    if (vendor.group === "tiles") {
+      return [
+        product({
+          id: `${vendor.id}-tile`,
+          sku: `${vendor.badge}-TILE`,
+          name: `Gresie / faianță ${vendor.brandName}`,
+          description: `Placă ceramică ${vendor.brandName}, fundal alb de studio.`,
+          category: "materials",
+          image2d: "/products/studio/rug.jpg",
+          image: "/products/studio/rug.jpg",
+          accentColor: vendor.accent,
+          styles: ["contemporary", "modern", "minimalist"],
+          rooms: ["bathroom", "kitchen", "living"],
+          slot: "tile",
+          promptHint: `a ${vendor.brandName} porcelain tile sample, white studio product shot`,
+          price: 74,
           vendorId: vendor.id,
           affiliateUrl: vendor.storeUrl,
         }),
@@ -2749,10 +2898,28 @@ export function formatProductDimensions(product: {
 export function formatProductPrice(
   product: { price: number; currency?: string },
   locale = "ro-RO",
+  displayCurrency?: string,
 ) {
-  return new Intl.NumberFormat(locale, {
+  const target = isDisplayCurrency(displayCurrency)
+    ? displayCurrency
+    : isDisplayCurrency(product.currency)
+      ? product.currency
+      : "EUR";
+  const amount = convertPrice(product.price, product.currency, target);
+  const intlLocale = locale.startsWith("ro")
+    ? "ro-RO"
+    : locale.startsWith("de")
+      ? "de-DE"
+      : locale.startsWith("fr")
+        ? "fr-FR"
+        : locale.startsWith("es")
+          ? "es-ES"
+          : locale.startsWith("it")
+            ? "it-IT"
+            : "en-US";
+  return new Intl.NumberFormat(intlLocale, {
     style: "currency",
-    currency: product.currency || "RON",
+    currency: target,
     maximumFractionDigits: 0,
-  }).format(product.price);
+  }).format(amount);
 }

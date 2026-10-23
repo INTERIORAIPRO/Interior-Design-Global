@@ -3,9 +3,9 @@ export const dynamic = 'force-dynamic';
 import { CatalogPhoto } from "@/components/catalog/CatalogPhoto";
 import { setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import { FormattedPrice } from "@/components/commerce/FormattedPrice";
 import {
   formatProductDimensions,
-  formatProductPrice,
   partnerProducts,
   primaryPartnerStore,
   withAffiliateParams,
@@ -49,7 +49,7 @@ export default async function MarketplacePage({ params }: PageProps) {
                 {formatProductDimensions(product)}
               </p>
               <p className="mt-2 text-brass">
-                {formatProductPrice(product, locale)}
+                <FormattedPrice product={product} />
               </p>
               <a
                 href={withAffiliateParams(product.affiliateUrl)}

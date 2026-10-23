@@ -87,7 +87,7 @@
     "brushErase": "Erase",
     "brushSize": "Size",
     "continueStyle": "Choose style and budget",
-    "styleTitle": "Interior style",
+    "styleTitle": "Interior / exterior style",
     "budgetTitle": "Budget",
     "budgets": {
       "economic": "Economy",
@@ -99,9 +99,13 @@
     "styles": {
       "scandinavian": "Scandinavian",
       "modern": "Modern",
-      "classic": "Classic",
+      "contemporary": "Contemporary",
+      "minimalist": "Minimalist",
       "industrial": "Industrial",
-      "minimal": "Minimal"
+      "midcentury": "Mid-Century",
+      "japandi": "Japandi",
+      "boho": "Boho",
+      "exterior": "Exterior / Landscape"
     },
     "catalogHint": "{store}: {count} pieces in budget Â· {spent} RON",
     "generate": "Render the room with AI",

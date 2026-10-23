@@ -25,7 +25,8 @@ function normalizeStyle(style?: string): InteriorStyle {
     style === "industrial" ||
     style === "midcentury" ||
     style === "japandi" ||
-    style === "boho"
+    style === "boho" ||
+    style === "exterior"
   ) {
     return style;
   }

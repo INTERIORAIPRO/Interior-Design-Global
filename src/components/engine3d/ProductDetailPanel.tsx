@@ -9,6 +9,7 @@ import {
   withAffiliateParams,
 } from "@/lib/partner-store/catalog";
 import { getVendor } from "@/lib/partner-store/vendors";
+import { useProjectDestination } from "@/lib/partner-store/ProjectDestinationProvider";
 import type { PartnerProduct } from "@/lib/partner-store/types";
 
 type ProductDetailPanelProps = {
@@ -23,6 +24,7 @@ export function ProductDetailPanel({
   onClose,
 }: ProductDetailPanelProps) {
   const t = useTranslations("product");
+  const { currency } = useProjectDestination();
   const orderUrl = withAffiliateParams(
     officialManufacturerUrl(product.vendorId, product.affiliateUrl),
   );
@@ -58,7 +60,7 @@ export function ProductDetailPanel({
         </div>
         <div className="flex justify-between gap-4">
           <dt className="text-linen/50">{t("price")}</dt>
-          <dd className="text-brass">{formatProductPrice(product, locale)}</dd>
+          <dd className="text-brass">{formatProductPrice(product, locale, currency)}</dd>
         </div>
       </dl>
       <a

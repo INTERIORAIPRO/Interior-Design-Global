@@ -11,11 +11,12 @@ import {
 import { productsForDestination, type PartnerProduct } from "./catalog";
 import {
   DEFAULT_SHIPPING_COUNTRY,
-  DEFAULT_VENDOR_ID,
   MIX_VENDOR_ID,
+  dedicatedBrandIds,
   getShippingCountry,
   isVendorId,
   vendorsForCountry,
+  type DedicatedVendorId,
   type FurnitureVendor,
   type ShippingCountry,
   type ShippingCountryId,
@@ -24,15 +25,20 @@ import {
 
 const COUNTRY_KEY = "idg-shipping-country";
 const VENDOR_KEY = "idg-vendor-id";
+const BRANDS_KEY = "idg-selected-brands";
 
 type ProjectDestinationValue = {
   country: ShippingCountry;
   countryId: ShippingCountryId;
   vendorId: VendorId;
+  selectedBrands: DedicatedVendorId[];
   availableVendors: FurnitureVendor[];
   catalog: PartnerProduct[];
   setCountryId: (id: ShippingCountryId) => void;
   setVendorId: (id: VendorId) => void;
+  toggleBrand: (id: DedicatedVendorId) => void;
+  setSelectedBrands: (ids: DedicatedVendorId[]) => void;
+  clearSelectedBrands: () => void;
 };
 
 const ProjectDestinationContext = createContext<ProjectDestinationValue | null>(
@@ -43,18 +49,28 @@ export function ProjectDestinationProvider({ children }: { children: ReactNode }
   const [countryId, setCountryIdState] = useState<ShippingCountryId>(
     DEFAULT_SHIPPING_COUNTRY,
   );
-  const [vendorId, setVendorIdState] = useState<VendorId>(DEFAULT_VENDOR_ID);
+  const [selectedBrands, setSelectedBrandsState] = useState<DedicatedVendorId[]>(
+    [],
+  );
 
   useEffect(() => {
     try {
       const storedCountry = window.localStorage.getItem(COUNTRY_KEY);
+      const storedBrands = window.localStorage.getItem(BRANDS_KEY);
       const storedVendor = window.localStorage.getItem(VENDOR_KEY);
       if (storedCountry) {
         const match = getShippingCountry(storedCountry);
         setCountryIdState(match.id);
       }
-      if (isVendorId(storedVendor)) {
-        setVendorIdState(storedVendor);
+      if (storedBrands) {
+        const parsed = JSON.parse(storedBrands) as unknown;
+        if (Array.isArray(parsed)) {
+          setSelectedBrandsState(dedicatedBrandIds(parsed.map(String)));
+          return;
+        }
+      }
+      if (isVendorId(storedVendor) && storedVendor !== MIX_VENDOR_ID) {
+        setSelectedBrandsState([storedVendor]);
       }
     } catch {
       /* ignore private-mode storage */
@@ -63,28 +79,32 @@ export function ProjectDestinationProvider({ children }: { children: ReactNode }
 
   const availableVendors = useMemo(
     () => vendorsForCountry(countryId),
-    [countryId],
+  [countryId],
   );
 
+  const effectiveBrands = useMemo(() => {
+    const allowed = new Set(availableVendors.map((vendor) => vendor.id));
+    return selectedBrands.filter((id) => allowed.has(id));
+  }, [availableVendors, selectedBrands]);
+
   const effectiveVendorId = useMemo<VendorId>(() => {
-    if (vendorId === MIX_VENDOR_ID) return MIX_VENDOR_ID;
-    return availableVendors.some((vendor) => vendor.id === vendorId)
-      ? vendorId
-      : MIX_VENDOR_ID;
-  }, [availableVendors, vendorId]);
+    if (effectiveBrands.length === 1) return effectiveBrands[0];
+    return MIX_VENDOR_ID;
+  }, [effectiveBrands]);
 
   useEffect(() => {
     try {
       window.localStorage.setItem(COUNTRY_KEY, countryId);
+      window.localStorage.setItem(BRANDS_KEY, JSON.stringify(effectiveBrands));
       window.localStorage.setItem(VENDOR_KEY, effectiveVendorId);
     } catch {
       /* ignore */
     }
-  }, [countryId, effectiveVendorId]);
+  }, [countryId, effectiveBrands, effectiveVendorId]);
 
   const catalog = useMemo(
-    () => productsForDestination(countryId, effectiveVendorId),
-    [countryId, effectiveVendorId],
+    () => productsForDestination(countryId, effectiveBrands),
+    [countryId, effectiveBrands],
   );
 
   const value = useMemo<ProjectDestinationValue>(
@@ -92,12 +112,28 @@ export function ProjectDestinationProvider({ children }: { children: ReactNode }
       country: getShippingCountry(countryId),
       countryId,
       vendorId: effectiveVendorId,
+      selectedBrands: effectiveBrands,
       availableVendors,
       catalog,
       setCountryId: setCountryIdState,
-      setVendorId: setVendorIdState,
+      setVendorId: (id) => {
+        if (id === MIX_VENDOR_ID) {
+          setSelectedBrandsState([]);
+          return;
+        }
+        setSelectedBrandsState([id as DedicatedVendorId]);
+      },
+      toggleBrand: (id) => {
+        setSelectedBrandsState((current) =>
+          current.includes(id)
+            ? current.filter((item) => item !== id)
+            : [...current, id],
+        );
+      },
+      setSelectedBrands: setSelectedBrandsState,
+      clearSelectedBrands: () => setSelectedBrandsState([]),
     }),
-    [availableVendors, catalog, countryId, effectiveVendorId],
+    [availableVendors, catalog, countryId, effectiveBrands, effectiveVendorId],
   );
 
   return (

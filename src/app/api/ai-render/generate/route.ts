@@ -254,7 +254,8 @@ async function runControlNet(
   isBedroom: boolean,
   frame?: { width?: number; height?: number; seed?: number },
 ) {
-  const structureScale = isBedroom ? (keepStructure ? 0.58 : 0.7) : 0.35;
+  const imageStrength = isBedroom ? (keepStructure ? 0.58 : 0.7) : 0.35;
+  const controlScale = isBedroom ? imageStrength : 0.3;
   const measured = imageSizeFromDataUrl(dataUrl);
   const width = frame?.width || measured?.width;
   const height = frame?.height || measured?.height;
@@ -274,9 +275,9 @@ async function runControlNet(
         prompt,
         negative_prompt: negativePrompt,
         guidance_scale: 15,
-        prompt_strength: structureScale,
-        image_strength: structureScale,
-        controlnet_conditioning_scale: structureScale,
+        prompt_strength: imageStrength,
+        image_strength: imageStrength,
+        controlnet_conditioning_scale: controlScale,
         num_inference_steps: 40,
         ...frameInput,
       },
@@ -298,8 +299,8 @@ async function runControlNet(
       prompt: `${prompt} Avoid: ${negativePrompt}.`,
       image: dataUrl,
       control_image: dataUrl,
-      image_strength: structureScale,
-      controlnet_conditioning_scale: structureScale,
+      image_strength: imageStrength,
+      controlnet_conditioning_scale: controlScale,
       guidance: 8,
       num_inference_steps: 32,
       output_format: "jpg",
@@ -344,6 +345,7 @@ export async function POST(request: Request) {
       style,
       selectedStyle,
       selectedBrand,
+      selectedBrands,
       keepStructure,
       vendorId,
       imageWidth,
@@ -359,6 +361,7 @@ export async function POST(request: Request) {
       style?: string;
       selectedStyle?: string;
       selectedBrand?: string;
+      selectedBrands?: string[];
       keepStructure?: boolean;
       vendorId?: string;
       imageWidth?: number;
@@ -384,10 +387,17 @@ export async function POST(request: Request) {
     const selectedPiecesList = (selectedPieces ?? [])
       .map((piece) => String(piece).trim())
       .filter(Boolean);
-    const prompt = `A photorealistic interior photo of a ${roomName} in ${styleName} style, containing strictly these exact items: ${selectedPiecesList.join(", ")}.`;
+    const isBedroom = isDormitorRoom(roomName || selectedRoom, roomType);
+    const prompt = isBedroom
+      ? `A photorealistic render of a ${roomName} in ${styleName} style, containing strictly: ${selectedPiecesList.join(", ")}.`
+      : `A photorealistic render of a ${roomName} in ${styleName} style, containing strictly: ${selectedPiecesList.join(", ")}. Completely remove any beds or bedroom furniture.`;
     const room = normalizeRoomType(selectedRoom || roomType);
     const negativePrompt = buildNegativePrompt(roomName || selectedRoom, roomType || room);
-    const brandId = vendorId || selectedBrand;
+    const brandIds = [
+      ...(Array.isArray(selectedBrands) ? selectedBrands : []),
+      vendorId,
+      selectedBrand,
+    ].filter((id): id is string => Boolean(id) && id !== "mix");
     const checkedSlots = checkedChecklistSlots(
       selectedSlots,
       selectedPieces,
@@ -396,7 +406,7 @@ export async function POST(request: Request) {
     const selectedSet = resolveFurnitureSet(
       room,
       style || styleName,
-      brandId,
+      brandIds,
       partnerProducts,
       checkedSlots,
       selectedPieces,
@@ -407,7 +417,7 @@ export async function POST(request: Request) {
       prompt,
       negativePrompt,
       Boolean(keepStructure),
-      isDormitorRoom(roomName || selectedRoom, roomType || room),
+      isBedroom,
       {
         width: Number(imageWidth) || undefined,
         height: Number(imageHeight) || undefined,

@@ -2444,6 +2444,23 @@ function officialBrandSeeds() {
           vendorId: vendor.id,
           affiliateUrl: vendor.storeUrl,
         }),
+        product({
+          id: `${vendor.id}-office-chair`,
+          sku: `${vendor.badge}-CHAIR`,
+          name: `Scaun ergonomic ${vendor.brandName}`,
+          description: `Scaun de birou ${vendor.brandName}, fundal alb de studio.`,
+          category: "armchair",
+          image2d: "/products/studio/pouf.jpg",
+          image: "/products/studio/pouf.jpg",
+          accentColor: vendor.accent,
+          styles: ["modern", "minimalist", "contemporary"],
+          rooms: ["office"],
+          slot: "officeChair",
+          promptHint: `a ${vendor.brandName} ergonomic office chair, white studio product shot`,
+          price: vendor.group === "furnitureLuxury" ? 890 : 210,
+          vendorId: vendor.id,
+          affiliateUrl: vendor.storeUrl,
+        }),
       ];
     }
     if (vendor.group === "lighting") {
@@ -2567,14 +2584,19 @@ function officialBrandSeeds() {
 
 export function productsForDestination(
   countryId: ShippingCountryId,
-  vendorId: VendorId = MIX_VENDOR_ID,
+  vendorId: VendorId | VendorId[] = MIX_VENDOR_ID,
 ) {
   const country = getShippingCountry(countryId);
+  const brandIds = (Array.isArray(vendorId) ? vendorId : [vendorId]).filter(
+    (id) => id && id !== MIX_VENDOR_ID,
+  );
   return partnerProducts.filter((product) => {
     const vendor = getVendor(product.vendorId);
     if (!vendor) return false;
     if (!vendorShipsTo(vendor, country)) return false;
-    if (vendorId !== MIX_VENDOR_ID && product.vendorId !== vendorId) return false;
+    if (brandIds.length && !brandIds.includes(product.vendorId as VendorId)) {
+      return false;
+    }
     return true;
   });
 }

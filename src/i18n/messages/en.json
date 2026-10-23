@@ -17,7 +17,7 @@
     "mixMatch": "All vendors (Mix & Match)",
     "mixMatchShort": "Mix & Match",
     "exclusive": "Exclusive {brand}",
-    "vendorHint": "Choose Mix & Match or a single brand that ships to the project destination."
+    "vendorHint": "Select one or more brands. Products and the AI render use only that stock."
   },
   "welcome": {
     "kicker": "Worldwide interiors, one studio",

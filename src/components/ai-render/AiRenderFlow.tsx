@@ -11,11 +11,7 @@ import {
 } from "@/lib/ai-render/designSets";
 import type { PartnerProduct, RoomKind } from "@/lib/partner-store/catalog";
 import { useProjectDestination } from "@/lib/partner-store/ProjectDestinationProvider";
-import {
-  MIX_VENDOR_ID,
-  getActiveVendorName,
-  getVendor,
-} from "@/lib/partner-store/vendors";
+import { selectedBrandsLabel } from "@/lib/partner-store/vendors";
 import { VendorChipBar } from "@/components/layout/VendorSelect";
 import { extractImageUrl } from "@/lib/ai-render/extractImageUrl";
 import {
@@ -43,12 +39,11 @@ export function AiRenderFlow() {
   const t = useTranslations("aiRender");
   const tCommerce = useTranslations("commerce");
   const locale = useLocale();
-  const { vendorId, countryId } = useProjectDestination();
-  const activeVendorName =
-    vendorId === MIX_VENDOR_ID
-      ? tCommerce("mixMatchShort")
-      : getVendor(vendorId)?.brandName ??
-        getActiveVendorName(vendorId, tCommerce("mixMatchShort"));
+  const { vendorId, selectedBrands, countryId } = useProjectDestination();
+  const activeVendorName = selectedBrandsLabel(
+    selectedBrands,
+    tCommerce("mixMatchShort"),
+  );
   const [isMounted, setIsMounted] = useState(false);
   const [roomType, setRoomType] = useState<RoomType>("bedroom");
   const [style, setStyle] = useState<InteriorStyle>("scandinavian");
@@ -73,7 +68,13 @@ export function AiRenderFlow() {
   const generationRef = useRef(0);
   const skipFilterRegenRef = useRef(true);
 
-  const activeKey = sceneKey(roomType, style, budget, vendorId, countryId);
+  const activeKey = sceneKey(
+    roomType,
+    style,
+    budget,
+    selectedBrands.join("+") || vendorId,
+    countryId,
+  );
   const originalImage = uploadedImage ?? previewUrl;
   const recommendedProducts = renderedProducts ?? [];
   const checklistOptions = useMemo(
@@ -98,7 +99,7 @@ export function AiRenderFlow() {
 
   useEffect(() => {
     setRenderedProducts(null);
-  }, [roomType, style, budget, vendorId, selectedSlots]);
+  }, [roomType, style, budget, vendorId, selectedBrands, selectedSlots]);
 
   useEffect(() => {
     setIsMounted(true);
@@ -168,6 +169,7 @@ export function AiRenderFlow() {
           style,
           selectedStyle: selectedStyleLabel,
           selectedBrand: vendorId,
+          selectedBrands,
           budget,
           selectedBudget: budget,
           keepStructure: true,
@@ -251,7 +253,7 @@ export function AiRenderFlow() {
     return () => window.clearTimeout(timer);
     // Filter-driven regeneration: new vendor/style/budget/room/pieces must request a new image.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [vendorId, style, budget, roomType, selectedSlots, hasGeneratedOnce, isMounted]);
+  }, [vendorId, selectedBrands, style, budget, roomType, selectedSlots, hasGeneratedOnce, isMounted]);
 
   function revokePreview() {
     if (previewUrlRef.current?.startsWith("blob:")) {

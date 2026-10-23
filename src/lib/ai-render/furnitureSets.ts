@@ -12,7 +12,7 @@ import {
   type PartnerProduct,
   type RoomKind,
 } from "@/lib/partner-store/catalog";
-import { MIX_VENDOR_ID, getVendor } from "@/lib/partner-store/vendors";
+import { MIX_VENDOR_ID, dedicatedBrandIds, getVendor } from "@/lib/partner-store/vendors";
 
 function normalizeStyle(style?: string): InteriorStyle {
   if (style === "minimal") return "minimalist";
@@ -51,14 +51,19 @@ function styleScore(product: PartnerProduct, style: InteriorStyle) {
 function pickForSlot(
   slot: PieceSlotId,
   style: InteriorStyle,
-  vendorId: string | undefined,
-  _roomType: RoomKind,
+  vendorIds: string[],
   usedIds: Set<string>,
-  usedImages: Set<string>,
   pool: PartnerProduct[],
+  slotIndex: number,
 ) {
   const option = pieceOptionById(slot);
   const catalogPool = partnerProducts.length ? partnerProducts : pool;
+  const brandIds = dedicatedBrandIds(vendorIds);
+  const brandNames = new Set(
+    brandIds
+      .map((id) => getVendor(id)?.brandName)
+      .filter((name): name is string => Boolean(name)),
+  );
   const matches = catalogPool.filter((product) => {
     if (usedIds.has(product.id)) return false;
     if (product.slot === slot) return true;
@@ -68,62 +73,48 @@ function pickForSlot(
     return productMatchesSlot(product, slot);
   });
   if (!matches.length) return undefined;
-  const selectedBrand = vendorId ? getVendor(vendorId)?.brandName : undefined;
-  const brandPool =
-    !vendorId || vendorId === MIX_VENDOR_ID
-      ? matches
-      : matches.filter(
-          (product) =>
-            product.vendorId === vendorId ||
-            (selectedBrand && product.brand === selectedBrand),
-        );
-  const mixFallback = matches.filter((product) => product.vendorId !== vendorId);
-  const ranked = (
-    brandPool.length ? brandPool : mixFallback.length ? mixFallback : matches
-  ).sort((a, b) => {
+  const brandPool = brandIds.length
+    ? matches.filter(
+        (product) =>
+          brandIds.includes(product.vendorId as (typeof brandIds)[number]) ||
+          (product.brand && brandNames.has(product.brand)),
+      )
+    : matches;
+  const ranked = [...brandPool].sort((a, b) => {
+    const preferred = brandIds[slotIndex % Math.max(brandIds.length, 1)];
+    const brandDelta =
+      Number(b.vendorId === preferred) - Number(a.vendorId === preferred);
+    if (brandDelta) return brandDelta;
     const styleDelta = styleScore(b, style) - styleScore(a, style);
     if (styleDelta) return styleDelta;
-    const brandBoost =
-      vendorId && vendorId !== MIX_VENDOR_ID
-        ? Number(b.vendorId === vendorId) - Number(a.vendorId === vendorId)
-        : 0;
-    if (brandBoost) return brandBoost;
     return a.price - b.price;
   });
-  return ranked.find((product) => {
-    const image = uniqueProductImage(product);
-    return !usedImages.has(image);
-  }) ?? ranked[0];
+  return ranked[0];
 }
 
 export function resolveFurnitureSet(
   roomType: RoomKind,
   style: InteriorStyle | string | undefined,
-  vendorId?: string,
+  vendorId?: string | string[],
   pool: PartnerProduct[] = partnerProducts,
   selectedSlots?: PieceSlotId[],
   selectedPieces?: string[],
 ) {
   const styleKey = normalizeStyle(style);
   const wanted = checkedChecklistSlots(selectedSlots, selectedPieces, roomType);
+  const vendorIds = Array.isArray(vendorId)
+    ? vendorId
+    : vendorId && vendorId !== MIX_VENDOR_ID
+      ? [vendorId]
+      : [];
   const seen = new Set<string>();
-  const usedImages = new Set<string>();
   const picked: PartnerProduct[] = [];
-  for (const slot of wanted) {
-    const product = pickForSlot(
-      slot,
-      styleKey,
-      vendorId,
-      roomType,
-      seen,
-      usedImages,
-      pool,
-    );
-    if (!product || seen.has(product.id)) continue;
+  wanted.forEach((slot, index) => {
+    const product = pickForSlot(slot, styleKey, vendorIds, seen, pool, index);
+    if (!product || seen.has(product.id)) return;
     seen.add(product.id);
-    usedImages.add(uniqueProductImage(product));
     picked.push({ ...product, slot });
-  }
+  });
   return picked.slice(0, wanted.length);
 }
 
@@ -177,5 +168,5 @@ export function buildDynamicRenderPrompt(
 ) {
   const roomName = selectedRoom;
   const piecesText = selectedPieces.join(", ");
-  return `A photorealistic interior photo of a ${roomName} in ${selectedStyle} style, containing strictly these exact items: ${piecesText}.`;
+  return `A photorealistic render of a ${roomName} in ${selectedStyle} style, containing strictly: ${piecesText}. Completely remove any beds or bedroom furniture.`;
 }

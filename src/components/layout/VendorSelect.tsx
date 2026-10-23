@@ -5,28 +5,25 @@ import { useTranslations } from "next-intl";
 import { useIsMounted } from "@/lib/useIsMounted";
 import { useProjectDestination } from "@/lib/partner-store/ProjectDestinationProvider";
 import {
-  MIX_VENDOR_ID,
   VENDOR_GROUP_LABELS,
   VENDOR_GROUP_ORDER,
-  getVendor,
+  selectedBrandsLabel,
+  type DedicatedVendorId,
   type VendorGroup,
-  type VendorId,
 } from "@/lib/partner-store/vendors";
 
-function VendorSearchDropdown({
-  compact = false,
-}: {
-  compact?: boolean;
-}) {
+function VendorMultiSelect({ compact = false }: { compact?: boolean }) {
   const t = useTranslations("commerce");
-  const { vendorId, setVendorId, availableVendors } = useProjectDestination();
+  const {
+    selectedBrands,
+    toggleBrand,
+    clearSelectedBrands,
+    availableVendors,
+  } = useProjectDestination();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const rootRef = useRef<HTMLDivElement>(null);
-  const selected =
-    vendorId === MIX_VENDOR_ID
-      ? t("mixMatch")
-      : getVendor(vendorId)?.brandName ?? t("mixMatchShort");
+  const selectedLabel = selectedBrandsLabel(selectedBrands, t("mixMatch"));
 
   const groups = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -54,10 +51,8 @@ function VendorSearchDropdown({
     return () => document.removeEventListener("mousedown", onPointer);
   }, []);
 
-  function choose(id: VendorId) {
-    setVendorId(id);
-    setOpen(false);
-    setQuery("");
+  function toggle(id: DedicatedVendorId) {
+    toggleBrand(id);
   }
 
   return (
@@ -71,55 +66,55 @@ function VendorSearchDropdown({
             : "border-white/15 bg-ink/40 text-linen"
         }`}
       >
-        <span className="truncate">{selected}</span>
+        <span className="truncate">{selectedLabel}</span>
         <span className="text-linen/45">{open ? "▴" : "▾"}</span>
       </button>
       {open ? (
-        <div className="absolute z-50 mt-2 max-h-[22rem] w-[min(100vw-2rem,22rem)] overflow-hidden rounded-2xl border border-white/10 bg-ink shadow-2xl">
+        <div className="absolute z-50 mt-2 max-h-[24rem] w-[min(100vw-2rem,24rem)] overflow-hidden rounded-2xl border border-white/10 bg-ink shadow-2xl">
           <div className="border-b border-white/10 p-2">
             <input
               autoFocus
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Caută brand (Minotti, Maytoni, Novacolor…)"
+              placeholder="Caută și bifează branduri (Eichholtz, Novacolor, Maytoni…)"
               className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-linen outline-none placeholder:text-linen/35"
             />
           </div>
-          <div className="max-h-[18rem] overflow-y-auto p-2">
-            <button
-              type="button"
-              onClick={() => choose(MIX_VENDOR_ID)}
-              className={`mb-2 w-full rounded-xl px-3 py-2 text-left text-sm ${
-                vendorId === MIX_VENDOR_ID
-                  ? "bg-brass text-ink"
-                  : "text-linen/80 hover:bg-white/5"
-              }`}
-            >
+          <div className="max-h-[19rem] overflow-y-auto p-2">
+            <label className="mb-2 flex cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm text-linen/80 hover:bg-white/5">
+              <input
+                type="checkbox"
+                checked={selectedBrands.length === 0}
+                className="accent-brass"
+                onChange={() => clearSelectedBrands()}
+              />
               {t("mixMatch")}
-            </button>
+            </label>
             {groups.map(({ group, vendors }) => (
               <div key={group} className="mb-3">
                 <p className="px-2 pb-1 text-[10px] uppercase tracking-[0.16em] text-linen/40">
                   {VENDOR_GROUP_LABELS[group as VendorGroup]}
                 </p>
                 {vendors.map((vendor) => {
-                  const active = vendorId === vendor.id;
+                  const checked = selectedBrands.includes(vendor.id);
                   return (
-                    <button
+                    <label
                       key={vendor.id}
-                      type="button"
-                      onClick={() => choose(vendor.id)}
-                      className={`flex w-full items-center justify-between rounded-xl px-3 py-1.5 text-left text-sm ${
-                        active
-                          ? "bg-brass text-ink"
-                          : "text-linen/80 hover:bg-white/5"
+                      className={`flex cursor-pointer items-center justify-between rounded-xl px-3 py-1.5 text-sm ${
+                        checked ? "bg-brass/15 text-linen" : "text-linen/80 hover:bg-white/5"
                       }`}
                     >
-                      <span>{vendor.brandName}</span>
-                      <span className={active ? "text-ink/60" : "text-linen/35"}>
-                        {vendor.badge}
+                      <span className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          className="accent-brass"
+                          onChange={() => toggle(vendor.id)}
+                        />
+                        {vendor.brandName}
                       </span>
-                    </button>
+                      <span className="text-linen/35">{vendor.badge}</span>
+                    </label>
                   );
                 })}
               </div>
@@ -149,14 +144,15 @@ export function HeaderVendorSelect() {
   return (
     <label className="flex items-center gap-2 text-xs uppercase tracking-[0.12em] text-linen/60">
       <span className="hidden xl:inline">{t("vendor")}</span>
-      <VendorSearchDropdown compact />
+      <VendorMultiSelect compact />
     </label>
   );
 }
 
 export function VendorChipBar() {
   const t = useTranslations("commerce");
-  const { country } = useProjectDestination();
+  const { country, selectedBrands, toggleBrand, availableVendors } =
+    useProjectDestination();
 
   return (
     <section className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4">
@@ -171,7 +167,25 @@ export function VendorChipBar() {
           {country.flag} {country.name}
         </p>
       </div>
-      <VendorSearchDropdown />
+      {selectedBrands.length ? (
+        <div className="flex flex-wrap gap-2">
+          {selectedBrands.map((id) => {
+            const vendor = availableVendors.find((item) => item.id === id);
+            if (!vendor) return null;
+            return (
+              <button
+                key={id}
+                type="button"
+                onClick={() => toggleBrand(id)}
+                className="rounded-full bg-brass px-3 py-1.5 text-xs text-ink"
+              >
+                {vendor.brandName} ×
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
+      <VendorMultiSelect />
     </section>
   );
 }

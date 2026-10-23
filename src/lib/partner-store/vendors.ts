@@ -203,6 +203,26 @@ export function getActiveVendorName(
   return getVendor(vendorId)?.brandName ?? mixLabel;
 }
 
+export function dedicatedBrandIds(ids?: string[] | null): DedicatedVendorId[] {
+  return [...new Set((ids ?? []).filter((id): id is DedicatedVendorId => {
+    if (!id || id === MIX_VENDOR_ID) return false;
+    return furnitureVendors.some((vendor) => vendor.id === id);
+  }))];
+}
+
+export function selectedBrandsLabel(
+  ids: string[] | null | undefined,
+  mixLabel = "Mix & Match",
+) {
+  const brands = dedicatedBrandIds(ids);
+  if (!brands.length) return mixLabel;
+  const names = brands
+    .map((id) => getVendor(id)?.brandName)
+    .filter((name): name is string => Boolean(name));
+  if (names.length <= 2) return names.join(" + ");
+  return `${names.slice(0, 2).join(", ")} +${names.length - 2}`;
+}
+
 export function vendorShipsTo(
   vendor: FurnitureVendor,
   country: ShippingCountry,

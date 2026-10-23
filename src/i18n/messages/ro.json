@@ -17,7 +17,7 @@
     "mixMatch": "Toți furnizorii (Mix & Match)",
     "mixMatchShort": "Mix & Match",
     "exclusive": "Exclusiv {brand}",
-    "vendorHint": "Alege Mix & Match sau un singur brand care livrează la destinația proiectului."
+    "vendorHint": "Bifează unul sau mai multe branduri. Produsele și randarea folosesc strict stocul selectat."
   },
   "welcome": {
     "kicker": "Interioare globale, un singur studio",

@@ -3,6 +3,8 @@ export const MIX_VENDOR_ID = "mix" as const;
 export type VendorGroup =
   | "furnitureLuxury"
   | "furnitureAccessible"
+  | "outdoor"
+  | "commercial"
   | "lighting"
   | "bath"
   | "finishes"
@@ -24,9 +26,9 @@ const VENDOR_SEEDS: VendorSeed[] = [
   { id: "bb-italia", brandName: "B&B Italia", storeUrl: "https://www.bebitalia.com", group: "furnitureLuxury" },
   { id: "poliform", brandName: "Poliform", storeUrl: "https://www.poliform.it", group: "furnitureLuxury" },
   { id: "boconcept", brandName: "BoConcept", storeUrl: "https://www.boconcept.com", group: "furnitureLuxury" },
-  { id: "restoration-hardware", brandName: "Restoration Hardware", storeUrl: "https://rh.com", group: "furnitureLuxury" },
+  { id: "restoration-hardware", brandName: "Restoration Hardware (RH)", storeUrl: "https://rh.com", group: "furnitureLuxury" },
   { id: "ethan-allen", brandName: "Ethan Allen", storeUrl: "https://www.ethanallen.com", group: "furnitureLuxury" },
-  { id: "dwr", brandName: "Design Within Reach", storeUrl: "https://www.dwr.com", group: "furnitureLuxury" },
+  { id: "dwr", brandName: "Design Within Reach (DWR)", storeUrl: "https://www.dwr.com", group: "furnitureLuxury" },
   { id: "crate-and-barrel", brandName: "Crate & Barrel", storeUrl: "https://www.crateandbarrel.com", group: "furnitureLuxury" },
   { id: "west-elm", brandName: "West Elm", storeUrl: "https://www.westelm.com", group: "furnitureLuxury" },
   { id: "pottery-barn", brandName: "Pottery Barn", storeUrl: "https://www.potterybarn.com", group: "furnitureLuxury" },
@@ -48,6 +50,23 @@ const VENDOR_SEEDS: VendorSeed[] = [
   { id: "freedom-furniture", brandName: "Freedom Furniture", storeUrl: "https://www.freedom.com.au", group: "furnitureAccessible" },
   { id: "home-centre", brandName: "Home Centre", storeUrl: "https://www.homecentre.com", group: "furnitureAccessible" },
   { id: "micadoni", brandName: "Micadoni Home", storeUrl: "https://micadoni.com", group: "furnitureAccessible" },
+  { id: "kettal", brandName: "Kettal", storeUrl: "https://www.kettal.com", group: "outdoor" },
+  { id: "roda", brandName: "Roda", storeUrl: "https://www.rodaonline.com", group: "outdoor" },
+  { id: "tribu", brandName: "Tribu", storeUrl: "https://www.tribu.com", group: "outdoor" },
+  { id: "dedon", brandName: "Dedon", storeUrl: "https://www.dedon.de", group: "outdoor" },
+  { id: "emu", brandName: "Emu", storeUrl: "https://www.emu.it", group: "outdoor" },
+  { id: "vondom", brandName: "Vondom", storeUrl: "https://www.vondom.com", group: "outdoor" },
+  { id: "fermob", brandName: "Fermob", storeUrl: "https://www.fermob.com", group: "outdoor" },
+  { id: "nardi", brandName: "Nardi", storeUrl: "https://www.nardioutdoor.com", group: "outdoor" },
+  { id: "kave-home-outdoor", brandName: "Kave Home Outdoor", storeUrl: "https://kavehome.com", group: "outdoor" },
+  { id: "sklum-outdoor", brandName: "Sklum Outdoor", storeUrl: "https://www.sklum.com", group: "outdoor" },
+  { id: "wayfair-outdoor", brandName: "Wayfair Outdoor", storeUrl: "https://www.wayfair.com", group: "outdoor" },
+  { id: "pedrali", brandName: "Pedrali", storeUrl: "https://www.pedrali.com", group: "commercial" },
+  { id: "scab-design", brandName: "Scab Design", storeUrl: "https://www.scabdesign.com", group: "commercial" },
+  { id: "gervasoni", brandName: "Gervasoni", storeUrl: "https://www.gervasoni1892.com", group: "commercial" },
+  { id: "richmond-commercial", brandName: "Richmond Interiors Commercial", storeUrl: "https://www.richmond-interiors.com", group: "commercial" },
+  { id: "vical-contract", brandName: "Vical Contract", storeUrl: "https://www.vicalhome.com", group: "commercial" },
+  { id: "eichholtz-contract", brandName: "Eichholtz Contract", storeUrl: "https://www.eichholtz.com", group: "commercial" },
   { id: "maytoni", brandName: "Maytoni Lighting", storeUrl: "https://maytoni.com", group: "lighting" },
   { id: "flos", brandName: "Flos", storeUrl: "https://flos.com", group: "lighting" },
   { id: "artemide", brandName: "Artemide", storeUrl: "https://www.artemide.com", group: "lighting" },
@@ -77,13 +96,15 @@ const VENDOR_SEEDS: VendorSeed[] = [
   { id: "egger", brandName: "Egger", storeUrl: "https://www.egger.com", group: "materials" },
   { id: "kronospan", brandName: "Kronospan", storeUrl: "https://www.kronospan.com", group: "materials" },
   { id: "cleaf", brandName: "Cleaf", storeUrl: "https://www.cleaf.it", group: "materials" },
-  { id: "fenix", brandName: "Fenix", storeUrl: "https://www.fenixforinteriors.com", group: "materials" },
+  { id: "fenix", brandName: "Fenix NTM", storeUrl: "https://www.fenixforinteriors.com", group: "materials" },
   { id: "cosentino", brandName: "Cosentino", storeUrl: "https://www.cosentino.com", group: "materials" },
 ];
 
 const GROUP_ACCENT: Record<VendorGroup, string> = {
   furnitureLuxury: "#c4a574",
   furnitureAccessible: "#8a9a84",
+  outdoor: "#6b8f71",
+  commercial: "#7a6a58",
   lighting: "#d9c48a",
   bath: "#8c7b6b",
   finishes: "#c45c26",
@@ -164,17 +185,21 @@ export const furnitureVendors: FurnitureVendor[] = VENDOR_SEEDS.map((seed) => ({
 }));
 
 export const VENDOR_GROUP_LABELS: Record<VendorGroup, string> = {
-  furnitureLuxury: "Mobilă High-End & Luxury",
+  furnitureLuxury: "Mobilă Luxury & High-End",
   furnitureAccessible: "Mobilă Design & Accesibilă",
+  outdoor: "Outdoor & Landscape",
+  commercial: "Commercial & HoReCa",
   lighting: "Iluminat",
   bath: "Baie & Sanitare",
-  finishes: "Finisaje Pereți, Vopsele & Tapet",
+  finishes: "Vopsele Decorative & Finisaje",
   materials: "Plăci PAL/MDF & Materiale",
 };
 
 export const VENDOR_GROUP_ORDER: VendorGroup[] = [
   "furnitureLuxury",
   "furnitureAccessible",
+  "outdoor",
+  "commercial",
   "lighting",
   "bath",
   "finishes",

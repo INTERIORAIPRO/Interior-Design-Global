@@ -30,7 +30,8 @@ const roomLabels: Record<RoomType, string> = {
   office: "Birou Acasă",
   kitchen: "Bucătărie / Dining",
   bathroom: "Baie",
-  terrace: "Terasă",
+  terrace: "Terasă / Outdoor Space",
+  horeca: "HoReCa / Comercial",
 };
 
 const finishSlotIds = new Set(GLOBAL_FINISHES.map((option) => option.id));

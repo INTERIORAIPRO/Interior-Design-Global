@@ -27,17 +27,19 @@ const LOCAL_DEMO_PATH = /sample-room|demo-scene|seed-room|\/ai-render\//i;
 
 const ROOM_SCENE: Record<RoomKind, string> = {
   office:
-    "photorealistic luxury home office, modern writing desk, ergonomic office chair, desk lamp, bookshelves, natural daylight, no bed",
+    "A modern home office with desk and ergonomic chair, bookshelves, task lighting, natural daylight, photorealistic interior photography, no bed",
   kitchen:
-    "photorealistic luxury dining room and kitchen, dining table, dining chairs, pendant lighting over the table, architectural digest, no bed",
+    "A modern kitchen and dining room with dining table, dining chairs and pendant lighting, photorealistic interior photography, no bed",
   living:
-    "photorealistic luxury living room, designer sofa, coffee table, floor lamp, no bed",
+    "A modern living room with designer sofa and coffee table, floor lamp, photorealistic interior photography, no bed",
   bathroom:
-    "photorealistic luxury bathroom, vanity with mirror, walk-in shower, sanitary fittings, no bed",
+    "A luxury bathroom with vanity, walk-in shower and sanitary fittings, photorealistic interior photography, no bed",
   terrace:
-    "photorealistic luxury terrace lounge, outdoor sofa, side table, no bed",
+    "A luxury outdoor terrace with lounge furniture, side table and garden daylight, photorealistic photography, no bed",
+  horeca:
+    "A photorealistic restaurant interior with hospitality dining tables, stacking chairs and a bar counter, commercial lighting, no bed",
   bedroom:
-    "photorealistic luxury bedroom, upholstered bed, nightstand, pendant lighting",
+    "A photorealistic luxury bedroom with upholstered bed, nightstand and pendant lighting",
 };
 
 function normalizeRoomType(value?: string): RoomKind {
@@ -46,6 +48,14 @@ function normalizeRoomType(value?: string): RoomKind {
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .trim();
+  if (
+    raw.includes("horeca") ||
+    raw.includes("comercial") ||
+    raw.includes("commercial") ||
+    raw.includes("restaurant")
+  ) {
+    return "horeca";
+  }
   if (
     raw.includes("office") ||
     raw.includes("birou") ||
@@ -87,7 +97,12 @@ function isDormitorRoom(selectedRoom?: string, roomType?: string) {
     raw.includes("teras") ||
     raw.includes("office") ||
     raw.includes("kitchen") ||
-    raw.includes("terrace")
+    raw.includes("terrace") ||
+    raw.includes("horeca") ||
+    raw.includes("comercial") ||
+    raw.includes("commercial") ||
+    raw.includes("restaurant") ||
+    raw.includes("outdoor")
   ) {
     return false;
   }
@@ -103,7 +118,7 @@ function buildNegativePrompt(selectedRoom?: string, roomType?: string) {
   const artifacts =
     "visual artifacts, jpeg artifacts, compression artifacts, noise, grain, glitches, banding, chromatic aberration, lens flare, motion blur, pixelation, low resolution, oversharpening, halos, ghosting, melted geometry, warped walls, deformed furniture, distorted perspective, extra limbs, extra fingers, duplicate objects, broken edges, CGI look, 3d render, plastic surfaces, fake lighting, oversaturated HDR, muddy textures, watermark, text overlay, logo";
   if (!isDormitorRoom(selectedRoom, roomType)) {
-    return `bed, bedroom, nightstand, duvet, pillows, headboard, ${artifacts}`;
+    return `bed, bedroom, nightstand, headboard, duvet, pillows, bedsheets, mattress, ${artifacts}`;
   }
   return artifacts;
 }
@@ -319,7 +334,7 @@ async function runRoomRender(
   }
 
   const promptStrength = isBedroom ? (keepStructure ? 0.58 : 0.72) : 0.92;
-  const controlScale = isBedroom ? 0.55 : 0.3;
+  const controlScale = isBedroom ? 0.55 : 0.35;
   try {
     const output = await replicate.run(CONTROLNET_MODELS.interior, {
       input: {
@@ -444,8 +459,8 @@ export async function POST(request: Request) {
     const isBedroom = isDormitorRoom(roomName || selectedRoom, roomType || room);
     const scene = ROOM_SCENE[room];
     const prompt = isBedroom
-      ? `A photorealistic render of a ${roomName} in ${styleName} style, ${scene}, containing strictly: ${selectedPiecesList.join(", ")}.`
-      : `A photorealistic render of a ${roomName} in ${styleName} style, ${scene}, containing strictly: ${selectedPiecesList.join(", ")}. Completely remove any beds or bedroom furniture.`;
+      ? `${scene} in ${styleName} style, containing strictly: ${selectedPiecesList.join(", ")}.`
+      : `${scene} in ${styleName} style, containing strictly: ${selectedPiecesList.join(", ")}. Completely remove any beds or bedroom furniture.`;
     const negativePrompt = buildNegativePrompt(roomName || selectedRoom, roomType || room);
     const brandIds = [
       ...(Array.isArray(selectedBrands) ? selectedBrands : []),

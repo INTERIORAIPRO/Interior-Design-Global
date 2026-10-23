@@ -238,6 +238,9 @@ function belongsToRoom(product: PartnerProduct, roomType: RoomKind) {
   if (roomType === "terrace") {
     return product.category !== "beds";
   }
+  if (roomType === "horeca") {
+    return product.category !== "beds" && product.category !== "bath";
+  }
   return true;
 }
 
@@ -360,6 +363,26 @@ const roomSlots: Record<RoomKind, RoomSlot[]> = {
       id: "table",
       required: true,
       match: (product) => product.category === "tables",
+    },
+  ],
+  horeca: [
+    {
+      id: "horecaTable",
+      required: true,
+      match: (product) =>
+        product.category === "tables" || nameOf(product).includes("mas"),
+    },
+    {
+      id: "horecaChair",
+      required: true,
+      match: (product) =>
+        product.category === "armchair" || nameOf(product).includes("scaun"),
+    },
+    {
+      id: "horecaBar",
+      required: false,
+      match: (product) =>
+        nameOf(product).includes("bar") || nameOf(product).includes("tejghea"),
     },
   ],
 };

@@ -40,7 +40,11 @@ export type PieceSlotId =
   | "terraceLounge"
   | "terraceTable"
   | "terraceUmbrella"
-  | "terraceLight";
+  | "terraceLight"
+  | "horecaChair"
+  | "horecaTable"
+  | "horecaBar"
+  | "horecaLight";
 
 export type PieceOption = {
   id: PieceSlotId;
@@ -97,6 +101,12 @@ export const CHECKLIST_BY_ROOM: Record<RoomKind, PieceOption[]> = {
     { id: "terraceUmbrella", label: "Umbrela / Pergolă", category: "decor", defaultOn: false },
     { id: "terraceLight", label: "Iluminat exterior", category: "lighting", defaultOn: false },
   ],
+  horeca: [
+    { id: "horecaTable", label: "Mese restaurant", category: "tables", defaultOn: true },
+    { id: "horecaChair", label: "Scaune restaurant", category: "armchair", defaultOn: true },
+    { id: "horecaBar", label: "Bar / tejghea", category: "tables", defaultOn: true },
+    { id: "horecaLight", label: "Iluminat comercial", category: "lighting", defaultOn: false },
+  ],
 };
 
 export const GLOBAL_CHECKLIST: PieceOption[] = [
@@ -106,6 +116,7 @@ export const GLOBAL_CHECKLIST: PieceOption[] = [
   ...CHECKLIST_BY_ROOM.kitchen,
   ...CHECKLIST_BY_ROOM.bathroom,
   ...CHECKLIST_BY_ROOM.terrace,
+  ...CHECKLIST_BY_ROOM.horeca,
   ...GLOBAL_FINISHES,
 ];
 
@@ -260,6 +271,23 @@ export function productMatchesSlot(
       return name.includes("panou") || name.includes("pal") || name.includes("mdf") || name.includes("egger");
     case "terraceUmbrella":
       return name.includes("umbrel") || name.includes("pergol");
+    case "terraceLight":
+    case "horecaLight":
+      return category === "lighting" || name.includes("iluminat") || name.includes("pendant");
+    case "horecaChair":
+      return (
+        name.includes("restaurant") ||
+        name.includes("horeca") ||
+        (name.includes("scaun") && !name.includes("ergonomic") && !name.includes("birou"))
+      );
+    case "horecaTable":
+      return (
+        name.includes("horeca") ||
+        name.includes("restaurant") ||
+        (name.includes("mas") && !name.includes("cafea") && !name.includes("noptier"))
+      );
+    case "horecaBar":
+      return name.includes("bar") || name.includes("tejghea") || name.includes("insul");
     case "artwork":
       return category === "decor" || name.includes("vaz") || name.includes("tablou");
     default:

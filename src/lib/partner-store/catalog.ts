@@ -20,7 +20,8 @@ export type RoomKind =
   | "office"
   | "kitchen"
   | "bathroom"
-  | "terrace";
+  | "terrace"
+  | "horeca";
 
 export type PartnerProduct = TypedPartnerProduct & {
   rooms: RoomKind[];
@@ -49,22 +50,31 @@ export const primaryPartnerStore: PartnerStore = {
 
 const AFFILIATE_REF = "interior-design-global";
 
-const DISTRIBUTOR_HOSTS = ["thehome.ro", "thehome.com"];
+const DISTRIBUTOR_HOSTS = [
+  "thehome.ro",
+  "thehome.com",
+  "amazon.",
+  "ebay.",
+  "emag.ro",
+  "aliexpress.",
+  "alibaba.",
+];
 
 export function officialManufacturerUrl(vendorId?: string, fallbackUrl?: string) {
   const vendor = getVendor(vendorId);
   if (vendor?.storeUrl) return vendor.storeUrl;
   const fallback = fallbackUrl?.trim() ?? "";
-  if (!fallback) return "https://kavehome.com";
   try {
-    const host = new URL(fallback).hostname.replace(/^www\./, "");
-    if (DISTRIBUTOR_HOSTS.some((blocked) => host.endsWith(blocked))) {
-      return "https://kavehome.com";
+    if (fallback) {
+      const host = new URL(fallback).hostname.replace(/^www\./, "");
+      if (!DISTRIBUTOR_HOSTS.some((blocked) => host.includes(blocked.replace(/\.$/, "")))) {
+        return fallback;
+      }
     }
   } catch {
-    return "https://kavehome.com";
+    /* ignore invalid fallback */
   }
-  return fallback;
+  return "https://kavehome.com";
 }
 
 export function isRealProductPhoto(url?: string | null) {
@@ -110,6 +120,10 @@ const SLOT_STUDIO_SHOT: Record<string, string> = {
   wetPaint: "/products/studio/rug.jpg",
   officeChair: "/products/studio/pouf.jpg",
   diningChair: "/products/studio/pouf.jpg",
+  horecaChair: "/products/studio/pouf.jpg",
+  horecaTable: "/products/studio/table.jpg",
+  horecaBar: "/products/studio/table.jpg",
+  horecaLight: "/products/studio/pendant.jpg",
   armchair: "/products/studio/pouf.jpg",
   shelf: "/products/studio/tv.jpg",
   officeShelf: "/products/studio/tv.jpg",
@@ -2458,6 +2472,99 @@ function officialBrandSeeds() {
           slot: "officeChair",
           promptHint: `a ${vendor.brandName} ergonomic office chair, white studio product shot`,
           price: vendor.group === "furnitureLuxury" ? 890 : 210,
+          vendorId: vendor.id,
+          affiliateUrl: vendor.storeUrl,
+        }),
+      ];
+    }
+    if (vendor.group === "outdoor") {
+      return [
+        product({
+          id: `${vendor.id}-lounge`,
+          sku: `${vendor.badge}-LOUNGE`,
+          name: `Lounge exterior ${vendor.brandName}`,
+          description: `Canapea outdoor ${vendor.brandName}, fundal alb de studio.`,
+          category: "sofas",
+          image2d: "/products/studio/sofa.jpg",
+          image: "/products/studio/sofa.jpg",
+          accentColor: vendor.accent,
+          styles: ["contemporary", "modern", "minimalist"],
+          rooms: ["terrace"],
+          slot: "terraceLounge",
+          promptHint: `a ${vendor.brandName} outdoor lounge sofa, white studio product shot`,
+          price: 1890,
+          vendorId: vendor.id,
+          affiliateUrl: vendor.storeUrl,
+        }),
+        product({
+          id: `${vendor.id}-outdoor-table`,
+          sku: `${vendor.badge}-OTABLE`,
+          name: `Măsuță terasă ${vendor.brandName}`,
+          description: `Măsuță outdoor ${vendor.brandName}, fundal alb de studio.`,
+          category: "tables",
+          image2d: "/products/studio/table.jpg",
+          image: "/products/studio/table.jpg",
+          accentColor: vendor.accent,
+          styles: ["modern", "contemporary", "minimalist"],
+          rooms: ["terrace"],
+          slot: "terraceTable",
+          promptHint: `a ${vendor.brandName} outdoor side table, white studio product shot`,
+          price: 420,
+          vendorId: vendor.id,
+          affiliateUrl: vendor.storeUrl,
+        }),
+      ];
+    }
+    if (vendor.group === "commercial") {
+      return [
+        product({
+          id: `${vendor.id}-horeca-chair`,
+          sku: `${vendor.badge}-HCHAIR`,
+          name: `Scaun restaurant ${vendor.brandName}`,
+          description: `Scaun HoReCa ${vendor.brandName}, fundal alb de studio.`,
+          category: "armchair",
+          image2d: "/products/studio/pouf.jpg",
+          image: "/products/studio/pouf.jpg",
+          accentColor: vendor.accent,
+          styles: ["modern", "contemporary", "minimalist"],
+          rooms: ["horeca", "kitchen"],
+          slot: "horecaChair",
+          promptHint: `a ${vendor.brandName} restaurant stacking chair, white studio product shot`,
+          price: 290,
+          vendorId: vendor.id,
+          affiliateUrl: vendor.storeUrl,
+        }),
+        product({
+          id: `${vendor.id}-horeca-table`,
+          sku: `${vendor.badge}-HTABLE`,
+          name: `Masă HoReCa ${vendor.brandName}`,
+          description: `Masă comercială ${vendor.brandName}, fundal alb de studio.`,
+          category: "tables",
+          image2d: "/products/studio/table.jpg",
+          image: "/products/studio/table.jpg",
+          accentColor: vendor.accent,
+          styles: ["modern", "contemporary", "industrial"],
+          rooms: ["horeca", "kitchen"],
+          slot: "horecaTable",
+          promptHint: `a ${vendor.brandName} hospitality dining table, white studio product shot`,
+          price: 640,
+          vendorId: vendor.id,
+          affiliateUrl: vendor.storeUrl,
+        }),
+        product({
+          id: `${vendor.id}-horeca-bar`,
+          sku: `${vendor.badge}-HBAR`,
+          name: `Bar / tejghea ${vendor.brandName}`,
+          description: `Bar comercial ${vendor.brandName}, fundal alb de studio.`,
+          category: "tables",
+          image2d: "/products/studio/table.jpg",
+          image: "/products/studio/table.jpg",
+          accentColor: vendor.accent,
+          styles: ["modern", "industrial", "contemporary"],
+          rooms: ["horeca"],
+          slot: "horecaBar",
+          promptHint: `a ${vendor.brandName} hospitality bar counter, white studio product shot`,
+          price: 980,
           vendorId: vendor.id,
           affiliateUrl: vendor.storeUrl,
         }),

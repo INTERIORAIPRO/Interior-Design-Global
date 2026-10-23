@@ -44,6 +44,7 @@ const heroCategory: Record<RoomKind, PartnerProduct["category"]> = {
   kitchen: "tables",
   bathroom: "bath",
   terrace: "sofas",
+  horeca: "tables",
 };
 
 export function pickCatalogForBudget(

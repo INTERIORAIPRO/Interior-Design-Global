@@ -18,6 +18,17 @@ const slideImages: Record<(typeof slideKeys)[number], string> = {
   kitchen: "/hero/kitchen.jpg",
   office: "/hero/office.jpg",
   bathroom: "/hero/bathroom.jpg",
+  bedroom:
+    "https://images.unsplash.com/photo-1618773928121-c32242e63f39?q=80&w=1200&auto=format&fit=crop",
+  terrace: "/hero/terrace.jpg",
+  horeca: "/hero/horeca.jpg",
+};
+
+const localImages: Record<(typeof slideKeys)[number], string> = {
+  living: "/hero/living.jpg",
+  kitchen: "/hero/kitchen.jpg",
+  office: "/hero/office.jpg",
+  bathroom: "/hero/bathroom.jpg",
   bedroom: "/hero/bedroom.jpg",
   terrace: "/hero/terrace.jpg",
   horeca: "/hero/horeca.jpg",
@@ -42,29 +53,32 @@ export function HeroLuxuryBanner() {
   return (
     <div
       key={locale}
-      className="relative overflow-hidden rounded-[28px] border border-white/10 bg-ink shadow-[0_30px_80px_rgba(0,0,0,0.45)]"
+      className="relative isolate overflow-hidden rounded-[28px] border border-white/10 bg-ink shadow-[0_30px_80px_rgba(0,0,0,0.45)]"
     >
-      <div className="relative aspect-[4/5] overflow-hidden sm:aspect-[4/3] lg:aspect-[5/4]">
+      <div className="relative aspect-[4/5] sm:aspect-[4/3] lg:aspect-[5/4]">
         {slideKeys.map((key, slideIndex) => (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             key={`${locale}-${key}`}
             src={slideImages[key]}
             alt={t(`slides.${key}.title`)}
+            onError={(event) => {
+              event.currentTarget.src = localImages[key];
+            }}
             className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700 ${
               slideIndex === index ? "opacity-100" : "opacity-0"
             }`}
           />
         ))}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 flex min-h-[10.5rem] flex-col justify-end px-6 pb-5 pt-10">
-          <h2 className="min-h-[2.5rem] font-serif text-[1.75rem] leading-tight tracking-tight text-linen sm:text-4xl">
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 p-6">
+          <h2 className="font-serif text-3xl leading-tight tracking-tight text-linen sm:text-4xl">
             <span className="line-clamp-1">{t(`slides.${activeKey}.title`)}</span>
           </h2>
-          <p className="mt-2 min-h-[2.75rem] max-w-sm text-sm leading-relaxed text-linen/75">
-            <span className="line-clamp-2">{t(`slides.${activeKey}.caption`)}</span>
+          <p className="mt-2 line-clamp-2 min-h-[2.75rem] max-w-sm text-sm leading-relaxed text-linen/75">
+            {t(`slides.${activeKey}.caption`)}
           </p>
-          <div className="mt-4 flex h-4 flex-nowrap items-center gap-2">
+          <div className="mt-4 flex flex-nowrap items-center gap-2">
             {slideKeys.map((key, slideIndex) => (
               <button
                 key={`${locale}-${key}-dot`}

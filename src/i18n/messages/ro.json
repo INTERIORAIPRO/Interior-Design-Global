@@ -33,28 +33,28 @@
         "caption": "Canapele, măsuță de cafea, comodă TV, fotoliu, covor, iluminat ambiental."
       },
       "kitchen": {
-        "title": "Dining & Bucătărie",
-        "caption": "Masă dining, scaune, pendule, insulă și mobilier de bucătărie."
+        "title": "Bucătărie și zona de mese",
+        "caption": "Masă, scaune, pendule, insulă și mobilier de bucătărie."
       },
       "office": {
         "title": "Birou",
         "caption": "Birou modern, scaune ergonomice, lămpi de lucru și etajere."
       },
       "bathroom": {
-        "title": "Baie & Finisaje",
-        "caption": "Gresie, faianță, microciment, sanitare de designer, oglinzi și baterii."
+        "title": "Baie și finisaje",
+        "caption": "Gresie, faianță, microciment, sanitare, oglinzi și baterii."
       },
       "bedroom": {
         "title": "Dormitor",
         "caption": "Pat, noptiere, șifonier, banchetă, iluminat și textile de pat."
       },
       "terrace": {
-        "title": "Terasă & Outdoor",
-        "caption": "Dining exterior, șezlonguri, lounge, umbrelă și iluminat outdoor."
+        "title": "Terasă și grădină",
+        "caption": "Masă de terasă, șezlonguri, canapele de exterior, umbrelă și iluminat de grădină."
       },
       "horeca": {
-        "title": "HoReCa & Comercial",
-        "caption": "Mese restaurant, scaune trafic intens, lounge, bar și iluminat suspendat."
+        "title": "HoReCa și comercial",
+        "caption": "Mese de restaurant, scaune pentru trafic intens, canapele, bar și iluminat suspendat."
       }
     }
   },

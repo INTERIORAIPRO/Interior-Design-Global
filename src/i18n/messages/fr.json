@@ -33,7 +33,7 @@
         "caption": "Canapés, table basse, meuble TV, fauteuil, tapis, éclairage d'ambiance."
       },
       "kitchen": {
-        "title": "Salle à manger & Cuisine",
+        "title": "Salle à manger et cuisine",
         "caption": "Table à manger, chaises, suspensions, îlot et mobilier de cuisine."
       },
       "office": {
@@ -41,20 +41,20 @@
         "caption": "Bureau moderne, chaises ergonomiques, lampes de travail et étagères."
       },
       "bathroom": {
-        "title": "Salle de bain & Finitions",
-        "caption": "Carrelage, faïence, microciment, sanitaires design, miroirs et robinetterie."
+        "title": "Salle de bain et finitions",
+        "caption": "Carrelage, faïence, microciment, sanitaires, miroirs et robinetterie."
       },
       "bedroom": {
         "title": "Chambre",
         "caption": "Lit, tables de nuit, armoire, banc, éclairage et textiles de lit."
       },
       "terrace": {
-        "title": "Terrasse & Outdoor",
-        "caption": "Dining extérieur, transats, lounge, parasol et éclairage outdoor."
+        "title": "Terrasse et jardin",
+        "caption": "Table d'extérieur, transats, canapés d'extérieur, parasol et éclairage de jardin."
       },
       "horeca": {
-        "title": "HoReCa & Commercial",
-        "caption": "Tables restaurant, chaises à fort trafic, lounge, bar et suspensions."
+        "title": "Restauration et commercial",
+        "caption": "Tables de restaurant, chaises à fort trafic, canapés, bar et suspensions."
       }
     }
   },

@@ -33,7 +33,7 @@
         "caption": "Sofas, Couchtisch, TV-Möbel, Sessel, Teppich, Ambientebeleuchtung."
       },
       "kitchen": {
-        "title": "Essen & Küche",
+        "title": "Esszimmer und Küche",
         "caption": "Esstisch, Stühle, Pendelleuchten, Insel und Küchenmöbel."
       },
       "office": {
@@ -41,20 +41,20 @@
         "caption": "Moderner Schreibtisch, ergonomische Stühle, Arbeitsleuchten und Regale."
       },
       "bathroom": {
-        "title": "Bad & Oberflächen",
-        "caption": "Fliesen, Keramik, Mikrozement, Design-Sanitär, Spiegel und Armaturen."
+        "title": "Bad und Oberflächen",
+        "caption": "Fliesen, Keramik, Mikrozement, Sanitär, Spiegel und Armaturen."
       },
       "bedroom": {
         "title": "Schlafzimmer",
         "caption": "Bett, Nachttische, Schrank, Bank, Beleuchtung und Betttextilien."
       },
       "terrace": {
-        "title": "Terrasse & Outdoor",
-        "caption": "Outdoor-Dining, Liegen, Lounge, Sonnenschirm und Aussenbeleuchtung."
+        "title": "Terrasse und Garten",
+        "caption": "Esstisch im Freien, Liegen, Loungemöbel, Sonnenschirm und Gartenbeleuchtung."
       },
       "horeca": {
-        "title": "HoReCa & Gewerbe",
-        "caption": "Restauranttische, stark frequentierte Stühle, Lounge, Bar und Pendelleuchten."
+        "title": "Gastronomie und Gewerbe",
+        "caption": "Restauranttische, strapazierfähige Stühle, Sofas, Theke und Pendelleuchten."
       }
     }
   },

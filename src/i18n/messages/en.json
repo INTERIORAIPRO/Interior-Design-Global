@@ -33,7 +33,7 @@
         "caption": "Sofas, coffee table, TV unit, armchair, rug, ambient lighting."
       },
       "kitchen": {
-        "title": "Dining & Kitchen",
+        "title": "Dining and kitchen",
         "caption": "Dining table, chairs, pendants, island and kitchen furniture."
       },
       "office": {
@@ -41,20 +41,20 @@
         "caption": "Modern desk, ergonomic chairs, task lamps and shelves."
       },
       "bathroom": {
-        "title": "Bath & Finishes",
-        "caption": "Tiles, ceramics, microcement, designer sanitaryware, mirrors and taps."
+        "title": "Bath and finishes",
+        "caption": "Tiles, ceramics, microcement, sanitaryware, mirrors and taps."
       },
       "bedroom": {
         "title": "Bedroom",
         "caption": "Bed, nightstands, wardrobe, bench, lighting and bed textiles."
       },
       "terrace": {
-        "title": "Terrace & Outdoor",
-        "caption": "Outdoor dining, loungers, lounge, umbrella and outdoor lighting."
+        "title": "Terrace and garden",
+        "caption": "Outdoor dining, loungers, outdoor sofas, umbrella and garden lighting."
       },
       "horeca": {
-        "title": "HoReCa & Commercial",
-        "caption": "Restaurant tables, high-traffic chairs, lounge, bar and pendant lighting."
+        "title": "Hospitality and commercial",
+        "caption": "Restaurant tables, high-traffic chairs, sofas, bar and pendant lighting."
       }
     }
   },

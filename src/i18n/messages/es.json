@@ -42,19 +42,19 @@
       },
       "bathroom": {
         "title": "Baño y acabados",
-        "caption": "Gres, azulejos, microcemento, sanitarios de diseño, espejos y grifería."
+        "caption": "Gres, azulejos, microcemento, sanitarios, espejos y grifería."
       },
       "bedroom": {
         "title": "Dormitorio",
         "caption": "Cama, mesitas, armario, banqueta, iluminación y textiles de cama."
       },
       "terrace": {
-        "title": "Terraza y outdoor",
-        "caption": "Comedor exterior, tumbonas, lounge, sombrilla e iluminación outdoor."
+        "title": "Terraza y jardín",
+        "caption": "Mesa de terraza, tumbonas, sofás de exterior, sombrilla e iluminación de jardín."
       },
       "horeca": {
-        "title": "HoReCa y comercial",
-        "caption": "Mesas de restaurante, sillas de alto tráfico, lounge, barra e iluminación colgante."
+        "title": "Hostelería y comercial",
+        "caption": "Mesas de restaurante, sillas de alto tráfico, sofás, barra e iluminación colgante."
       }
     }
   },

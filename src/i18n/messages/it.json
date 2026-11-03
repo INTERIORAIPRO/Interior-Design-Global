@@ -29,11 +29,11 @@
     "ctaVendor": "Apri il portale partner",
     "slides": {
       "living": {
-        "title": "Living",
+        "title": "Soggiorno",
         "caption": "Divani, tavolino, mobile TV, poltrona, tappeto, illuminazione ambientale."
       },
       "kitchen": {
-        "title": "Dining e cucina",
+        "title": "Sala da pranzo e cucina",
         "caption": "Tavolo da pranzo, sedie, sospensioni, isola e mobili cucina."
       },
       "office": {
@@ -42,19 +42,19 @@
       },
       "bathroom": {
         "title": "Bagno e finiture",
-        "caption": "Gres, ceramica, microcemento, sanitari di design, specchi e rubinetteria."
+        "caption": "Gres, ceramica, microcemento, sanitari, specchi e rubinetteria."
       },
       "bedroom": {
         "title": "Camera",
         "caption": "Letto, comodini, armadio, panca, illuminazione e tessili per il letto."
       },
       "terrace": {
-        "title": "Terrazza e outdoor",
-        "caption": "Dining outdoor, lettini, lounge, ombrellone e illuminazione esterna."
+        "title": "Terrazza e giardino",
+        "caption": "Tavolo da esterno, lettini, divani da esterno, ombrellone e illuminazione da giardino."
       },
       "horeca": {
-        "title": "HoReCa e commerciale",
-        "caption": "Tavoli ristorante, sedie ad alto traffico, lounge, bar e sospensioni."
+        "title": "Ristorazione e commerciale",
+        "caption": "Tavoli ristorante, sedie ad alto traffico, divani, bar e sospensioni."
       }
     }
   },

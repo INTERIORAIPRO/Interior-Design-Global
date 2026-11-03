@@ -34,13 +34,15 @@ export function HeroLuxuryBanner() {
   const locale = useLocale();
   const t = useTranslations("welcome");
   const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
 
   useEffect(() => {
+    if (paused) return undefined;
     const timer = window.setInterval(() => {
       setIndex((current) => (current + 1) % slideKeys.length);
     }, 5200);
     return () => window.clearInterval(timer);
-  }, [locale]);
+  }, [locale, paused]);
 
   const activeKey = slideKeys[index];
 
@@ -49,39 +51,42 @@ export function HeroLuxuryBanner() {
       key={locale}
       className="relative overflow-hidden rounded-[28px] border border-white/10 bg-ink shadow-[0_30px_80px_rgba(0,0,0,0.45)]"
     >
-      <div className="relative aspect-[4/5] sm:aspect-[4/3] lg:aspect-[5/4]">
+      <div className="relative aspect-[4/3] overflow-hidden sm:aspect-[5/4]">
         {slideKeys.map((key, slideIndex) => (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             key={`${locale}-${key}`}
             src={slideImages[key]}
             alt={t(`slides.${key}.title`)}
-            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
+            className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700 ${
               slideIndex === index ? "opacity-100" : "opacity-0"
             }`}
           />
         ))}
-        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 p-6">
-          <h2 className="font-serif text-3xl text-linen sm:text-4xl">
-            {t(`slides.${activeKey}.title`)}
-          </h2>
-          <p className="mt-2 max-w-sm text-sm text-linen/75">
-            {t(`slides.${activeKey}.caption`)}
-          </p>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {slideKeys.map((key, slideIndex) => (
-              <button
-                key={`${locale}-${key}-dot`}
-                type="button"
-                aria-label={t(`slides.${key}.title`)}
-                onClick={() => setIndex(slideIndex)}
-                className={`h-1.5 rounded-full transition ${
-                  slideIndex === index ? "w-8 bg-brass" : "w-3 bg-white/30"
-                }`}
-              />
-            ))}
-          </div>
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/55 via-transparent to-black/10" />
+      </div>
+      <div className="flex min-h-[10.5rem] flex-col px-6 pb-5 pt-5">
+        <h2 className="min-h-[2.5rem] font-serif text-[1.75rem] leading-tight tracking-tight text-linen sm:text-[2rem]">
+          <span className="line-clamp-1">{t(`slides.${activeKey}.title`)}</span>
+        </h2>
+        <p className="mt-2 min-h-[2.75rem] max-w-sm text-sm leading-relaxed text-linen/75">
+          <span className="line-clamp-2">{t(`slides.${activeKey}.caption`)}</span>
+        </p>
+        <div className="mt-auto flex h-4 flex-nowrap items-center gap-2 pt-4">
+          {slideKeys.map((key, slideIndex) => (
+            <button
+              key={`${locale}-${key}-dot`}
+              type="button"
+              aria-label={t(`slides.${key}.title`)}
+              onClick={() => {
+                setPaused(true);
+                setIndex(slideIndex);
+              }}
+              className={`h-1.5 shrink-0 rounded-full transition-all ${
+                slideIndex === index ? "w-8 bg-brass" : "w-3 bg-white/30"
+              }`}
+            />
+          ))}
         </div>
       </div>
     </div>

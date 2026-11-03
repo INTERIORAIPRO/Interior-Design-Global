@@ -7,19 +7,19 @@ const slides = [
   {
     key: "living",
     image:
-      "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80",
     fallback: "/hero/living.jpg",
   },
   {
     key: "kitchen",
     image:
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1600489000022-c2086d79f9d4?auto=format&fit=crop&w=1200&q=80",
     fallback: "/hero/kitchen.jpg",
   },
   {
     key: "office",
     image:
-      "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1593062096033-9a26b09da705?auto=format&fit=crop&w=1200&q=80",
     fallback: "/hero/office.jpg",
   },
   {
@@ -31,19 +31,19 @@ const slides = [
   {
     key: "bedroom",
     image:
-      "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1615529162924-f8605388461d?auto=format&fit=crop&w=1200&q=80",
     fallback: "/hero/bedroom.jpg",
   },
   {
     key: "terrace",
     image:
-      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
     fallback: "/hero/terrace.jpg",
   },
   {
     key: "horeca",
     image:
-      "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1200&q=80",
     fallback: "/hero/horeca.jpg",
   },
 ] as const;
@@ -85,9 +85,9 @@ export function HeroLuxuryBanner() {
           }`}
         />
       ))}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-      <div className="absolute bottom-0 left-0 right-0 z-10 p-6 text-white">
-        <h2 className="line-clamp-1 font-serif text-2xl font-light">
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 z-10 p-6">
+        <h2 className="line-clamp-1 font-serif text-2xl font-light text-white">
           {t(`slides.${active.key}.title`)}
         </h2>
         <p className="mt-1 line-clamp-2 min-h-10 max-w-sm text-sm text-gray-200">

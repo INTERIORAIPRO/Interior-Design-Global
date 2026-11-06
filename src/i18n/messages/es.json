@@ -8,8 +8,7 @@
     "aiStudio": "Render IA",
     "cart": "Cesta",
     "studio": "Estudio 3D",
-    "vendors": "Partners",
-    "returns": "Devoluciones"
+    "vendors": "Partners"
   },
   "commerce": {
     "shippingCountry": "Envío",
@@ -74,10 +73,6 @@
     "vendors": {
       "title": "Panel de partners",
       "body": "Los vendedores gestionan catÃ¡logos, pedidos, comisiones y envÃ­os."
-    },
-    "returns": {
-      "title": "Sistema de devoluciones",
-      "body": "Sigue RMA, reposiciÃ³n y reembolsos en pedidos internacionales."
     }
   },
   "product": {
@@ -214,4 +209,3 @@
     ]
   }
 }
-

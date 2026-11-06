@@ -8,8 +8,7 @@
     "aiStudio": "AI Render",
     "cart": "Cart",
     "studio": "3D Studio",
-    "vendors": "Partners",
-    "returns": "Returns"
+    "vendors": "Partners"
   },
   "commerce": {
     "shippingCountry": "Ship to",
@@ -74,10 +73,6 @@
     "vendors": {
       "title": "Partner control panel",
       "body": "Vendors manage catalogs, orders, commissions, and shipping from one place."
-    },
-    "returns": {
-      "title": "Returns system",
-      "body": "Track RMA requests, restocking, and refunds across international orders."
     }
   },
   "product": {
@@ -242,4 +237,3 @@
     ]
   }
 }
-

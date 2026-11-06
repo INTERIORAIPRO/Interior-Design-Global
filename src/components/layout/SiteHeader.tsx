@@ -12,16 +12,13 @@ const allLinks = [
   { href: "/marketplace", key: "marketplace" as const },
   { href: "/ai-studio", key: "aiStudio" as const },
   { href: "/studio", key: "studio" as const },
-  { href: "/returns", key: "returns" as const },
 ];
 
 export function SiteHeader() {
   const t = useTranslations("nav");
   const pathname = usePathname();
   const isHome = pathname === "/";
-  const links = isHome
-    ? allLinks.filter((link) => link.key !== "returns")
-    : allLinks;
+  const links = allLinks;
 
   return (
     <header className="fixed inset-x-0 top-0 z-40 border-b border-white/8 bg-ink/85 backdrop-blur-2xl">

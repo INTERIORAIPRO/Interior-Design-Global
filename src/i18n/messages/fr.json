@@ -8,8 +8,7 @@
     "aiStudio": "Rendu IA",
     "cart": "Panier",
     "studio": "Studio 3D",
-    "vendors": "Partenaires",
-    "returns": "Retours"
+    "vendors": "Partenaires"
   },
   "commerce": {
     "shippingCountry": "Livraison",
@@ -74,10 +73,6 @@
     "vendors": {
       "title": "Panneau partenaires",
       "body": "Les vendeurs gÃ¨rent catalogues, commandes, commissions et livraisons."
-    },
-    "returns": {
-      "title": "SystÃ¨me de retours",
-      "body": "Suivez les RMA, le restockage et les remboursements Ã  lâ€™international."
     }
   },
   "product": {
@@ -214,4 +209,3 @@
     ]
   }
 }
-

@@ -13,31 +13,31 @@ const slides = [
   {
     key: "kitchen",
     image:
-      "https://images.unsplash.com/photo-1600489000022-c2086d79f9d4?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1615529162924-f8605388461d?auto=format&fit=crop&w=1200&q=80",
     fallback: "/hero/kitchen.jpg",
   },
   {
     key: "office",
     image:
-      "https://images.unsplash.com/photo-1593062096033-9a26b09da705?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1595515106969-1ce29566ff1c?auto=format&fit=crop&w=1200&q=80",
     fallback: "/hero/office.jpg",
   },
   {
     key: "bathroom",
     image:
-      "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1620626011761-996317b8d101?auto=format&fit=crop&w=1200&q=80",
     fallback: "/hero/bathroom.jpg",
   },
   {
     key: "bedroom",
     image:
-      "https://images.unsplash.com/photo-1615529162924-f8605388461d?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1616046229478-9901c5536a45?auto=format&fit=crop&w=1200&q=80",
     fallback: "/hero/bedroom.jpg",
   },
   {
     key: "terrace",
     image:
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=1200&q=80",
     fallback: "/hero/terrace.jpg",
   },
   {
@@ -73,6 +73,7 @@ export function HeroLuxuryBanner() {
         // eslint-disable-next-line @next/next/no-img-element
         <img
           key={`${locale}-${slide.key}`}
+          suppressHydrationWarning={true}
           src={slide.image}
           alt={t(`slides.${slide.key}.title`)}
           onError={(event) => {
@@ -87,16 +88,23 @@ export function HeroLuxuryBanner() {
       ))}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
       <div className="absolute bottom-0 left-0 right-0 z-10 p-6">
-        <h2 className="line-clamp-1 font-serif text-2xl font-light text-white">
+        <h2
+          suppressHydrationWarning={true}
+          className="line-clamp-1 font-serif text-2xl font-light text-white"
+        >
           {t(`slides.${active.key}.title`)}
         </h2>
-        <p className="mt-1 line-clamp-2 min-h-10 max-w-sm text-sm text-gray-200">
+        <p
+          suppressHydrationWarning={true}
+          className="mt-1 line-clamp-2 min-h-10 max-w-sm text-sm text-gray-200"
+        >
           {t(`slides.${active.key}.caption`)}
         </p>
         <div className="mt-4 flex flex-nowrap items-center gap-2">
           {slides.map((slide, slideIndex) => (
             <button
               key={`${locale}-${slide.key}-dot`}
+              suppressHydrationWarning={true}
               type="button"
               aria-label={t(`slides.${slide.key}.title`)}
               onClick={() => {

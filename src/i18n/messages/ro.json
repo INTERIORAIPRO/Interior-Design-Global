@@ -8,8 +8,7 @@
     "aiStudio": "Randare AI",
     "cart": "Coș",
     "studio": "Studio 3D",
-    "vendors": "Parteneri",
-    "returns": "Retururi"
+    "vendors": "Parteneri"
   },
   "commerce": {
     "shippingCountry": "Livrare",
@@ -74,10 +73,6 @@
     "vendors": {
       "title": "Panou pentru parteneri",
       "body": "Vendorii gestionează cataloage, comenzi, comisioane și livrări dintr-un singur loc."
-    },
-    "returns": {
-      "title": "Sistem de retururi",
-      "body": "Urmărește cereri RMA, restocking și rambursări pentru comenzi internaționale."
     }
   },
   "product": {

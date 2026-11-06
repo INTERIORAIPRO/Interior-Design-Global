@@ -8,8 +8,7 @@
     "aiStudio": "Render AI",
     "cart": "Carrello",
     "studio": "Studio 3D",
-    "vendors": "Partner",
-    "returns": "Resi"
+    "vendors": "Partner"
   },
   "commerce": {
     "shippingCountry": "Consegna",
@@ -74,10 +73,6 @@
     "vendors": {
       "title": "Pannello partner",
       "body": "I vendor gestiscono cataloghi, ordini, commissioni e spedizioni."
-    },
-    "returns": {
-      "title": "Sistema resi",
-      "body": "Traccia RMA, restock e rimborsi sugli ordini internazionali."
     }
   },
   "product": {
@@ -214,4 +209,3 @@
     ]
   }
 }
-

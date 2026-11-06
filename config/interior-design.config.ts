@@ -13,7 +13,6 @@ export const appConfig = {
   features: {
     marketplace: true,
     vendorPortal: true,
-    returns: true,
     engine3d: true,
     multilingual: true,
     aiRender: true,
@@ -28,10 +27,6 @@ export const appConfig = {
     defaultCommissionPercent: 12,
     onboardingRequired: true,
     primaryStoreId: "vnd_the_home",
-  },
-  returns: {
-    windowDays: 14,
-    restockingFeePercent: 0,
   },
 } as const;
 

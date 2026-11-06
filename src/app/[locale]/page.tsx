@@ -16,7 +16,6 @@ export default async function WelcomePage({ params }: WelcomePageProps) {
     { key: "ai", href: "/ai-studio" },
     { key: "i18n", href: "/marketplace" },
     { key: "engine", href: "/studio" },
-    { key: "returns", href: "/returns" },
   ] as const;
 
   return (
@@ -26,13 +25,22 @@ export default async function WelcomePage({ params }: WelcomePageProps) {
 
       <section className="mx-auto grid min-h-screen max-w-6xl items-center gap-12 px-6 pb-20 pt-28 lg:grid-cols-[1.05fr_0.95fr]">
         <div>
-          <p className="text-xs uppercase tracking-[0.28em] text-brass">
+          <p
+            suppressHydrationWarning={true}
+            className="text-xs uppercase tracking-[0.28em] text-brass"
+          >
             {t("kicker")}
           </p>
-          <h1 className="mt-5 font-serif text-5xl leading-[1.05] text-linen sm:text-6xl lg:text-7xl">
+          <h1
+            suppressHydrationWarning={true}
+            className="mt-5 font-serif text-5xl leading-[1.05] text-linen sm:text-6xl lg:text-7xl"
+          >
             {t("title")}
           </h1>
-          <p className="mt-6 max-w-xl text-base leading-relaxed text-linen/70 sm:text-lg">
+          <p
+            suppressHydrationWarning={true}
+            className="mt-6 max-w-xl text-base leading-relaxed text-linen/70 sm:text-lg"
+          >
             {t("subtitle")}
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
@@ -59,17 +67,23 @@ export default async function WelcomePage({ params }: WelcomePageProps) {
         <HeroLuxuryBanner />
       </section>
 
-      <section className="mx-auto grid max-w-6xl gap-4 px-6 pb-24 sm:grid-cols-2">
+      <section className="mx-auto grid max-w-6xl gap-4 px-6 pb-24 md:grid-cols-3">
         {cards.map((card) => (
           <Link
             key={card.key}
             href={card.href}
             className="rounded-3xl border border-white/10 bg-white/5 p-6 transition hover:border-brass/40 hover:bg-white/[0.07]"
           >
-            <h2 className="font-serif text-2xl text-linen">
+            <h2
+              suppressHydrationWarning={true}
+              className="font-serif text-2xl text-linen"
+            >
               {features(`${card.key}.title`)}
             </h2>
-            <p className="mt-2 text-sm leading-relaxed text-linen/65">
+            <p
+              suppressHydrationWarning={true}
+              className="mt-2 text-sm leading-relaxed text-linen/65"
+            >
               {features(`${card.key}.body`)}
             </p>
           </Link>

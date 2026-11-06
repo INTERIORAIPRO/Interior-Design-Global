@@ -8,8 +8,7 @@
     "aiStudio": "KI-Render",
     "cart": "Warenkorb",
     "studio": "3D-Studio",
-    "vendors": "Partner",
-    "returns": "Rücksendungen"
+    "vendors": "Partner"
   },
   "commerce": {
     "shippingCountry": "Lieferung",
@@ -74,10 +73,6 @@
     "vendors": {
       "title": "Partner-Cockpit",
       "body": "Vendoren verwalten Kataloge, Bestellungen, Provisionen und Versand."
-    },
-    "returns": {
-      "title": "RÃ¼cksendesystem",
-      "body": "RMA-Anfragen, Restocking und Erstattungen international verfolgen."
     }
   },
   "product": {
@@ -214,4 +209,3 @@
     ]
   }
 }
-

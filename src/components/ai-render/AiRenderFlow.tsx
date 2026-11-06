@@ -28,7 +28,7 @@ const roomLabels: Record<RoomType, string> = {
   living: "Sufragerie / Living",
   bedroom: "Dormitor",
   office: "Birou",
-  kitchen: "Bucătărie & Dining",
+  kitchen: "Bucătărie și zona de mese",
   bathroom: "Baie",
   terrace: "Terasă & Outdoor",
   horeca: "HoReCa",

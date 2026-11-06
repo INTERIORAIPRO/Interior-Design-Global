@@ -3,44 +3,53 @@
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 
+// Ordinea și URL-urile sunt cele cerute. Titlurile/descrierile vin din
+// src/i18n/messages/*.json (welcome.slides.<key>.title|caption).
 const slides = [
   {
+    // 1. Zona de zi
     key: "living",
     image:
       "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80",
     fallback: "/hero/living.jpg",
   },
   {
+    // 2. Bucătărie și zona de mese
     key: "kitchen",
     image:
       "https://images.unsplash.com/photo-1615529162924-f8605388461d?auto=format&fit=crop&w=1200&q=80",
     fallback: "/hero/kitchen.jpg",
   },
   {
+    // 3. Birou
     key: "office",
     image:
       "https://images.unsplash.com/photo-1595515106969-1ce29566ff1c?auto=format&fit=crop&w=1200&q=80",
     fallback: "/hero/office.jpg",
   },
   {
+    // 4. Baie și finisaje
     key: "bathroom",
     image:
       "https://images.unsplash.com/photo-1620626011761-996317b8d101?auto=format&fit=crop&w=1200&q=80",
     fallback: "/hero/bathroom.jpg",
   },
   {
+    // 5. Dormitor
     key: "bedroom",
     image:
       "https://images.unsplash.com/photo-1616046229478-9901c5536a45?auto=format&fit=crop&w=1200&q=80",
     fallback: "/hero/bedroom.jpg",
   },
   {
+    // 6. Terasă și grădină
     key: "terrace",
     image:
       "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=1200&q=80",
     fallback: "/hero/terrace.jpg",
   },
   {
+    // 7. HoReCa și comercial
     key: "horeca",
     image:
       "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1200&q=80",
@@ -64,6 +73,8 @@ export function HeroLuxuryBanner() {
 
   const active = slides[index];
 
+  // Un singur șablon de randare pentru toate cele 7 carduri:
+  // aceeași înălțime, același gradient, aceeași tipografie, aceiași dots.
   return (
     <div
       key={locale}
